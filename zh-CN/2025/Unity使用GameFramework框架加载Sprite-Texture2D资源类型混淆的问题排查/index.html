@@ -20,23 +20,23 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="前两天发现一个邪门的事情, Unity引擎使用GameFramework框架的 GameEntry.Resource.LoadAssetAsync&lt;T&gt;API加载Sprite类型的资源, 在对应Sprite文件明明存在的情况下却给一个类型不匹配的报错: 123Exception: GameFrameworkException: Load asset &#x27;Assets&#x2F;Res&#x2F;U">
+    <meta name="description" content="前两天发现一个邪门的事情, Unity引擎使用GameFramework框架的 GameEntry.Resource.LoadAssetAsync&lt;T&gt;API加载Sprite类型的资源, 在对应Sprite文件明明存在的情况下却给一个类型不匹配的报错:123Exception: GameFrameworkException: Load asset &#x27;Assets&#x2F;Res&#x2F;UI">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Unity使用GameFramework框架加载Sprite&#x2F;Texture2D资源类型混淆的问题排查">
 <meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E4%BD%BF%E7%94%A8GameFramework%E6%A1%86%E6%9E%B6%E5%8A%A0%E8%BD%BDSprite-Texture2D%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B%E6%B7%B7%E6%B7%86%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/index.html">
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
-<meta property="og:description" content="前两天发现一个邪门的事情, Unity引擎使用GameFramework框架的 GameEntry.Resource.LoadAssetAsync&lt;T&gt;API加载Sprite类型的资源, 在对应Sprite文件明明存在的情况下却给一个类型不匹配的报错: 123Exception: GameFrameworkException: Load asset &#x27;Assets&#x2F;Res&#x2F;U">
+<meta property="og:description" content="前两天发现一个邪门的事情, Unity引擎使用GameFramework框架的 GameEntry.Resource.LoadAssetAsync&lt;T&gt;API加载Sprite类型的资源, 在对应Sprite文件明明存在的情况下却给一个类型不匹配的报错:123Exception: GameFrameworkException: Load asset &#x27;Assets&#x2F;Res&#x2F;UI">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216174309645.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216195251169.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216202807313.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216200725026.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216203514623.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216174309645.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216195251169.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216202807313.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216200725026.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216203514623.png">
 <meta property="article:published_time" content="2025-12-16T09:37:03.000Z">
-<meta property="article:modified_time" content="2026-03-05T12:17:40.509Z">
+<meta property="article:modified_time" content="2026-09-01T08:46:59.208Z">
 <meta property="article:author" content="HanWen">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216174309645.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216174309645.png">
 
 
 <link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2025/Unity%E4%BD%BF%E7%94%A8GameFramework%E6%A1%86%E6%9E%B6%E5%8A%A0%E8%BD%BDSprite-Texture2D%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B%E6%B7%B7%E6%B7%86%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
@@ -143,7 +143,7 @@
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="HanWen"
-      src="https://github.com/SHthemW.png">
+      src="https://github.com/SHW2002.png">
   <p class="site-author-name" itemprop="name">HanWen</p>
   <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
 </div>
@@ -151,7 +151,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -167,7 +167,7 @@
 </div>
   <div class="links-of-author animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/shthemw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shthemw" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
         <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
@@ -198,7 +198,7 @@
     <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-CN/2025/Unity%E4%BD%BF%E7%94%A8GameFramework%E6%A1%86%E6%9E%B6%E5%8A%A0%E8%BD%BDSprite-Texture2D%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B%E6%B7%B7%E6%B7%86%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://github.com/SHthemW.png">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
       <meta itemprop="name" content="HanWen">
     </span>
 
@@ -231,7 +231,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-05 20:17:40" itemprop="dateModified" datetime="2026-03-05T20:17:40+08:00">2026-03-05</time>
+      <time title="修改时间：2026-09-01 16:46:59" itemprop="dateModified" datetime="2026-09-01T16:46:59+08:00">2026-09-01</time>
     </span>
 
   
@@ -250,31 +250,28 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>前两天发现一个邪门的事情, Unity引擎使用GameFramework框架的 <code>GameEntry.Resource.LoadAssetAsync&lt;T&gt;</code>API加载Sprite类型的资源, 在对应Sprite文件明明存在的情况下却给一个类型不匹配的报错:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception: GameFrameworkException: Load asset </span><br><span class="line">&#x27;Assets/Res/UI/UISprite/EnterGamePopup/Achievement/EGP_Achievement_Base_ChineseTraditional.png&#x27; </span><br><span class="line">failure load type is UnityEngine.Texture2D but asset type is UnityEngine.Sprite.</span><br></pre></td></tr></table></figure>
-
+    <div class="post-body" itemprop="articleBody"><p>前两天发现一个邪门的事情, Unity引擎使用GameFramework框架的 <code>GameEntry.Resource.LoadAssetAsync&lt;T&gt;</code>API加载Sprite类型的资源, 在对应Sprite文件明明存在的情况下却给一个类型不匹配的报错:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception: GameFrameworkException: Load asset </span><br><span class="line">&#x27;Assets/Res/UI/UISprite/EnterGamePopup/Achievement/EGP_Achievement_Base_ChineseTraditional.png&#x27; </span><br><span class="line">failure load type is UnityEngine.Texture2D but asset type is UnityEngine.Sprite.</span><br></pre></td></tr></table></figure></p>
 <span id="more"></span>
-
 <hr>
 <h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>当时检查了打包机日志和成品包的AB, 均未发现打出的资源有缺失, 而且奇怪的是我有三组完全相同的逻辑, 只有其中一个会稳定地报错, 另外两组从未出现问题; 此外编辑器上也是正常的.</p>
 <p>检查Unity项目仓库, 出问题的文件如下, 可以看到同名文件在一个目录中被Unity识别为了两份, 分别是Sprite类型 (第一个, 这里和你在Inspector里的设置有关, 不一定是Sprite) 和Texture2D类型 (第二个). </p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216174309645.png" alt="image-20251216174309645"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216174309645.png" alt="image-20251216174309645"></p>
 <p>此时已经可以管中窥豹的看出一点毛病, 因为这两个不同类型的资源共用着同一个名称 (甚至在Windows资源管理器里的扩展名也是一样的). 如果我传一个文件名进去, UGF会加载哪一个是不能确定的.</p>
 <p>但是这无法说明为什么我相同的三组逻辑只有一组有问题. 并且如果真的是随机加载, 那这个报错也不应该一直出现, 应该是有时出现有时不出现才对, 和我遇到的情况不符.</p>
 <p>最终还是在网上找到了Keyword: GF加载资源的时候会按文件名<code>AssetName</code>做key去缓存资源, 以便后续访问同一资源时减少查找频率:</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216195251169.png" alt="image-20251216195251169"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216195251169.png" alt="image-20251216195251169"></p>
 <p>如果某处存在在Unity中具有二义性的资源 (如同一个 <code>.png</code> 资产在 Unity 里既可以被当成 <code>Texture2D</code>加载，也可以被当成 <code>Sprite</code> 加载) , 则它们在首次被加载时就会被缓存, 缓存值的类型取决于你首次加载时用到的类型.</p>
 <p>也因此, 后续再尝试加载这个资源, 即使声明了不同的类型, 缓存池也会由于文件名相同而返回之前的资源缓存, 随后再因为类型不匹配而被UGF抛异常, 产生本文开头的报错.</p>
 <p>经过我的排查, 我项目里这个”先人一步”的加载链路就位于一个UIForm Prefeb上面:</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216202807313.png" alt="image-20251216202807313"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216202807313.png" alt="image-20251216202807313"></p>
 <p>我默认引用了这张图片作为Editor下的效果预览, 随后游戏生成这个UIForm时, UGF自动以<code>Texture2D</code>格式加载了这张图, 后面再在代码里调用<code>LoadAsset&lt;Sprite&gt;</code>就无法得到正确的结果了.</p>
 <p>这里比较坑的一个点是<code>LoadAssetAsync&lt;T&gt;</code>的类型参数<code>T</code>并没有在加载时用做索引, 只是一个后置的验证, 也就是说UGF是先加载资源再以<code>T</code>类型检验, 不通过则抛出异常.</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216200725026.png" alt="image-20251216200725026"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216200725026.png" alt="image-20251216200725026"></p>
 <p>StackOverflow上有一个类似的问题对比了两者的区别:</p>
 <p><a href="https://stackoverflow.com/questions/28629874/unity-resources-loadsprite-vs-as-sprite">Unity Resources.Load与作为精灵的区别 - Stack Overflow</a></p>
 <h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><p>OK, 那既然原因查明, 解决方法也就一目了然了, 要么清除之前的引用链路确保我调用<code>Resource.LoadAssetAsync&lt;T&gt;</code>的时候缓存里没有旧数据, 要么直接从物理层面把两种类型的文件分开. </p>
 <p>考虑到拆分同一份<code>.png</code>资源会占用额外的空间, 并且在实际项目多人合作中”规范开发者只使用某个特定路径的图作为某种资源格式”也有一定的成本, 我最后还是图省事直接把UIForm上的图拿掉了, 换成了另一张透明的图片.</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216203514623.png" alt="image-20251216203514623"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216203514623.png" alt="image-20251216203514623"></p>
 <p>打包测试了一下, 问题立刻解决.</p>
 
     </div>

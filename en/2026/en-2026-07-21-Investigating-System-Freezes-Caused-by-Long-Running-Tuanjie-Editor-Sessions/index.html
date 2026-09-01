@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Over the past couple of days, while developing a project with Tuanjie, I found that leaving the editor running for a while would occasionally cause my computer to freeze completely, usually by the tim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="Over the past couple of days, while developing a project with Tuanjie, I found that leaving the editor running for a while would occasionally cause my computer to freeze completely, usually by the tim">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png">
+<meta property="og:image" content="https://www.shenhanwen.top/images/posts/tuanjie-memory-leak/windows-log.png">
+<meta property="og:image" content="https://www.shenhanwen.top/images/posts/tuanjie-memory-leak/uxtool-settings.png">
+<meta property="article:published_time" content="2026-07-21T09:04:50.000Z">
+<meta property="article:modified_time" content="2026-09-01T08:46:59.214Z">
+<meta property="article:author" content="HanWen">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/","path":"en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/","title":"Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the footer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Environment"><span class="nav-number">1.</span> <span class="nav-text">Environment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Logs"><span class="nav-number">2.</span> <span class="nav-text">Logs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Investigation-Tool"><span class="nav-number">3.</span> <span class="nav-text">Investigation Tool</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reproducing-the-Issue"><span class="nav-number">4.</span> <span class="nav-text">Reproducing the Issue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Reproduction"><span class="nav-number">4.1.</span> <span class="nav-text">1. Reproduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Analysis"><span class="nav-number">4.2.</span> <span class="nav-text">2. Analysis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Confirmation"><span class="nav-number">4.3.</span> <span class="nav-text">3. Confirmation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-Was-This-Project-So-Easy-to-Trigger"><span class="nav-number">4.4.</span> <span class="nav-text">Why Was This Project So Easy to Trigger?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Official-Issue-Record"><span class="nav-number">4.5.</span> <span class="nav-text">Official Issue Record</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mitigation"><span class="nav-number">5.</span> <span class="nav-text">Mitigation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Verification"><span class="nav-number">6.</span> <span class="nav-text">Verification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">7.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-07-21 17:04:50" itemprop="dateCreated datePublished" datetime="2026-07-21T17:04:50+08:00">2026-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-09-01 16:46:59" itemprop="dateModified" datetime="2026-09-01T16:46:59+08:00">2026-09-01</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Over the past couple of days, while developing a project with Tuanjie, I found that leaving the editor running for a while would occasionally cause my computer to freeze completely, usually by the time I returned to work the next day. There was no blue screen and no consistent error dialog; only a few applications occasionally reported OOM errors. Once it happened, the machine normally had to be rebooted by holding the power button.</p>
+<p>After investigation, the root issue turned out to be a memory leak inside Tuanjie itself, which currently also exists on the Unity 6 mainline. Certain paths can trigger it more frequently and eventually cause a freeze. This article records the investigation process.</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png" alt="tuanjielogo"></p>
+<span id="more"></span>
+<h2 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h2><ul>
+<li>Operating system: Windows 11</li>
+<li>Editor: Tuanjie <code>2022.3.62t6</code></li>
+<li>Build branch: <code>tuanjie/1.8/staging</code></li>
+</ul>
+<h2 id="Logs"><a href="#Logs" class="headerlink" title="Logs"></a>Logs</h2><p>Because the system was almost completely frozen when the issue occurred, I checked not only Tuanjie’s own logs but also the system crash logs to see whether a child process had unusually high usage.</p>
+<p>I asked GPT to scan the drive and found 60 resource-exhaustion events within one week. The most important one was <code>Event ID 2004</code>; both the official documentation and the event description indicated that the crashes were indeed caused by insufficient memory:</p>
+<p><img src="/images/posts/tuanjie-memory-leak/windows-log.png" alt="Windows log"></p>
+<p>Interestingly, these events did not all have the same cause:</p>
+<ol>
+<li>In one case, Tuanjie’s private memory grew from about 35.18 GiB to 39.25 GiB, making it highly suspicious.</li>
+<li>In another case, system commit reached about 94.93/94.94 GiB.<ul>
+<li><code>svchost</code> grew to 50.74 GiB.</li>
+<li>Processes related to <code>DoSvc</code> used about 12.65 GiB.</li>
+<li>Tuanjie used about 9.08 GiB.</li>
+</ul>
+</li>
+</ol>
+<p>Below are two representative <code>Event ID 2004</code> entries. I added digit separators to the byte counts to make them easier to review.</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[2026/7/16 11:30:59]</span><br><span class="line">Provider: Microsoft-Windows-Resource-Exhaustion-Detector</span><br><span class="line">Event ID: 2004</span><br><span class="line">Windows successfully diagnosed a low virtual-memory condition. The following programs used most of the virtual memory:</span><br><span class="line">Tuanjie.exe (38948) used 42,144,346,112 bytes;</span><br><span class="line">svchost.exe (9560) used 8,966,844,416 bytes;</span><br><span class="line">svchost.exe (44892) used 5,992,996,864 bytes.</span><br><span class="line"></span><br><span class="line">[2026/7/20 09:04:22]</span><br><span class="line">Provider: Microsoft-Windows-Resource-Exhaustion-Detector</span><br><span class="line">Event ID: 2004</span><br><span class="line">Windows successfully diagnosed a low virtual-memory condition. The following programs used most of the virtual memory:</span><br><span class="line">svchost.exe (3068) used 54,483,042,304 bytes;</span><br><span class="line">svchost.exe (5272) used 13,587,877,888 bytes;</span><br><span class="line">Tuanjie.exe (6952) used 9,745,526,784 bytes.</span><br></pre></td></tr></table></figure>
+<p>The exported system logs contained 83 <code>Event ID 2004</code> entries in total, with 60 occurring in the preceding seven days.</p>
+<p>In the first entry, Tuanjie was clearly the largest consumer.</p>
+<p>The second entry was quite different: <code>svchost</code> was the process consuming the largest share.</p>
+<p>That made the situation more complicated. Tuanjie was suspicious, but it was not the only explanation for every OOM event. The eventual crash could be the result of multiple memory-leak bugs. The immediate goal was to eliminate the most damaging factor, or at least keep the editor from crashing after being left idle for too long.</p>
+<h2 id="Investigation-Tool"><a href="#Investigation-Tool" class="headerlink" title="Investigation Tool"></a>Investigation Tool</h2><p>I had AI put together a <code>MemoryLeakTracker</code>. Its purpose was to collect the following information when system memory showed abnormal growth over a period of time:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Collected data</th>
+<th>Tool</th>
+<th>Policy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>System memory and kernel pools</td>
+<td>Performance counters</td>
+<td>Every 15 seconds, retained in a rolling buffer</td>
+</tr>
+<tr>
+<td>Tuanjie memory, handles, and threads</td>
+<td>Performance counters</td>
+<td>Preserved when a threshold is reached</td>
+</tr>
+<tr>
+<td>Handles, heaps, and virtual-memory stacks</td>
+<td>WPR/ETW</td>
+<td>Retains about 10 minutes of ETL data</td>
+</tr>
+<tr>
+<td>Process state</td>
+<td>ProcDump</td>
+<td>Creates a dump when private memory reaches 12 GiB</td>
+</tr>
+<tr>
+<td>Supporting evidence</td>
+<td>Event logs and system snapshots</td>
+<td>Saves one copy before and after the event</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The collector is triggered when any of the following conditions is met:</p>
+<ul>
+<li>Tuanjie private memory exceeds 6 GiB.</li>
+<li>System commit exceeds 70%.</li>
+<li>Handle count exceeds 10,000.</li>
+<li>Growth exceeds 768 MiB within 10 minutes.</li>
+<li>Private memory reaches 12 GiB, at which point a dump is created.</li>
+</ul>
+<p>This tool does not prevent the system from crashing or rebooting. It only needs to leave some final evidence before that happens, so that the next time I log in I can see more specific logs. Without an ETL trace and a dump, all you get is a technically correct but unhelpful statement such as “usage is very high.” With call stacks, there is at least a chance to trace the issue back to the code above <code>DuplicateHandle</code>.</p>
+<h2 id="Reproducing-the-Issue"><a href="#Reproducing-the-Issue" class="headerlink" title="Reproducing the Issue"></a>Reproducing the Issue</h2><p>Once the tool was ready, I restarted the editor and left it running. Surprisingly, the tool displayed its recording prompt after only a few minutes. The reason the crash might normally take days to appear is probably that this machine has 64 GiB of physical memory to absorb the growth for a while.</p>
+<h3 id="1-Reproduction"><a href="#1-Reproduction" class="headerlink" title="1. Reproduction"></a>1. Reproduction</h3><p>The first important capture was located at:</p>
+<p><code>E:\MemoryLeak-Capture\Incidents\20260720-142209-PID22848</code></p>
+<p>At 14:21:19, two <code>AssetImportWorker</code> processes started.</p>
+<p>At 14:22:09, one worker process reached about 11,590 handles, triggering the automatic capture.</p>
+<p>The automatically generated <code>incident-20260720-142210.json</code> contained these key fields:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;CapturedAt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-07-20T14:22:16.1321305+08:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;Reason&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Handle count reached 11590&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;System&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;CommitPercent&quot;</span><span class="punctuation">:</span> <span class="number">29.05</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;AvailablePhysicalMiB&quot;</span><span class="punctuation">:</span> <span class="number">36851.55</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;PoolPagedMiB&quot;</span><span class="punctuation">:</span> <span class="number">1304.77</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;PoolNonpagedMiB&quot;</span><span class="punctuation">:</span> <span class="number">1326.43</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;Targets&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;CreationTime&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-07-20T11:00:06.8128080+08:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">3.853</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">6060</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">292</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ProjectPath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;E:\\Unity\\wx_gardenagrown_1\\Unity&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">22848</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ParentProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">0.756</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">11590</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">155</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;WorkerName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AssetImportWorker0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">6884</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ParentProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">0.754</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">11589</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">155</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;WorkerName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AssetImportWorker1&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>At that point, system commit was only 29.05%, so this was not an active OOM condition. The tracker had caught the abnormal behavior early.</p>
+<p>The main process showed a very typical handle pattern: a rising and falling sawtooth curve, with each trough ending higher than the previous one:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th style="text-align:right">Main-process handle count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>14:22:10</td>
+<td style="text-align:right">6,060</td>
+</tr>
+<tr>
+<td>14:24:18</td>
+<td style="text-align:right">35,684</td>
+</tr>
+<tr>
+<td>14:29:57</td>
+<td style="text-align:right">120,037</td>
+</tr>
+<tr>
+<td>14:30:29</td>
+<td style="text-align:right">8,846</td>
+</tr>
+<tr>
+<td>14:38:51</td>
+<td style="text-align:right">132,168</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>From 14:59:59 to 15:00:04, only five seconds elapsed, yet the handle count grew from 14,884 to 16,825 while private memory was still around 4 GiB.</p>
+<p>This essentially established the direction of the investigation: the leak was in handles rather than heap memory.</p>
+<h3 id="2-Analysis"><a href="#2-Analysis" class="headerlink" title="2. Analysis"></a>2. Analysis</h3><p>Next, I used Sysinternals Handle to inspect <code>PID 27308</code>, the process that had just exhibited the problem.</p>
+<p>One snapshot contained the following data:</p>
+<ul>
+<li>Total handles: 97,998.</li>
+<li><code>Thread</code> handles: 92,490.</li>
+<li>Live threads: 289.</li>
+</ul>
+<p>The relevant Handle output was as follows:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Handle type summary:</span><br><span class="line">  Event      :   908</span><br><span class="line">  Semaphore  :  3264</span><br><span class="line">  Thread     : 92490</span><br><span class="line">Total handles: 97998</span><br><span class="line"></span><br><span class="line">Get-Process PID 27308:</span><br><span class="line">  Live threads: 289</span><br><span class="line"></span><br><span class="line">Thread-handle target aggregation:</span><br><span class="line">  &gt;99% of thread handles -&gt; TID 30960</span><br></pre></td></tr></table></figure>
+<p>More than ninety thousand <code>Thread</code> handles is frankly alarming.</p>
+<p>After aggregating by target thread, more than 99% of the abnormal handles pointed to <code>TID 30960</code>. In other words, this entire pile of handles was associated with one thread; the system had not actually created that many running tasks.</p>
+<p>I strongly suspected that the service behind thread 30960 was being duplicated or restarted repeatedly, causing the handle count to keep growing.</p>
+<h3 id="3-Confirmation"><a href="#3-Confirmation" class="headerlink" title="3. Confirmation"></a>3. Confirmation</h3><p>To analyze the ETL trace, I installed the Windows Performance Toolkit and loaded Microsoft and Tuanjie symbols in WPAExporter.</p>
+<p>In only 15 seconds, the same duplication stack appeared 219,368 times, which was already far beyond normal.</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Thread::RunThreadWrapper</span><br><span class="line">PreviewTextureManager::LoadingLoop</span><br><span class="line">PreviewTextureManager::GetMostImportantTextureToLoad</span><br><span class="line">ProtectedScopedThreadAttach::ProtectedScopedThreadAttach</span><br><span class="line">scripting_thread_attach</span><br><span class="line">mono_thread_internal_attach</span><br><span class="line">mono_thread_attach_internal</span><br><span class="line">mono_threads_open_native_thread_handle</span><br><span class="line">KernelBase!DuplicateHandle</span><br><span class="line">ntdll!NtDuplicateObject</span><br></pre></td></tr></table></figure>
+<p>The aggregate summary exported from WPA was:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Trace range                         : 15 seconds</span><br><span class="line">Dominant creation method            : Duplicate</span><br><span class="line">Dominant stack events               : 219368</span><br><span class="line">Observed net handle growth           : 380-400 handles/second</span><br><span class="line">Creating process                     : Tuanjie.exe (27308)</span><br><span class="line">Handle type                          : Thread</span><br><span class="line">Dominant target thread               : TID 30960</span><br></pre></td></tr></table></figure>
+<p>At this point, the case was essentially solved:</p>
+<ol>
+<li>The background loading thread in <code>PreviewTextureManager</code> was executing preview work.</li>
+<li>It attached a native thread to Mono through <code>ProtectedScopedThreadAttach</code>.</li>
+<li>Mono duplicated the native thread handle.<ul>
+<li>Call site: <code>mono_threads_open_native_thread_handle</code>.</li>
+</ul>
+</li>
+<li>The handles were not closed promptly, so the same thread object accumulated more and more of them.</li>
+</ol>
+<p>The root cause therefore lay inside the Tuanjie engine, on the path between the preview thread and the Mono attachment process.</p>
+<h3 id="Why-Was-This-Project-So-Easy-to-Trigger"><a href="#Why-Was-This-Project-So-Easy-to-Trigger" class="headerlink" title="Why Was This Project So Easy to Trigger?"></a>Why Was This Project So Easy to Trigger?</h3><p>We had found who was leaking, but the investigation was not over. Why did the same engine trigger the issue so frequently in this project?</p>
+<p>The editor logs showed that the following file was repeatedly detected, written, and imported around the time the abnormal behavior began:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br></pre></td></tr></table></figure>
+<p>Following the logs and the code revealed that frequent writes from the ThunderFire UXTool favorites feature were responsible:</p>
+<ol>
+<li><code>RecentSelectRecord</code> subscribes to <code>Selection.selectionChanged</code>.</li>
+<li>Whenever the selection changes, the code first removes the old record and then adds a new one.</li>
+<li>Both removal and addition call <code>JsonAssetManager.SaveAssets</code>.</li>
+<li><code>SaveAssets</code> writes JSON into the <code>Assets</code> directory.<ul>
+<li>It uses <code>File.WriteAllText</code>.</li>
+</ul>
+</li>
+<li>The write triggers an Asset Database refresh.</li>
+<li>Resource items in the “recently selected” panel also call <code>AssetPreview.GetAssetPreview</code>.</li>
+<li>These preview requests ultimately enter the leaking <code>PreviewTextureManager</code>.</li>
+</ol>
+<p>The <code>Editor-prev.log</code> from before the restart confirmed the same pattern. Here is a short extract:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Starting new worker id: 0 with log in .../Logs/AssetImportWorker0.log</span><br><span class="line">Starting new worker id: 1 with log in .../Logs/AssetImportWorker1.log</span><br><span class="line">Detected change in .../Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Refreshing native plugins compatible for Editor in 39.09 ms, found 15 plugins.</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.182 seconds</span><br><span class="line">Detected change in .../FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.188 seconds</span><br><span class="line">Detected change in .../FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.208 seconds</span><br><span class="line"></span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br></pre></td></tr></table></figure>
+<p>The <code>prematurely finalized</code> messages line up with the sharp drops in handle count. The finalizer reclaims a batch of objects, but the same creation path is still running.</p>
+<p>The key source locations include:</p>
+<ul>
+<li><code>RecentSelectRecord.cs</code>: subscribes to selection changes and removes or adds records.</li>
+<li><code>RecentFilesSetting.cs</code>: saves JSON immediately after every modification.</li>
+<li><code>AssetItemMatFile.cs</code>: requests material previews.</li>
+<li><code>AssetItemOthersFile.cs</code>: requests other resource previews.</li>
+<li><code>SwitchSetting.json</code>: stores the switch for the “recently selected panel history” feature.</li>
+</ul>
+<p>Putting the relevant code together makes the relationship clear:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RecentSelectRecord.cs</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">RecentSelectRecord</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    Selection.selectionChanged += UpdateRecentFiles;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (recentList.Contains(guid))</span><br><span class="line">&#123;</span><br><span class="line">    recentSelected.Remove(guid);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (guid != <span class="string">&quot;&quot;</span> &amp;&amp; !recentList.Contains(guid))</span><br><span class="line">&#123;</span><br><span class="line">    recentSelected.Add(guid);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RecentFilesSetting.cs</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Add</span>(<span class="params"><span class="built_in">string</span> guid</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    List.Insert(<span class="number">0</span>, guid);</span><br><span class="line">    JsonAssetManager.SaveAssets(<span class="keyword">this</span>);</span><br><span class="line">    OnValueChanged();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Remove</span>(<span class="params"><span class="built_in">string</span> guid</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> index = List.FindIndex(i =&gt; i == guid);</span><br><span class="line">    <span class="keyword">if</span> (index &gt;= <span class="number">0</span>) List.RemoveAt(index);</span><br><span class="line">    JsonAssetManager.SaveAssets(<span class="keyword">this</span>);</span><br><span class="line">    OnValueChanged();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// JsonAssetManager.cs</span></span><br><span class="line"><span class="built_in">string</span> dataAsJson = JsonUtility.ToJson(obj);</span><br><span class="line">File.WriteAllText(path, dataAsJson);</span><br><span class="line"></span><br><span class="line"><span class="comment">// AssetItemMatFile.cs / AssetItemOthersFile.cs</span></span><br><span class="line">Texture2D preview = AssetPreview.GetAssetPreview(_assetObj);</span><br></pre></td></tr></table></figure>
+<p>UXTool is only the trigger. It refreshes and requests previews frequently, but the underlying defect remains in the Tuanjie engine.</p>
+<h3 id="Official-Issue-Record"><a href="#Official-Issue-Record" class="headerlink" title="Official Issue Record"></a>Official Issue Record</h3><p>Unity’s Issue Tracker contains a similar record: <a href="https://issuetracker-mig.prd.it.unity3d.com/issues/crash-on-protectedscopedthreadattach-protectedscopedthreadattach-when-performing-various-unity-operations">UUM-141036</a>.</p>
+<p>Its native call chain is almost identical:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PreviewTextureManager::LoadingLoop</span><br><span class="line">PreviewTextureManager::GetMostImportantTextureToLoad</span><br><span class="line">ProtectedScopedThreadAttach</span><br><span class="line">scripting_thread_attach</span><br><span class="line">mono_thread_internal_attach</span><br></pre></td></tr></table></figure>
+<p>However, Tuanjie is an independent branch, so Unity’s work may no longer apply to it. Whether the target version has actually fixed the issue still needs to be verified in practice. Since upgrading the engine in the middle of a project carries substantial risk, this issue may remain with us for quite a long time.</p>
+<h2 id="Mitigation"><a href="#Mitigation" class="headerlink" title="Mitigation"></a>Mitigation</h2><p>Since I could not fix the issue itself, I disabled the tool that triggers it. I turned off UXTool’s “recently selected panel history” feature and restarted Tuanjie:</p>
+<p><img src="/images/posts/tuanjie-memory-leak/uxtool-settings.png" alt="UXTool settings"></p>
+<h2 id="Verification"><a href="#Verification" class="headerlink" title="Verification"></a>Verification</h2><p>Because the issue had been confirmed to involve handles, I focused on handle counts after the restart:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th style="text-align:right">Handle count</th>
+<th style="text-align:right">Private memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:45:42</td>
+<td style="text-align:right">5,513</td>
+<td style="text-align:right">3,629.7 MiB</td>
+</tr>
+<tr>
+<td>15:50:57</td>
+<td style="text-align:right">5,811</td>
+<td style="text-align:right">3,702.5 MiB</td>
+</tr>
+<tr>
+<td>15:55:57</td>
+<td style="text-align:right">6,100</td>
+<td style="text-align:right">3,711.8 MiB</td>
+</tr>
+<tr>
+<td>16:03:10</td>
+<td style="text-align:right">6,075</td>
+<td style="text-align:right">3,719.1 MiB</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>During startup, the handle count peaked at 7,564 and quickly fell back to 5,500-6,100.</p>
+<p>In a 39-second sample, the handle count grew from 5,831 to 5,871, or about 1.03 handles per second.</p>
+<p>After about seven minutes, the count fell again from 6,100 to 6,075.</p>
+<p>The old process used to grow by hundreds of handles per second and could spike into the hundreds of thousands. It appears that we removed the main trigger. Given that the underlying issue is in Tuanjie itself, a small residual increase is not surprising. Reducing the frequency of crashes counts as a success.</p>
+<p>The Handle summary after restarting was back within the normal range:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Handle type summary:</span><br><span class="line">  Event      :  819</span><br><span class="line">  Semaphore  : 3225</span><br><span class="line">  Thread     :  557</span><br><span class="line">Total handles: 5871</span><br><span class="line"></span><br><span class="line">Process snapshot:</span><br><span class="line">  Threads    : 271</span><br><span class="line">  PrivateMiB : 3714.8</span><br></pre></td></tr></table></figure>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>To summarize the chain of events:</p>
+<ul>
+<li>Surface symptom: repeated memory exhaustion, desktop-component crashes, or a complete system freeze.</li>
+<li>Confirmed defect: <code>PreviewTextureManager</code> repeatedly duplicates thread handles and does not release them promptly.</li>
+<li>Project-side trigger: UXTool’s “recently selected” feature repeatedly writes JSON, refreshes assets, and requests previews.</li>
+<li>Temporary mitigation: disable that feature, exit normally, and restart Tuanjie.</li>
+<li>Verification: handle growth dropped from 380-400 per second to about 1 per second.<ul>
+<li>Thread handles dropped from 92,490 to 557.</li>
+<li>The original leak signature disappeared.</li>
+</ul>
+</li>
+<li>Long-term resolution: wait for or verify a Tuanjie engine fix. The project-side workaround should not be mistaken for the engine defect having disappeared.</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-CN/2026/%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/" rel="prev" title="在Unity Mecanim中实现透传状态的动作同步">
+                  <i class="fa fa-angle-left"></i> 在Unity Mecanim中实现透传状态的动作同步
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-CN/2026/%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="next" title="团结引擎长时间挂机导致系统卡死的问题排查">
+                  团结引擎长时间挂机导致系统卡死的问题排查 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>English</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

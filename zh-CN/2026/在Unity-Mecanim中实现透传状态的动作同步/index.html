@@ -20,33 +20,33 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 —-它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.">
+    <meta name="description" content="最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 ——它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在Unity Mecanim中实现透传状态的动作同步">
 <meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/index.html">
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
-<meta property="og:description" content="最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 —-它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.">
+<meta property="og:description" content="最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 ——它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305114052767.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260304200813244.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260304210108799.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260304203045997.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305112046086.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305112136528.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305113106997.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305113125123.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305114052767.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305153356425.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305154424137.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305155748425.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305155551443.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305160746792.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305162522792.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260304200813244.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260304210108799.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260304203045997.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305112046086.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305112136528.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305113106997.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305113125123.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305153356425.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305154424137.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305155748425.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305155551443.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305160746792.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305162522792.png">
 <meta property="article:published_time" content="2026-03-04T11:31:51.000Z">
-<meta property="article:modified_time" content="2026-03-12T08:16:01.015Z">
+<meta property="article:modified_time" content="2026-09-01T08:46:59.209Z">
 <meta property="article:author" content="HanWen">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305114052767.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png">
 
 
 <link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/">
@@ -153,7 +153,7 @@
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="HanWen"
-      src="https://github.com/SHthemW.png">
+      src="https://github.com/SHW2002.png">
   <p class="site-author-name" itemprop="name">HanWen</p>
   <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
 </div>
@@ -161,7 +161,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -177,7 +177,7 @@
 </div>
   <div class="links-of-author animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/shthemw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shthemw" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
         <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
@@ -208,7 +208,7 @@
     <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://github.com/SHthemW.png">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
       <meta itemprop="name" content="HanWen">
     </span>
 
@@ -241,7 +241,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-12 16:16:01" itemprop="dateModified" datetime="2026-03-12T16:16:01+08:00">2026-03-12</time>
+      <time title="修改时间：2026-09-01 16:46:59" itemprop="dateModified" datetime="2026-09-01T16:46:59+08:00">2026-09-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -269,16 +269,14 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 —-它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.</p>
-<img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;">
-
+    <div class="post-body" itemprop="articleBody"><p>最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 ——它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;"></p>
 <span id="more"></span>
-
 <hr>
 <h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>Unity自带的动画系统称为Mecanim, 这是一种基于有限状态机的动画系统; 每一个Layer都会维持一个活跃的状态 (State), 而状态持有动画片段 (motion), 活跃状态的动画片段会被播放. 多个Layer按照遮罩 (Mask) 层层叠加, 达到最终的动画效果.</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260304200813244.png" alt="image-20260304200813244"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260304200813244.png" alt="image-20260304200813244"></p>
 <p>想要播放一个状态的动画有多种方式: 除了在AnimatorController里设置过渡条件由Unity自动处理外, 还可以使用<code>CrossFade</code> API进行手动强制播放:</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260304210108799.png" alt="image-20260304210108799"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260304210108799.png" alt="image-20260304210108799"></p>
 <p>因此一个比较容易想到的方案是, <strong>将本地正在播放的动画状态及其相关信息同步出去, 其它客户端接受这些信息并在本地通过<code>CrossFade</code>重现动作, 以此达到基本的动画同步效果.</strong> </p>
 <p>然而, 以上只是很理想的表述, 实操中如果直接采用这个方案会带来很多问题, 下面我会说一下基于这个同步方案的详细设计, 以及如何规避掉这些问题让其真正可用.</p>
 <blockquote>
@@ -287,12 +285,13 @@
 </blockquote>
 <hr>
 <h2 id="方案细节"><a href="#方案细节" class="headerlink" title="方案细节"></a>方案细节</h2><h3 id="同步参数还是状态"><a href="#同步参数还是状态" class="headerlink" title="同步参数还是状态?"></a>同步参数还是状态?</h3><p>如果是通过转发消息实现多端同步, 最直观的做法其实是广播本地AnimatorController的状态<strong>参数 (Parameters)</strong>, 并在多端使用同一个AnimatorController执行, 有点类似于帧间同步的思路, 通过维护输入的一致来保证结果的一致.</p>
-<p>这么做本身并没有很大问题, 但考虑到实际情况下的网络延迟, 直接广播参数就不那么可用了 –发送顺序 !&#x3D; 接受顺序, 对于同一个状态机, 参数变化的先后顺序不同可能导致完全不同的结果, 从而使接收端的状态乱掉.</p>
+<p>这么做本身并没有很大问题, 但考虑到实际情况下的网络延迟, 直接广播参数就不那么可用了 —发送顺序 != 接受顺序, 对于同一个状态机, 参数变化的先后顺序不同可能导致完全不同的结果, 从而使接收端的状态乱掉.</p>
 <p>当然, 通过缓存队列来确保消息顺序可以避免消息时序的问题, 但是Animator执行动画状态本身也需要时间, 接收端很难确定从缓存中取新数据的时机, 这实在太麻烦了!</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260304203045997.png" alt="image-20260304203045997"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260304203045997.png" alt="image-20260304203045997"></p>
 <p>相比之下, 在不追求严格时间一致性的前提下, 广播<strong>状态 (State)</strong> 的方案显得更可靠些. 虽然时序问题仍然存在, 但由于是结果到结果的传递, 不会出现广播参数时”一步错步步错”的情况. 此外, 接收端也不再需要因此考虑动作执行时间, 因为发送端会传递可直接到达的最新状态.</p>
 <p>不过仅广播状态也有很大的局限性. Mecanim的状态 (State) 还可以持有更复杂的子结构 (如根据速度值进行融合的Idle-Move-Run 混合树) , 它们往往需要另外的数据 (如速度值) 来做出正确的表现.</p>
 <p>因此, 我采用的做法是<strong>同时广播状态Hash (StateNameHash) 和 连续参数 (如控制Move-Run混合的速度参数)</strong> 来达到基础的同步效果. 注意, 不是所有Animator里的参数都需要同步, 我更建议按如下方式操作:</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -301,7 +300,8 @@
 <th>例子</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>驱动表现的连续参数</td>
 <td>建议同步</td>
 <td>速度、方向、瞄准 pitch、上身权重</td>
@@ -316,19 +316,23 @@
 <td>按需同步</td>
 <td>武器类型、姿态类型、载具类型</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p>以下是一段使用Protobuf协议的数据结构参考:</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">ProtoContract</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">BroadcastAnimUpdateData</span> : <span class="title">IReference</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * Animation Info</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line">    [<span class="meta">ProtoMember(10)</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> StateNameHash;</span><br><span class="line">    </span><br><span class="line">    [<span class="meta">ProtoMember(20)</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> StateNormalizedTime;</span><br><span class="line"></span><br><span class="line">    [<span class="meta">ProtoMember(30)</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> NextStateNameHash;</span><br><span class="line">    </span><br><span class="line">    [<span class="meta">ProtoMember(40)</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> AnimLayer;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * Animator Params</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line">    [<span class="meta">ProtoMember(300)</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> SpeedPerc_XZ;</span><br><span class="line"></span><br><span class="line">    [<span class="meta">ProtoMember(310)</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> SpeedPerc_Y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>[^注:]: <code>CrossFade</code>API确定一个目标状态至少需要状态(StateNameHash)和层(AnimLayer), 因此它们都要被包含在广播数据中.</p>
-<p>你会注意到, 广播发出的State信息分为了三段, 除了包括当前Playing状态的<code>StateNameHash</code>, 还包括了当前状态下一个状态的<code>NextStateNameHash</code>以及当前状态已播放的时间<code>StateNormalizedTime</code>. 这些额外参数的设置并不是必须的, 它们是为了优化表现和减少延迟, 并和Unity Mecanim的过渡机制有关. 详细的说明可以参见<a href="#%E9%A2%84%E8%A1%A8%E7%8E%B0">这里</a>.</p>
+<blockquote id="fn_注:">
+<sup>注:</sup>. <code>CrossFade</code>API确定一个目标状态至少需要状态(StateNameHash)和层(AnimLayer), 因此它们都要被包含在广播数据中.<a href="#reffn_注:" title="Jump back to footnote [注:] in the text."> &#8617;</a>
+</blockquote>
+<p>你会注意到, 广播发出的State信息分为了三段, 除了包括当前Playing状态的<code>StateNameHash</code>, 还包括了当前状态下一个状态的<code>NextStateNameHash</code>以及当前状态已播放的时间<code>StateNormalizedTime</code>. 这些额外参数的设置并不是必须的, 它们是为了优化表现和减少延迟, 并和Unity Mecanim的过渡机制有关. 详细的说明可以参见<a href="#预表现">这里</a>.</p>
 <h3 id="本地玩家数据的发送"><a href="#本地玩家数据的发送" class="headerlink" title="本地玩家数据的发送"></a>本地玩家数据的发送</h3><p>确定了要同步的数据, 接下来我们也要思考发送数据同步的时机. 随着项目的扩张, AnimatorController里的参数和状态都会逐渐变多, 我们很显然不能每一帧都广播所有的状态, 这会造成巨大的流量消耗.</p>
 <p>为了让同步更精确, 这里我采用<strong>容器缓存+下一帧转发</strong>的方案, 参考如下代码:</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Sync容器</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> List&lt;DefAnimatorController_Player.Layers&gt; m_ThisFrameSyncRequestLayers;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 一些其他参数</span></span><br><span class="line"><span class="keyword">private</span> <span class="built_in">int</span> m_DelaySyncFrameCount;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">const</span> <span class="built_in">int</span> SYNC_BUFFER_FRAME_DELAY = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">HandleSync</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (m_DelaySyncFrameCount &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        m_DelaySyncFrameCount--;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (m_DelaySyncFrameCount == <span class="number">0</span> &amp;&amp; m_ThisFrameSyncRequestLayers.Count &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 仅一人, 不同步数据</span></span><br><span class="line">            <span class="keyword">if</span> (HotEntry.GameData.Player.Players.Count &gt;= <span class="number">2</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 位置同步的相关代码</span></span><br><span class="line">                <span class="comment">// 也可以写在这里, 不过此处省略</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 动作同步</span></span><br><span class="line">                <span class="keyword">foreach</span> (<span class="keyword">var</span> layer <span class="keyword">in</span> m_ThisFrameSyncRequestLayers)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 动作透传</span></span><br><span class="line">                    SendBroadcastAnimation(layer);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            m_ThisFrameSyncRequestLayers.Clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (m_ThisFrameSyncRequestLayers.Count &gt; <span class="number">0</span> &amp;&amp; m_DelaySyncFrameCount == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        m_DelaySyncFrameCount = SYNC_BUFFER_FRAME_DELAY;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>可以看到, 代码里做了多重处理. 默认该系统将不会传输任何数据. 只有当<code>m_ThisFrameSyncRequestLayers</code>缓存具有数据时, 才会在<strong>下一帧</strong>发送对应层 (Layer) 的动画数据. 每当玩家进行动作 (如使用了某个道具), 只需调用下面所展示的函数更新缓存, 同步系统就会自动处理.</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 添加同步请求层，并重置同步计时器</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;layer&quot;&gt;</span>动画层<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddSyncRequestLayer</span>(<span class="params">DefAnimatorController_Player.Layers layer</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    m_ThisFrameSyncRequestLayers.Add(layer);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 重置计时器</span></span><br><span class="line">    m_IsSyncTimerRunning = <span class="literal">true</span>;</span><br><span class="line">    m_SyncTimerElapsed = <span class="number">0f</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<blockquote id="fn_注">
+<sup>注</sup>. 下一帧才发送数据的原因是等待Animator的状态更新<a href="#reffn_注" title="Jump back to footnote [注] in the text."> &#8617;</a>
+</blockquote>
 <p>我们已经剔除了多数的情况, 实际上这里可以更进一步缓存已转发状态, 防止持续广播同一个状态.</p>
 <h3 id="同步玩家数据的接收"><a href="#同步玩家数据的接收" class="headerlink" title="同步玩家数据的接收"></a>同步玩家数据的接收</h3><p>接收端的处理逻辑需要解决两个主要问题: 异步初始化和状态一致性判断.</p>
 <p>由于网络消息的到达时机可能早于玩家实体的初始化完成, 接收端不能立即应用动画数据. 系统使用异步等待机制, 等待目标玩家持有AnimatorController的组件准备就绪后再处理.</p>
@@ -339,14 +343,14 @@
 </ol>
 <p>以下是基础版的代码参考: <a id="基础版"></a></p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">PlayFromBroadcast</span>(<span class="params">BroadcastAnimUpdateData broadcastData</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    m_Animator.SetFloat(DefAnimatorController_Player.Params.SpeedPerc_XZ, broadcastData.SpeedPerc_XZ);</span><br><span class="line">    m_Animator.SetFloat(DefAnimatorController_Player.Params.SpeedPerc_Y, broadcastData.SpeedPerc_Y);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> localCurrState = GetPlayingAnimStateInfo((DefAnimatorController_Player.Layers)broadcastData.AnimLayer);</span><br><span class="line">    <span class="keyword">var</span> localNextState = GetNextAnimStateInfo((DefAnimatorController_Player.Layers)broadcastData.AnimLayer);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (localCurrState.shortNameHash == broadcastData.StateNameHash &amp;&amp; localNextState.shortNameHash == broadcastData.NextStateNameHash)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 远程状态和当前状态完全相同</span></span><br><span class="line">        <span class="comment">// 不做处理</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        m_Animator.Play(broadcastData.StateNameHash, broadcastData.AnimLayer);</span><br><span class="line">        m_Animator.Update(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>至此, 我们打通了从发送到接收的大致流程.</p>
 <h3 id="傀儡接收端"><a href="#傀儡接收端" class="headerlink" title="傀儡接收端"></a>傀儡接收端</h3><p>不知道你有没有真的跟着上面的思路实操一遍, 如果做了, 你一定会意识到直接在接收端 (其他玩家) 的Player上套用自己的AnimatorController是不行的. 仔细想想就会发现, 发送端 (即自己玩家) Animator的状态变化依赖于外部对Animator Parameters 的设置, 而接收端并没有同步的提供这些 Parameters 信息, 很容易发生某个过渡条件在意外达成而把本地状态切走的情况.</p>
 <p>解决这个问题的一个办法是生成一份状态完全相同, 但取消所有过渡的复制状态机, 我称其为傀儡 (<code>ClipOnly</code>) 状态机:</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305112046086.png" alt="image-20260305112046086"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305112046086.png" alt="image-20260305112046086"></p>
 <p>作为对比, 以下图片展示的是上图状态机的原版 (本地执行版):</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305112136528.png" alt="image-20260305112136528"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305112136528.png" alt="image-20260305112136528"></p>
 <p>将<code>ClipOnly</code>状态机作用于 (本地同步的) 其它客户端玩家, 而带过渡的完整状态机作用于受控的自己玩家, 就可以实现本地玩家执行完整动作逻辑, 而 (本地同步的) 其它客户端玩家 (即接收端) 则相当于成为了一个傀儡: 只根据接收到的数据播放特定的动作状态, 自己没有切换State的能力.</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -355,31 +359,30 @@
 <th>职责</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>本地权威玩家</td>
 <td>Full Controller</td>
 <td>响应输入，完整状态决策</td>
 </tr>
 <tr>
 <td>远端表现傀儡</td>
-<td>Puppet &#x2F; ClipOnly Controller</td>
+<td>Puppet / ClipOnly Controller</td>
 <td>只消费同步结果，不自行决策</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p>细心的读者可能发现, 上图我贴的<code>ClipOnly</code>状态机截图并不真的取消了所有过渡. 实际上, 我确实保留了一部分<strong>满足特定条件</strong>的过渡到傀儡状态机上, 让我们随便挑两个看看:</p>
-<img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305113106997.png" alt="image-20260305113106997" style="zoom: 33%;">
-
-<img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305113125123.png" alt="image-20260305113125123" style="zoom:33%;">
-
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305113106997.png" alt="image-20260305113106997" style="zoom: 33%;"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305113125123.png" alt="image-20260305113125123" style="zoom:33%;"></p>
 <p>这些被转移的过渡均<strong>有且只有<code>HasExitTime</code>这一个过渡条件</strong>, 意味着它们在本地端都是可以无条件自动执行的过渡. 既然如此, 保留这些过渡到傀儡状态机, 在恰当的时机内傀儡状态机也能够处理这些过渡, 减少表现上的延迟. </p>
-<img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;">
-
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;"></p>
 <p>另外, 我们也可以通过这种方式处理那些本地状态机里过渡到<code>Exit</code>状态的场景. 如上图所示的过渡是一个典型的”一次性”动作, 典型案例为打招呼, 使用道具等<strong>只需要播放一次就退出</strong>的动作. 在傀儡状态机上保留这些自动退出过渡可以保证这些一次性状态在接收端也能正确的退出.</p>
-<p>从模板AnimatorController生成傀儡AnimatorController的工具程序我上传了在了文章末尾的<a href="#%E9%99%84%E5%BD%95">附录</a>部分, 感兴趣的同学可以自行翻阅一下.</p>
+<p>从模板AnimatorController生成傀儡AnimatorController的工具程序我上传了在了文章末尾的<a href="#附录">附录</a>部分, 感兴趣的同学可以自行翻阅一下.</p>
 <h3 id="数据的保持"><a href="#数据的保持" class="headerlink" title="数据的保持"></a>数据的保持</h3><p>截止目前, 我们提到的所有网络传输办法都是基于广播 (Broadcast). 通常来讲, 服务器并不会在这种简单的透传过程里持久化保存信息. 这就带来一个问题: <strong>如何将数据持久化?</strong> 或者具体的来说, 一个新进入的玩家如何获取到其他玩家当前的状态?</p>
 <p>我的解决方案是<strong>主动推送完整状态</strong>: 当检测到新玩家加入时, 现有玩家会主动向新玩家发送完整的动画状态信息. 系统通过监听玩家加入事件来触发完整同步. 当新玩家加入房间时, 所有现有玩家都会收到通知, 并开始向新玩家推送状态.</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推送所有目前已发生的Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">BroadcastOverrideClipCompletely</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> (name, anim) <span class="keyword">in</span> m_CachedOverrideControllerClips)</span><br><span class="line">    &#123;</span><br><span class="line">        HotEntry.NetworkService.BroadcastAnimClipOverride(m_EntityPlayer.PlayerId, name, anim.path, anim.relatedLayer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 推送当前所有Layer的State</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendBroadcastAnimationCompletely</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> layer <span class="keyword">in</span> Enum.GetValues(<span class="keyword">typeof</span>(DefAnimatorController_Player.Layers)))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> ((DefAnimatorController_Player.Layers)layer == DefAnimatorController_Player.Layers.None)</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        AddSyncRequestLayer((DefAnimatorController_Player.Layers)layer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>完整同步包括两个部分:</p>
 <ol>
 <li><strong>所有层的动画状态:</strong><br>系统会遍历所有动画层, 获取每个层的当前播放状态, 包括状态Hash、归一化时间、下一个状态Hash等信息, 然后通过广播发送给新玩家.</li>
@@ -391,52 +394,40 @@
 <h2 id="高级功能"><a href="#高级功能" class="headerlink" title="高级功能"></a>高级功能</h2><p>以上设计是在项目初期搞定的, 能够适应大部分比较基础的功能. 不过随着项目的迭代, 这套同步机制也需要一些功能上的扩展来适应新的业务需求, 这里也总结一下供想使用这套方案的同学参考.</p>
 <h3 id="预表现"><a href="#预表现" class="headerlink" title="预表现 "></a>预表现 <a id="预表现"></a></h3><p>网络延迟是动作同步系统面临的主要挑战. 如果接收端总是等待发送端的状态变化后再播放动画, 玩家会明显感受到延迟带来的卡顿.</p>
 <p>我们先来简单回顾一下Unity Mecanim的动画过渡机制: 当有可用的过渡状态时, Unity 首先将该状态安排为<code>NextState</code>, 随后执行过渡. 当过渡完成后, 该<code>NextState</code>成为新的<code>CurrentState</code>, 这样就完成了一次过渡.</p>
-<img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305153356425.png" alt="image-20260305153356425" style="zoom: 50%;">
-
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305153356425.png" alt="image-20260305153356425" style="zoom: 50%;"></p>
 <p>并且, Unity提供了获取”正在过渡状态”的API, 意味着我们可以在某个状态将要播放的时候就得知这个信息, 并提前发送出去.</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305154424137.png" alt="image-20260305154424137"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305154424137.png" alt="image-20260305154424137"></p>
 <p>基于这种时间差, 我们可以实现一个简易的预表现功能. 核心思想是: 当发送端检测到状态机即将发生过渡时, 提前将下一个状态的信息一并发送, 接收端可以提前开始过渡动画, 从而减少视觉延迟.</p>
 <p>在<strong>发送端</strong>, 我们可以通过Unity Mecanim的<code>GetNextAnimatorStateInfo</code> API检测当前层是否正在过渡到下一个状态. 如果检测到过渡 (返回的状态Hash不为0), 则将其包含在广播数据中. 这个检测发生在延迟一帧发送之前, 确保能捕获到即将发生的状态变化:</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendBroadcastAnimation</span>(<span class="params">DefAnimatorController_Player.Layers layer</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> playing = m_EntityPlayer.AnimDriver.GetPlayingAnimStateInfo(layer);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> data = BroadcastAnimUpdateData.Create(</span><br><span class="line">        stateNameHash: playing.shortNameHash,</span><br><span class="line">        stateNormalizedTime: playing.normalizedTime,</span><br><span class="line">        nextStateNameHash: <span class="number">0</span>,</span><br><span class="line">        animLayer: (<span class="built_in">int</span>)layer,</span><br><span class="line">        speedPerc_XZ: m_CurrentAnimationInputs.SpeedPerc_XZ,</span><br><span class="line">        speedPerc_Y: m_CurrentAnimationInputs.SpeedPerc_Y,</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> nextStateHash = m_EntityPlayer.AnimDriver.GetNextAnimStateInfo(layer).shortNameHash;</span><br><span class="line">    <span class="keyword">if</span> (nextStateHash != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        data.NextStateNameHash = nextStateHash;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    HotEntry.NetworkService.BroadcastAnimChange(m_EntityPlayer.PlayerId, data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>而在<strong>接收端</strong>, 当接收到包含<code>NextStateNameHash</code>的广播数据时, 系统会立即使用<code>CrossFade</code>开始过渡到下一个状态, 而不是等待当前状态播放完成. 这样, 即使网络存在延迟, 接收端也能在发送端状态切换的同时 (或更早) 开始过渡动画. 你可以对比一下下面逻辑和<a href="#%E5%9F%BA%E7%A1%80%E7%89%88">基础版</a>的差异:</p>
+<p>而在<strong>接收端</strong>, 当接收到包含<code>NextStateNameHash</code>的广播数据时, 系统会立即使用<code>CrossFade</code>开始过渡到下一个状态, 而不是等待当前状态播放完成. 这样, 即使网络存在延迟, 接收端也能在发送端状态切换的同时 (或更早) 开始过渡动画. 你可以对比一下下面逻辑和<a href="#基础版">基础版</a>的差异:</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">PlayFromBroadcast</span>(<span class="params">BroadcastAnimUpdateData broadcastData</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    m_Animator.SetFloat(DefAnimatorController_Player.Params.SpeedPerc_XZ, broadcastData.SpeedPerc_XZ);</span><br><span class="line">    m_Animator.SetFloat(DefAnimatorController_Player.Params.SpeedPerc_Y, broadcastData.SpeedPerc_Y);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> localCurrState = GetPlayingAnimStateInfo((DefAnimatorController_Player.Layers)broadcastData.AnimLayer);</span><br><span class="line">    <span class="keyword">var</span> localNextState = GetNextAnimStateInfo((DefAnimatorController_Player.Layers)broadcastData.AnimLayer);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (localCurrState.shortNameHash == broadcastData.StateNameHash &amp;&amp; localNextState.shortNameHash == broadcastData.NextStateNameHash)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 远程状态和当前状态完全相同</span></span><br><span class="line">        <span class="comment">// 不做处理</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (broadcastData.NextStateNameHash != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 有过渡, 先预播过渡, 减少延迟</span></span><br><span class="line">        m_Animator.CrossFade(broadcastData.NextStateNameHash, TransitionDuration, broadcastData.AnimLayer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        m_Animator.Play(broadcastData.StateNameHash, broadcastData.AnimLayer);</span><br><span class="line">        m_Animator.Update(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
 <h3 id="状态的多态化"><a href="#状态的多态化" class="headerlink" title="状态的多态化"></a>状态的多态化</h3><p>在实际项目中, 经常遇到同一个动画状态需要根据不同的上下文播放不同的动画片段的需求. 例如, 玩家持有不同物品时, “持握”状态应该播放不同的动画; 或者不同角色使用同一个状态机时, 某些状态需要播放角色特定的动画.</p>
 <p>Unity提供了<code>AnimatorOverrideController</code>来解决这个问题. 它可以在运行时动态替换基础<code>AnimatorController</code>中某个状态对应的动画Clip, 而不需要修改状态机结构. 我们的同步系统也基于此实现了多Clip状态的同步.</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305155748425.png" alt="image-20260305155748425"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305155748425.png" alt="image-20260305155748425"></p>
 <p>要做到这一点, 首先需要<code>Animator</code>的<code>runtimeAnimatorController</code>替换为基于当前<code>Animator</code>模板生成的新<code>AnimatorOverrideController</code>, 这样就赋予了<code>Animator</code>动态替换片段的能力. 使用Unity提供的API可以很轻松的做到这一点:</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于当前模板创建新的 AnimatorOverrideController</span></span><br><span class="line">m_OverrideController = <span class="keyword">new</span> (m_Animator.runtimeAnimatorController);</span><br><span class="line"><span class="comment">// 替换原有的 runtimeAnimatorController</span></span><br><span class="line">m_Animator.runtimeAnimatorController = m_OverrideController;</span><br></pre></td></tr></table></figure>
-
 <p>下图是一个被替换了<code>runtimeAnimatorController</code>字段的<code>Animator</code>组件, 可以看到<code>Controller</code>字段的名称已经被抹去, 说明不再使用原始的<code>AnimatorController</code>资源.</p>
-<img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305155551443.png" alt="image-20260305155551443" style="zoom: 50%;">
-
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305155551443.png" alt="image-20260305155551443" style="zoom: 50%;"></p>
 <p>在替换<code>runtimeAnimatorController</code>后, 我们可以轻松的将某个原始Clip替换为另一个:</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m_OverrideController[clipNameInBaseController] = clip;</span><br></pre></td></tr></table></figure>
-
 <p>注意, 这里用于索引的<code>clipNameInBaseController</code>是Clip名称, 而不是State名称. 所以要使用这种方式覆盖, 请确保你要被覆盖的状态中已经持有了一个动画片段, 随后用该片段的名称去索引.</p>
 <p>部分状态甚至不持有默认的motion. 我的项目里准备了一些空的动画片段, 专门用于赋值给它们以实现后续索引:</p>
-<img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305160746792.png" alt="image-20260305160746792" style="zoom: 67%;">
-
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305160746792.png" alt="image-20260305160746792" style="zoom: 67%;"></p>
 <p>系统的设计遵循”覆盖即同步”的原则: 当本地端覆盖了某个Clip后, 自动触发同步广播, 其他客户端接收到后应用相同的覆盖. 这样保证了多端状态机结构的一致性, 同时允许不同上下文下的动画表现差异化.</p>
 <p>在本地端, 只需异步加载指定的动画资源, 然后将其设置到<code>AnimatorOverrideController</code>中. 为了性能考虑, 系统应当缓存已加载的动画资源, 避免重复加载. 以下是一段可供参考的代码:</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 覆盖动画剪辑</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;clipNameInBaseController&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;animClipPath&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">async</span> UniTask&lt;<span class="built_in">bool</span>&gt; <span class="title">OverrideAnimationClip</span>(<span class="params"><span class="built_in">string</span> clipNameInBaseController, <span class="built_in">string</span> animClipPath, Layers relatedLayer</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> (success, clip) = <span class="keyword">await</span> GetOrLoadAnimationClipAsset(animClipPath);</span><br><span class="line">    <span class="keyword">if</span> (!success)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (m_CachedOverrideControllerClips.TryGetValue(clipNameInBaseController, <span class="keyword">out</span> <span class="keyword">var</span> cache) &amp;&amp; cache.clip == clip)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 添加到OverrideController</span></span><br><span class="line">    m_OverrideController[clipNameInBaseController] = clip;</span><br><span class="line">    <span class="comment">// 添加到缓存</span></span><br><span class="line">    m_CachedOverrideControllerClips[clipNameInBaseController] = (animClipPath, clip, relatedLayer);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>实现本地的Clip覆盖后, 将这个操作也转发出去, 使接收端执行同样的操作, 就能实现状态替换的同步. 当State和Motion都保持同步后, 动画整体也就实现了同步. 仔细的读者会发现上面提供的函数被标记为了<code>protected virtual</code>, 在我的项目中, <code>OverrideAnimationClip</code>是一个被发送端玩家和接收端玩家复用的逻辑 (我认为也应当这么做).</p>
 <p>具体的逻辑为, 当本地端成功覆盖Clip后, 会自动触发同步广播. 接收端通过专门的Handler处理覆盖广播, 并应用相同的覆盖.</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 发送玩家class中按如下方式重写</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">async</span> UniTask&lt;<span class="built_in">bool</span>&gt; <span class="title">OverrideAnimationClip</span>(<span class="params"><span class="built_in">string</span> clipNameInBaseController, <span class="built_in">string</span> animClipPath, Layers relatedLayer</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> ok = <span class="keyword">await</span> <span class="keyword">base</span>.OverrideAnimationClip(clipNameInBaseController, animClipPath, relatedLayer);</span><br><span class="line">    <span class="keyword">if</span> (ok)</span><br><span class="line">    &#123;</span><br><span class="line">        HotEntry.NetworkService.BroadcastAnimClipOverride(m_EntityPlayer.PlayerId, clipNameInBaseController, animClipPath, relatedLayer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ok;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接收端玩家中触发覆盖的接口</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OverrideAnimationClipFromBroadcast</span>(<span class="params"><span class="built_in">string</span> clipNameInBaseController, <span class="built_in">string</span> animClipPath, DefAnimatorController_Player.Layers relatedLayer</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    OverrideAnimationClip(clipNameInBaseController, animClipPath, relatedLayer).Forget();</span><br><span class="line">    <span class="comment">// 重播被覆写的状态</span></span><br><span class="line">    <span class="keyword">var</span> playingAnimState = GetPlayingAnimStateInfo(relatedLayer);</span><br><span class="line">    m_Animator.CrossFade(playingAnimState.shortNameHash, TransitionDuration, (<span class="built_in">int</span>)relatedLayer, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>需要注意的是, 覆盖Clip后需要重新播放当前状态才能使新Clip生效. 这是因为<code>AnimatorOverrideController</code>的覆盖是在状态机层面进行的, 已经播放的状态不会自动更新. 因此, 接收端在应用覆盖后会立即使用<code>CrossFade</code>重播当前状态. 这个处理也用于解决<code>OverrideAnimationClip</code>和<code>StateUpdate</code>时序的问题 —-无论<code>OverrideAnimationClip</code>先后到达, 正确的动画总会播放至少一遍.</p>
+<p>需要注意的是, 覆盖Clip后需要重新播放当前状态才能使新Clip生效. 这是因为<code>AnimatorOverrideController</code>的覆盖是在状态机层面进行的, 已经播放的状态不会自动更新. 因此, 接收端在应用覆盖后会立即使用<code>CrossFade</code>重播当前状态. 这个处理也用于解决<code>OverrideAnimationClip</code>和<code>StateUpdate</code>时序的问题 ——无论<code>OverrideAnimationClip</code>先后到达, 正确的动画总会播放至少一遍.</p>
 <p>这个机制在项目中有多个典型应用场景:</p>
 <ol>
 <li><p><strong>物品持握动画</strong>: 当玩家拿起不同物品时, 同一个”持握”状态会播放不同物品对应的持握动画.</p>
 </li>
 <li><p><strong>个人秀动画</strong>: 个人秀系统使用这个机制来播放不同的动作动画. 同一个”个人秀”状态可以根据配置播放不同的动画Clip, 包括前摇、主动作和后摇动画, 每个部分都可以独立配置和同步.</p>
-<img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20260305162522792.png" alt="image-20260305162522792" style="zoom: 67%;">
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305162522792.png" alt="image-20260305162522792" style="zoom: 67%;"></p>
 </li>
 <li><p><strong>移动混合树</strong>: 某些情况下需要替换移动混合树中的Idle、Walk、Run动画, 例如角色换装后需要播放新的移动动画.</p>
 </li>
@@ -482,8 +473,8 @@
 </ul>
 <hr>
 <h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><p>这里提供了本文中提到的动作同步方案下经常会用到的两个实用Unity Editor工具. 可以点进它们对应的Url进行下载.</p>
-<p><a href="https://github.com/SHthemW/Unity-Animator-Metadata-Generate-Tool">SHthemW&#x2F;Unity-Animator-Metadata-Generate-Tool: 这个工具可以将Unity AnimatorController内的所有元数据生成为一个常量定义文件, 免去需要手写常量的麻烦.</a></p>
-<p><a href="https://github.com/SHthemW/Unity-Animator-Cliponly-Duplicate-Tool">SHthemW&#x2F;Unity-Animator-Cliponly-Duplicate-Tool: 这个工具可以为AnimatorController复制一个不包含过渡的版本, 移除了所有需要参数触发的过渡, 只保留可以自动执行的过渡.</a></p>
+<p><a href="https://github.com/SHW2002/Unity-Animator-Metadata-Generate-Tool">SHW2002/Unity-Animator-Metadata-Generate-Tool: 这个工具可以将Unity AnimatorController内的所有元数据生成为一个常量定义文件, 免去需要手写常量的麻烦.</a></p>
+<p><a href="https://github.com/SHW2002/Unity-Animator-Cliponly-Duplicate-Tool">SHW2002/Unity-Animator-Cliponly-Duplicate-Tool: 这个工具可以为AnimatorController复制一个不包含过渡的版本, 移除了所有需要参数触发的过渡, 只保留可以自动执行的过渡.</a></p>
 
     </div>
 
@@ -502,8 +493,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/zh-CN/2026/%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="next" title="团结引擎长时间挂机导致系统卡死的问题排查">
-                  团结引擎长时间挂机导致系统卡死的问题排查 <i class="fa fa-angle-right"></i>
+                <a href="/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/" rel="next" title="Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions">
+                  Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

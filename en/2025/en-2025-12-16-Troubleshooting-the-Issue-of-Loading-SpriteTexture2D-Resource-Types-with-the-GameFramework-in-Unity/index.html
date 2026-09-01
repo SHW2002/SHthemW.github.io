@@ -27,16 +27,16 @@
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
 <meta property="og:description" content="A couple of days ago, I encountered a peculiar issue: when using the GameEntry.Resource.LoadAssetAsync&lt;T&gt; API from the GameFramework in Unity to load Sprite-type resources, an error indicating a">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216174309645.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216195251169.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216202807313.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216200725026.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216203514623.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216174309645.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216195251169.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216202807313.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216200725026.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216203514623.png">
 <meta property="article:published_time" content="2025-12-16T09:37:03.000Z">
-<meta property="article:modified_time" content="2026-03-12T12:24:14.940Z">
+<meta property="article:modified_time" content="2026-09-01T08:46:59.218Z">
 <meta property="article:author" content="HanWen">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216174309645.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216174309645.png">
 
 
 <link rel="canonical" href="https://www.shenhanwen.top/en/2025/en-2025-12-16-Troubleshooting-the-Issue-of-Loading-SpriteTexture2D-Resource-Types-with-the-GameFramework-in-Unity/">
@@ -143,7 +143,7 @@
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="HanWen"
-      src="https://github.com/SHthemW.png">
+      src="https://github.com/SHW2002.png">
   <p class="site-author-name" itemprop="name">HanWen</p>
   <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
 </div>
@@ -151,7 +151,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -167,7 +167,7 @@
 </div>
   <div class="links-of-author animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/shthemw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;shthemw" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
         <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
@@ -198,7 +198,7 @@
     <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2025/en-2025-12-16-Troubleshooting-the-Issue-of-Loading-SpriteTexture2D-Resource-Types-with-the-GameFramework-in-Unity/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://github.com/SHthemW.png">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
       <meta itemprop="name" content="HanWen">
     </span>
 
@@ -231,7 +231,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-12 20:24:14" itemprop="dateModified" datetime="2026-03-12T20:24:14+08:00">2026-03-12</time>
+      <time title="Modified: 2026-09-01 16:46:59" itemprop="dateModified" datetime="2026-09-01T16:46:59+08:00">2026-09-01</time>
     </span>
 
   
@@ -252,30 +252,27 @@
     
     <div class="post-body" itemprop="articleBody"><p>A couple of days ago, I encountered a peculiar issue: when using the <code>GameEntry.Resource.LoadAssetAsync&lt;T&gt;</code> API from the GameFramework in Unity to load Sprite-type resources, an error indicating a type mismatch occurred, even though the corresponding Sprite file clearly exists:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception: GameFrameworkException: Load asset </span><br><span class="line">&#x27;Assets/Res/UI/UISprite/EnterGamePopup/Achievement/EGP_Achievement_Base_ChineseTraditional.png&#x27; </span><br><span class="line">failure load type is UnityEngine.Texture2D but asset type is UnityEngine.Sprite.</span><br></pre></td></tr></table></figure>
-
-
 <span id="more"></span>
-
 <hr>
 <h2 id="Problem-Analysis"><a href="#Problem-Analysis" class="headerlink" title="Problem Analysis"></a>Problem Analysis</h2><p>At that time, I checked the packaging machine logs and the AB of the finished packages, and found no missing resources. Interestingly, I have three sets of identical logic, but only one of them consistently reports an error, while the other two have never had issues; additionally, everything appears normal in the editor.</p>
 <p>Upon inspecting the Unity project repository, the problematic files are as follows. You can see that Unity has recognized two versions of the same file in one directory, one as a Sprite type (the first one, which relates to your settings in the Inspector and may not necessarily be a Sprite) and the other as a Texture2D type (the second one).</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216174309645.png" alt="image-20251216174309645"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216174309645.png" alt="image-20251216174309645"></p>
 <p>At this point, it’s already evident that there’s a problem, as these two different types of resources share the same name (even the file extensions in Windows Explorer are the same). If I pass a filename in, which one UGF will load is uncertain.</p>
 <p>However, this does not explain why only one of my three identical logic sets has an issue. Moreover, if it were truly random loading, this error shouldn’t consistently occur; it should appear sometimes and not at other times, which contradicts my experience.</p>
 <p>Eventually, I found online that the keyword: UGF caches resources using the filename <code>AssetName</code> as a key when loading resources, to reduce lookup frequency for subsequent accesses to the same resource:</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216195251169.png" alt="image-20251216195251169"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216195251169.png" alt="image-20251216195251169"></p>
 <p>If there are ambiguous resources in Unity (for example, the same <code>.png</code> asset can be loaded as both <code>Texture2D</code> and <code>Sprite</code>), they will be cached upon first loading, and the type of the cached value depends on the type used during the initial load.</p>
 <p>Thus, when attempting to load this resource again, even if a different type is declared, the cache will return the previously cached resource due to the same filename, which will then throw an exception from UGF due to type mismatch, resulting in the error mentioned at the beginning of this article.</p>
 <p>After my investigation, I found that this “premature” loading chain in my project is located on a UIForm Prefab:</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216202807313.png" alt="image-20251216202807313"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216202807313.png" alt="image-20251216202807313"></p>
 <p>I had set this image as the effect preview under the Editor, and when the game generated this UIForm, UGF automatically loaded the image in <code>Texture2D</code> format. Later, when calling <code>LoadAsset&lt;Sprite&gt;</code> in the code, it couldn’t yield the correct result.</p>
 <p>One tricky point here is that the type parameter <code>T</code> of <code>LoadAssetAsync&lt;T&gt;</code> is not used as an index during loading; it is merely a post-validation. This means that UGF first loads the resource and then checks it against type <code>T</code>, throwing an exception if it doesn’t match.</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216200725026.png" alt="image-20251216200725026"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216200725026.png" alt="image-20251216200725026"></p>
 <p>There is a similar question on StackOverflow comparing the differences between the two:</p>
 <p><a href="https://stackoverflow.com/questions/28629874/unity-resources-loadsprite-vs-as-sprite">Unity Resources.Load vs. Load as Sprite - Stack Overflow</a></p>
 <h2 id="Problem-Resolution"><a href="#Problem-Resolution" class="headerlink" title="Problem Resolution"></a>Problem Resolution</h2><p>OK, now that the cause has been identified, the solution is clear: either clear the previous reference chain to ensure that when I call <code>Resource.LoadAssetAsync&lt;T&gt;</code>, there is no old data in the cache, or physically separate the two types of files.</p>
 <p>Considering that splitting the same <code>.png</code> resource would take up additional space, and that in actual multi-developer projects, “standardizing developers to only use a specific path for a certain resource format” also has its costs, I ultimately opted for convenience and removed the image from the UIForm, replacing it with another transparent image.</p>
-<p><img src="https://raw.githubusercontent.com/SHthemW/Blog.Images/master/image-20251216203514623.png" alt="image-20251216203514623"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20251216203514623.png" alt="image-20251216203514623"></p>
 <p>After testing the packaging, the issue was resolved immediately.</p>
 
     </div>
