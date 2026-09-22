@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/windows-log.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/uxtool-settings.png">
 <meta property="article:published_time" content="2026-07-21T09:04:50.000Z">
-<meta property="article:modified_time" content="2026-09-01T08:46:59.212Z">
+<meta property="article:modified_time" content="2026-08-24T16:00:00.000Z">
 <meta property="article:author" content="HanWen">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png">
@@ -59,6 +59,8 @@
 
   
 
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
 
 
 
@@ -134,7 +136,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E5%BF%97"><span class="nav-number">2.</span> <span class="nav-text">日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">排查工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%A4%8D%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">问题复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%A4%8D%E7%8E%B0"><span class="nav-number">4.1.</span> <span class="nav-text">1. 复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%86%E6%9E%90"><span class="nav-number">4.2.</span> <span class="nav-text">2. 分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%9F%B3%E9%94%A4"><span class="nav-number">4.3.</span> <span class="nav-text">3. 石锤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E7%89%B9%E5%88%AB%E5%AE%B9%E6%98%93%E8%A7%A6%E5%8F%91"><span class="nav-number">4.4.</span> <span class="nav-text">为什么这个项目特别容易触发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95"><span class="nav-number">4.5.</span> <span class="nav-text">官方问题记录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3"><span class="nav-number">5.</span> <span class="nav-text">解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">6.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E5%BF%97"><span class="nav-number">2.</span> <span class="nav-text">日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">排查工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%A4%8D%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">问题复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%A4%8D%E7%8E%B0"><span class="nav-number">4.1.</span> <span class="nav-text">1. 复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%86%E6%9E%90"><span class="nav-number">4.2.</span> <span class="nav-text">2. 分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%9F%B3%E9%94%A4"><span class="nav-number">4.3.</span> <span class="nav-text">3. 石锤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E7%89%B9%E5%88%AB%E5%AE%B9%E6%98%93%E8%A7%A6%E5%8F%91"><span class="nav-number">4.4.</span> <span class="nav-text">为什么这个项目特别容易触发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95"><span class="nav-number">4.5.</span> <span class="nav-text">官方问题记录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3"><span class="nav-number">5.</span> <span class="nav-text">解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">6.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2026-%E5%B9%B4-8-%E6%9C%88%E5%90%8E%E7%BB%AD%EF%BC%9A%E6%8A%8A%E6%AD%A3%E5%B8%B8%E9%87%8D%E5%90%AF%E5%81%9A%E6%88%90%E5%B7%A5%E5%85%B7"><span class="nav-number">7.</span> <span class="nav-text">2026 年 8 月后续：把正常重启做成工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -149,16 +151,16 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -229,7 +231,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-09-01 16:46:59" itemprop="dateModified" datetime="2026-09-01T16:46:59+08:00">2026-09-01</time>
+      <time title="修改时间：2026-08-25 00:00:00" itemprop="dateModified" datetime="2026-08-25T00:00:00+08:00">2026-08-25</time>
     </span>
 
   
@@ -471,6 +473,11 @@
 <p>旧进程会每秒涨几百个，还会冲到十几万，看来我们已经解决了引发问题的大头. 考虑到这是团结自己的问题, 残留有少许的上涨也不令人意外. 能把崩溃的频率降低就算成功.</p>
 <p>重启后的 Handle 摘要如下，总量已经回到正常范围。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Handle type summary:</span><br><span class="line">  Event      :  819</span><br><span class="line">  Semaphore  : 3225</span><br><span class="line">  Thread     :  557</span><br><span class="line">Total handles: 5871</span><br><span class="line"></span><br><span class="line">Process snapshot:</span><br><span class="line">  Threads    : 271</span><br><span class="line">  PrivateMiB : 3714.8</span><br></pre></td></tr></table></figure>
+<h2 id="2026-年-8-月后续：把正常重启做成工具"><a href="#2026-年-8-月后续：把正常重启做成工具" class="headerlink" title="2026 年 8 月后续：把正常重启做成工具"></a>2026 年 8 月后续：把正常重启做成工具</h2><p>排查之后，我又制作了 <a href="https://github.com/SHW2002/Unity-Restart-Tool">Unity-Restart-Tool</a>，用来管理 Windows 上多个 Unity / 团结编辑器实例，并提供手动批量重启和按项目设置的定时计划。</p>
+<p>工具会识别具有主窗口与有效项目路径的编辑器，排除 AssetImportWorker 等后台进程。项目内的 Editor companion 负责检查当前是否正在运行游戏、编译、导入或构建；不满足条件或无法完成检查时跳过实例，通过检查后才尝试正常退出并重新启动，不强制结束进程。</p>
+<p>另外还有一个短时间的 Console 安静检查，退出前会再次检查编辑器状态，减少检查完成到实际退出之间的状态变化问题。这个检查只是重启条件之一，不能证明编辑器或项目本身没有问题。</p>
+<p>这里有个使用前需要明确的边界：工具当前没有把场景与资源的 Dirty 标志作为重启门禁，未保存内容可能随编辑器退出而丢失，所以需要先保存工作，再使用手动或定时重启。</p>
+<p>它是长时间运行时的辅助工具，不是本文引擎问题的修复，也不会改变前面的根因判断。窗口位置可以尝试恢复，Unity 内部布局仍然依赖编辑器正常退出时保存；Windows 任务栏上的精确排列也不能保证完全复原。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总结一下问题的前因后果：</p>
 <ul>
 <li>表面现象：系统多次内存耗尽、桌面组件崩溃或整机卡死。</li>
@@ -502,8 +509,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/" rel="next" title="在游戏开发中实现网络同步的双人牵手玩法">
-                  在游戏开发中实现网络同步的双人牵手玩法 <i class="fa fa-angle-right"></i>
+                <a href="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/" rel="next" title="自动测试工具Unity-Autorun-Tool的演进(2026)">
+                  自动测试工具Unity-Autorun-Tool的演进(2026) <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

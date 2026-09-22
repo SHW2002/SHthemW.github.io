@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="配置表有了类型定义之后，业务代码里仍然可能散落着很多数字 ID。读代码时需要回到表格查含义，复制到另一处时也容易写错。手工维护一份常量文件能够改善可读性，但会增加一份需要同步的数据。 我从 2025 年 9 月开始扩展项目的导表流程，让道具 ID 随导表一起生成。到 2026 年初，实体、界面、音效等类型也有类似需求，于是又把重复的输出流程抽成公共生成器，并继续接入 NPC ID。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩展 Luban 导表流程：自动生成业务 ID">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="配置表有了类型定义之后，业务代码里仍然可能散落着很多数字 ID。读代码时需要回到表格查含义，复制到另一处时也容易写错。手工维护一份常量文件能够改善可读性，但会增加一份需要同步的数据。 我从 2025 年 9 月开始扩展项目的导表流程，让道具 ID 随导表一起生成。到 2026 年初，实体、界面、音效等类型也有类似需求，于是又把重复的输出流程抽成公共生成器，并继续接入 NPC ID。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/id-generation.svg">
+<meta property="article:published_time" content="2026-02-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-02-01T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Luban">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="代码生成">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/id-generation.svg">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.shenhanwen.top/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/","path":"zh-CN/2026/扩展Luban导表流程-自动生成业务ID/","title":"扩展 Luban 导表流程：自动生成业务 ID"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>扩展 Luban 导表流程：自动生成业务 ID | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the footer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A9%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%88%90%E4%B8%BA%E5%94%AF%E4%B8%80%E7%9A%84%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">让数据表成为唯一的数据来源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8D%E7%A7%B0%E7%94%9F%E6%88%90%E9%9C%80%E8%A6%81%E5%A4%84%E7%90%86%E5%93%AA%E4%BA%9B%E7%BA%A6%E6%9D%9F"><span class="nav-number">2.</span> <span class="nav-text">名称生成需要处理哪些约束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D%E7%9A%84%E6%98%AF%E8%BE%93%E5%87%BA%E6%B5%81%E7%A8%8B%EF%BC%8C%E5%8F%98%E5%8C%96%E7%9A%84%E6%98%AF%E8%A1%A8%E6%A0%BC%E8%A7%84%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">重复的是输出流程，变化的是表格规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E7%8E%B0%E5%92%8C%E6%89%A7%E8%A1%8C%E7%94%9F%E6%88%90%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">发现和执行生成器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E4%B8%8D%E5%8F%98%E6%97%B6%E8%B7%B3%E8%BF%87%E5%86%99%E5%85%A5"><span class="nav-number">5.</span> <span class="nav-text">内容不变时跳过写入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E8%83%BD%E6%8F%90%E5%89%8D%E6%9A%B4%E9%9C%B2%E5%93%AA%E4%BA%9B%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">常量能提前暴露哪些问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E7%BA%A6%E5%AE%9A%E6%94%BE%E8%BF%9B%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">把约定放进可执行的流程</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="扩展 Luban 导表流程：自动生成业务 ID | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          扩展 Luban 导表流程：自动生成业务 ID
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-02-02 00:00:00" itemprop="dateCreated datePublished" datetime="2026-02-02T00:00:00+08:00">2026-02-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">开发工具</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>配置表有了类型定义之后，业务代码里仍然可能散落着很多数字 ID。读代码时需要回到表格查含义，复制到另一处时也容易写错。手工维护一份常量文件能够改善可读性，但会增加一份需要同步的数据。</p>
+<p>我从 2025 年 9 月开始扩展项目的导表流程，让道具 ID 随导表一起生成。到 2026 年初，实体、界面、音效等类型也有类似需求，于是又把重复的输出流程抽成公共生成器，并继续接入 NPC ID。</p>
+<span id="more"></span>
+<h2 id="让数据表成为唯一的数据来源"><a href="#让数据表成为唯一的数据来源" class="headerlink" title="让数据表成为唯一的数据来源"></a>让数据表成为唯一的数据来源</h2><p>这里没有替换 Luban 的数据导出能力。Luban 先完成表格解析与数据输出，项目自己的后处理再读取导出结果，生成业务常量。</p>
+<p><img src="/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/id-generation.svg" alt="配置表经 Luban 导出，再由各类 ID 生成器共用输出逻辑生成 C# 常量" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<p>例如下面是一组虚构的配置：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:right">ID</th>
+<th>系统</th>
+<th>名称</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">101</td>
+<td>Tool</td>
+<td>小铲子</td>
+</tr>
+<tr>
+<td style="text-align:right">102</td>
+<td>Tool</td>
+<td>喷壶</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>生成后，业务可以这样引用：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">ItemId</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">int</span> Undefined = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>小铲子<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">int</span> Tool_XiaoChanZi = <span class="number">101</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>喷壶<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">int</span> Tool_PenHu = <span class="number">102</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>数值仍然来自配置表，常量名负责提供可读的访问入口。修改生成文件没有意义，下次导表就会被覆盖，因此文件头也明确标记为自动生成。</p>
+<h2 id="名称生成需要处理哪些约束"><a href="#名称生成需要处理哪些约束" class="headerlink" title="名称生成需要处理哪些约束"></a>名称生成需要处理哪些约束</h2><p>项目当时采用“系统名 + 名称拼音”的方式生成道具常量。这能减少不同系统之间的命名冲突，也让开发者在输入系统前缀后获得一组较容易辨认的提示。</p>
+<p>生成前先检查系统字段能否对应到有效枚举。如果配置里填了不存在的系统值，应该在生成阶段报告所在数据，而不是输出一个看起来正常、实际含义不明的常量。</p>
+<p>中文名转拼音之后仍然可能重名，因此实现中维护一个已用名称集合。再次遇到同名结果时，为后来的常量附加数据 ID，并输出警告。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Tool_XiaoChanZi</span><br><span class="line">Tool_XiaoChanZi_103</span><br></pre></td></tr></table></figure>
+<p>这是一种务实的兼容方式，但它并不保证名称永远不变。修改文案、调整重名项的先后顺序，都可能影响生成结果。需要长期稳定的引用时，更合适的是在表里提供单独的代码名字段，让展示文案与程序标识分别维护。</p>
+<p>拼音也不是完整的 C# 标识符清洗。项目的名称约定能覆盖日常数据，并不意味着任意标点、数字开头或关键字都可以直接生成合法代码。这类情况需要在输入约束或生成器中明确处理，最后仍要通过编译检查。</p>
+<h2 id="重复的是输出流程，变化的是表格规则"><a href="#重复的是输出流程，变化的是表格规则" class="headerlink" title="重复的是输出流程，变化的是表格规则"></a>重复的是输出流程，变化的是表格规则</h2><p>生成器逐渐增多之后，很多代码开始重复：检查参数、创建命名空间、写注释、输出常量和建立目录。每增加一种表，就要复制一段基本相同的文件写入逻辑。</p>
+<p>我把它们拆成两层：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>负责的事情</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>各表生成器</td>
+<td>读取数据、选择条目、校验业务字段、决定常量名称</td>
+</tr>
+<tr>
+<td>公共基类</td>
+<td>组织 C# 结构、生成注释、输出常量或枚举、写入文件</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>上层向公共方法提供一组简单的数据项：常量名、ID 和描述。这样新增一种表时，关注点就落在“哪些条目需要生成、应该叫什么”，不必再次维护文件格式。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">IdGenerator</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">GenerateCode</span>()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">WriteConstants</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="built_in">string</span> targetNamespace,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="built_in">string</span> className,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="built_in">string</span> outputPath,</span></span></span><br><span class="line"><span class="params"><span class="function">        IReadOnlyList&lt;IdEntry&gt; entries</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> content = BuildSource(targetNamespace, className, entries);</span><br><span class="line">        WriteWhenChanged(outputPath, content);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里展示的是职责结构，省略了项目自己的数据类型。常量和枚举可以分别提供输出入口，不必为了统一形式强行把所有表都生成同一种声明。</p>
+<h2 id="发现和执行生成器"><a href="#发现和执行生成器" class="headerlink" title="发现和执行生成器"></a>发现和执行生成器</h2><p>项目的生成器都位于同一个工具程序集里，因此加载器可以反射查找公共基类的非抽象派生类，筛选有无参构造函数的类型，再实例化并统一执行。</p>
+<p>实际执行前按类型名排序，使同一组生成器的执行顺序确定。这个顺序只用于保持行为可预期，不应该承载隐含的跨生成器依赖；如果 B 必须读取 A 的结果，就需要显式安排依赖关系。</p>
+<p>统一入口也方便同时为不同代码模块输出文件：表的读取和命名规则复用，命名空间、类名和目标目录则由对应生成器提供。</p>
+<p>这次实现会记录单个生成器的异常，并继续尝试剩余生成器。这样的行为便于一次发现多个问题，但“后面的表生成完成”不能当作整个流程成功。接入自动构建时，需要汇总错误并通过失败状态阻止使用不完整的输出。</p>
+<h2 id="内容不变时跳过写入"><a href="#内容不变时跳过写入" class="headerlink" title="内容不变时跳过写入"></a>内容不变时跳过写入</h2><p>即使生成结果完全相同，直接覆盖文件也会改变修改时间，增加文件监听、资源刷新或编译链路的无效工作。因此公共输出方法先比较内容：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">WriteWhenChanged</span>(<span class="params"><span class="built_in">string</span> outputPath, <span class="built_in">string</span> content</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> directory = Path.GetDirectoryName(outputPath);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(directory))</span><br><span class="line">        Directory.CreateDirectory(directory);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (File.Exists(outputPath) &amp;&amp;</span><br><span class="line">        <span class="built_in">string</span>.Equals(File.ReadAllText(outputPath), content,</span><br><span class="line">            StringComparison.Ordinal))</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    File.WriteAllText(outputPath, content);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要让这个比较有意义，生成内容本身也必须稳定。不要在每次输出里加入当前时间，也不要依赖无序集合决定条目顺序。输入与生成规则都没变化时，重复执行应得到相同文本。</p>
+<h2 id="常量能提前暴露哪些问题"><a href="#常量能提前暴露哪些问题" class="headerlink" title="常量能提前暴露哪些问题"></a>常量能提前暴露哪些问题</h2><p>使用命名常量后，删除或重命名配置导致某个符号消失，会在代码编译时暴露引用错误；使用者也可以通过注释看到这条配置的含义。</p>
+<p>但常量只能覆盖编译期可见的引用。网络下发的 ID、存档里的旧 ID，以及运行时拼出的资源关系，仍然需要数据校验。生成代码不会自动证明所有配置引用都有效。</p>
+<p>还有一个容易忽略的点：C# 的 <code>const</code> 会在编译时内联到调用方。如果生成常量与使用常量的程序集分开更新，必须确保依赖方也重新编译，不能只替换定义常量的程序集。</p>
+<h2 id="把约定放进可执行的流程"><a href="#把约定放进可执行的流程" class="headerlink" title="把约定放进可执行的流程"></a>把约定放进可执行的流程</h2><p>这次扩展最直接的收益，是业务不必手抄数字，新增表类型也可以沿同一个入口生成代码。命名与校验规则集中之后，后续调整有了明确的位置。</p>
+<p>我保留各张表自己的选择和命名逻辑，只统一重复的输出部分。对于项目工具，这样的边界已经足够实用：规则写在生成器里，结果随导表产生，最终由编译和资源接入一起检查。</p>
+<p>参考：<a href="https://github.com/focus-creative-games/luban">Luban</a>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/tags/Luban/" rel="tag"># Luban</a>
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/" rel="tag"># 代码生成</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-CN/2025/Unity%E4%BD%BF%E7%94%A8GameFramework%E6%A1%86%E6%9E%B6%E5%8A%A0%E8%BD%BDSprite-Texture2D%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B%E6%B7%B7%E6%B7%86%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="prev" title="Unity使用GameFramework框架加载Sprite&#x2F;Texture2D资源类型混淆的问题排查">
+                  <i class="fa fa-angle-left"></i> Unity使用GameFramework框架加载Sprite/Texture2D资源类型混淆的问题排查
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-03-04-Implementing-Animation-Synchronization-with-Pass-Through-States-in-Unity-Mecanim/" rel="next" title="Implementing Action Synchronization with Pass-Through States in Unity Mecanim">
+                  Implementing Action Synchronization with Pass-Through States in Unity Mecanim <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="选择语言">
+      
+        <option value="zh-CN" data-href="/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

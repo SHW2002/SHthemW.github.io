@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="做图鉴和排行榜展示时，我需要把角色与手持模型放进一个固定大小的展示空间。不同服装、不同形状的手持物可以组成很多种组合，逐个配置缩放很难维护，所以我根据模型的包围盒自动限制整体尺寸。 随后遇到了一个奇怪的问题：有的角色会被缩得非常小，看起来像是展示空间里只剩一个小点。缩放公式没有明显错误，真正出问题的是公式拿到的“模型尺寸”。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity 蒙皮包围盒与展示模型自适应缩放">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="做图鉴和排行榜展示时，我需要把角色与手持模型放进一个固定大小的展示空间。不同服装、不同形状的手持物可以组成很多种组合，逐个配置缩放很难维护，所以我根据模型的包围盒自动限制整体尺寸。 随后遇到了一个奇怪的问题：有的角色会被缩得非常小，看起来像是展示空间里只剩一个小点。缩放公式没有明显错误，真正出问题的是公式拿到的“模型尺寸”。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/oversized-bounds.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/bounds-spaces.svg">
+<meta property="article:published_time" content="2026-06-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-17T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="SkinnedMeshRenderer">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="问题排查">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/oversized-bounds.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/","path":"zh-CN/2026/Unity蒙皮包围盒与展示模型自适应缩放/","title":"Unity 蒙皮包围盒与展示模型自适应缩放"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unity 蒙皮包围盒与展示模型自适应缩放 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the footer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%98%8E%E7%A1%AE%E8%A6%81%E6%B5%8B%E9%87%8F%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">先明确要测量什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%9D%E8%AF%95%E4%BD%BF%E7%94%A8-BakeMesh"><span class="nav-number">2.</span> <span class="nav-text">第一次尝试使用 BakeMesh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BA%E5%AF%B8%E6%AD%A3%E7%A1%AE%E8%BF%98%E4%B8%8D%E5%A4%9F%EF%BC%8C%E6%B5%8B%E9%87%8F%E6%97%B6%E6%9C%BA%E4%B9%9F%E8%A6%81%E6%AD%A3%E7%A1%AE"><span class="nav-number">3.</span> <span class="nav-text">尺寸正确还不够，测量时机也要正确</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%BB%E5%B1%8F%E6%9B%B4%E6%96%B0%E4%B9%9F%E6%98%AF%E6%B5%8B%E9%87%8F%E6%9D%A1%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">离屏更新也是测量条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AA%E5%90%88%E5%B9%B6%E7%9C%9F%E6%AD%A3%E5%8F%82%E4%B8%8E%E5%B1%95%E7%A4%BA%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.</span> <span class="nav-text">只合并真正参与展示的对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E9%99%90%E5%88%B6%E6%9C%80%E7%B4%A7%E7%9A%84%E8%BD%B4%E7%BB%9F%E4%B8%80%E7%BC%A9%E6%94%BE"><span class="nav-number">6.</span> <span class="nav-text">根据限制最紧的轴统一缩放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5%E4%B8%AD%E6%9C%80%E6%9C%89%E7%94%A8%E7%9A%84%E5%87%A0%E9%A1%B9%E4%BF%A1%E6%81%AF"><span class="nav-number">7.</span> <span class="nav-text">排查中最有用的几项信息</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Unity 蒙皮包围盒与展示模型自适应缩放 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unity 蒙皮包围盒与展示模型自适应缩放
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-06-18 00:00:00" itemprop="dateCreated datePublished" datetime="2026-06-18T00:00:00+08:00">2026-06-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">游戏开发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>做图鉴和排行榜展示时，我需要把角色与手持模型放进一个固定大小的展示空间。不同服装、不同形状的手持物可以组成很多种组合，逐个配置缩放很难维护，所以我根据模型的包围盒自动限制整体尺寸。</p>
+<p>随后遇到了一个奇怪的问题：有的角色会被缩得非常小，看起来像是展示空间里只剩一个小点。缩放公式没有明显错误，真正出问题的是公式拿到的“模型尺寸”。</p>
+<span id="more"></span>
+<h2 id="先明确要测量什么"><a href="#先明确要测量什么" class="headerlink" title="先明确要测量什么"></a>先明确要测量什么</h2><p>展示功能需要的是<strong>当前参与展示的模型，在指定姿势下占据的空间</strong>。它与网格资产的原始尺寸、导入时覆盖多段动画的包围盒，都不一定相同。</p>
+<p>Unity 中几个容易混用的数据各有用途：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>数据</th>
+<th>坐标空间</th>
+<th>用于展示时需要注意什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Mesh.bounds</code></td>
+<td>网格局部空间</td>
+<td>蒙皮网格的原始顶点范围不代表当前动画姿势</td>
+</tr>
+<tr>
+<td><code>SkinnedMeshRenderer.localBounds</code></td>
+<td>Renderer 局部空间</td>
+<td>可能是较保守的动画包络，不一定紧贴当前外形</td>
+</tr>
+<tr>
+<td><code>Renderer.bounds</code></td>
+<td>世界空间 AABB</td>
+<td>受旋转、蒙皮更新和剔除状态影响</td>
+</tr>
+<tr>
+<td><code>BakeMesh</code> 得到的网格</td>
+<td>Renderer 的局部空间</td>
+<td>是当前蒙皮姿势的快照，仍需正确处理坐标变换</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>第一次排查时，画出来的包围盒远大于实际人物。尺寸限制逻辑把这个虚大的盒子当成真实模型，只能把角色继续缩小。</p>
+<p><img src="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/oversized-bounds.webp" alt="编辑器中的人物与明显偏大的包围盒" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<p><em>裁取自当时的 Scene 视图，只保留人物与包围盒的大小关系。</em></p>
+<p>把相机拉远并不能修正这个问题。相机改变的是画面投影，错误的尺寸测量仍然会让缩放逻辑把角色压到不合适的大小。</p>
+<h2 id="第一次尝试使用-BakeMesh"><a href="#第一次尝试使用-BakeMesh" class="headerlink" title="第一次尝试使用 BakeMesh"></a>第一次尝试使用 BakeMesh</h2><p><code>SkinnedMeshRenderer.BakeMesh</code> 可以得到当前蒙皮姿势的网格快照。当静态包围盒过于保守时，它是一个有用的排查入口：比较烘焙网格与 Renderer 的范围，可以帮助判断差异来自资源包络还是当前姿势。</p>
+<p>不过，烘焙之后不能直接把 <code>mesh.bounds.size</code> 当成世界尺寸。对于一般层级，需要把局部包围盒的八个角转换到同一坐标空间，再合并求得新的 AABB。</p>
+<p><img src="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/bounds-spaces.svg" alt="局部网格包围盒转换为世界空间包围盒后，再参与统一缩放" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<p>这里有两个常见误区：</p>
+<ul>
+<li>只把局部 <code>size</code> 乘以 <code>lossyScale</code>，忽略了旋转对世界 AABB 的影响。</li>
+<li>使用了带缩放的烘焙结果，又在后面的矩阵变换中重复应用同一层缩放。</li>
+</ul>
+<p>我们项目还有额外情况：服装的骨骼会重绑到角色骨架，Renderer 所在节点的缩放与实际蒙皮表现不总能用简单的层级关系对应。继续套用“局部盒乘 Transform”得到的结果，可能退化成点，也可能异常放大。</p>
+<p>因此我没有把 <code>BakeMesh</code> 固定成最终方案，而是继续检查项目自己的蒙皮更新过程。烘焙接口能够提供信息，但不能代替对骨架和坐标空间的确认。</p>
+<h2 id="尺寸正确还不够，测量时机也要正确"><a href="#尺寸正确还不够，测量时机也要正确" class="headerlink" title="尺寸正确还不够，测量时机也要正确"></a>尺寸正确还不够，测量时机也要正确</h2><p>第二个问题出现在模型加载期间。角色、服装和手持物分别就绪，Animator 还可能因为资源切换执行 <code>Rebind</code>。这时如果立即测量，拿到的可能是绑定姿势或尚未稳定的骨骼状态。</p>
+<p>同一套资源有时正常、有时异常，正是这类时序问题的典型表现。于是测量流程调整为：</p>
+<ol>
+<li>等待角色、服装和手持物全部就绪。</li>
+<li>完成动画控制器与骨架的刷新。</li>
+<li>跨过重绑当帧，在后续更新阶段评估展示姿势。</li>
+<li>确认蒙皮已更新，再收集实际参与展示的 Renderer。</li>
+<li>合并包围盒并计算统一缩放。</li>
+</ol>
+<p>对这个专用展示角色，我在测量前把 Animator 评估到确定的 Idle 姿势。核心操作如下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> previousMode = animator.cullingMode;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">    animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (animator.HasState(<span class="number">0</span>, idleStateHash))</span><br><span class="line">        animator.Play(idleStateHash, <span class="number">0</span>, <span class="number">0f</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 写回这一姿势，但不推进动画时间。</span></span><br><span class="line">    animator.Update(<span class="number">0f</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">finally</span></span><br><span class="line">&#123;</span><br><span class="line">    animator.cullingMode = previousMode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码会改变当前动画姿势，所以适用于初始化中的展示角色，不应直接拿去重置正在游玩的角色。只量 Idle 也只能保证该姿势的尺寸，不能保证后续挥手、跳跃等所有动画始终装在同一个空间里。</p>
+<h2 id="离屏更新也是测量条件"><a href="#离屏更新也是测量条件" class="headerlink" title="离屏更新也是测量条件"></a>离屏更新也是测量条件</h2><p>展示模型常在画面外完成加载。即使资源已经存在，离屏剔除仍可能让动画或蒙皮没有按预期更新。</p>
+<p>在这次实现中，我为相关 <code>SkinnedMeshRenderer</code> 开启了 <code>updateWhenOffscreen</code>，结合确定的 Animator 姿势和后续帧的测量，取得项目中可用的世界空间包围盒。这样也避免了自行还原特殊蒙皮层级的世界盒。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (renderer <span class="keyword">is</span> SkinnedMeshRenderer skinned)</span><br><span class="line">    skinned.updateWhenOffscreen = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">Bounds worldBounds = renderer.bounds;</span><br></pre></td></tr></table></figure>
+<p>这里不能理解为“开一个开关后，所有模型的 Bounds 都会立即变准确”。还要确认项目是否手动覆盖过 Bounds、骨架是否已经稳定，以及本帧的动画和蒙皮评估是否真的完成。</p>
+<p>持续开启离屏更新会增加开销。我们的用途是数量有限的展示对象，这个取舍可以接受；如果把方案推广到大量角色，则应当限定更新对象与时段，并在恢复剔除后检查结果。</p>
+<h2 id="只合并真正参与展示的对象"><a href="#只合并真正参与展示的对象" class="headerlink" title="只合并真正参与展示的对象"></a>只合并真正参与展示的对象</h2><p>角色下面不一定只有可见的服装。隐藏的旧部件、未激活的手持物和粒子特效，都可能把包围盒撑大。</p>
+<p>因此收集时需要先过滤：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!renderer.enabled || !renderer.gameObject.activeInHierarchy)</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (renderer <span class="keyword">is</span> ParticleSystemRenderer)</span><br><span class="line">    <span class="keyword">continue</span>;</span><br></pre></td></tr></table></figure>
+<p>剩余对象统一使用世界空间数据，通过 <code>Bounds.Encapsulate</code> 合并。第一个有效 Renderer 用来初始化合并结果，不能用世界原点上的零盒子起步，否则远离原点的模型会把无关空间也算进去。</p>
+<p>计算时我还记录每个轴的最小值和最大值分别来自哪个 Renderer。出现异常时，就能直接知道是某件服装撑大了 X 轴，还是某个骨骼关联部件把 Y 轴拉长，而不是只看到一个最终的巨大数字。</p>
+<h2 id="根据限制最紧的轴统一缩放"><a href="#根据限制最紧的轴统一缩放" class="headerlink" title="根据限制最紧的轴统一缩放"></a>根据限制最紧的轴统一缩放</h2><p>设当前模型尺寸为 <code>measuredSize</code>，允许展示的空间尺寸为 <code>targetSize</code>。如果只希望压小超出范围的模型，而不放大小模型，可以这样计算倍率：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">float</span> fit = Mathf.Min(</span><br><span class="line">    <span class="number">1f</span>,</span><br><span class="line">    targetSize.x / measuredSize.x,</span><br><span class="line">    targetSize.y / measuredSize.y,</span><br><span class="line">    targetSize.z / measuredSize.z);</span><br><span class="line"></span><br><span class="line">modelRoot.localScale = initialScale * fit;</span><br></pre></td></tr></table></figure>
+<p>实际计算前还要剔除空集合、零尺寸和非有限数值。测量是在什么初始缩放下完成的，也必须保持一致，不能在已经缩过一次的模型上不断重复乘倍率。</p>
+<p>统一缩放可以维持人物与手持物的相对比例，但形状较扁、较宽的物体往往会先触及水平限制。此时可以调整展示空间或按资源类别配置目标盒，不宜为了某一个模型直接放宽所有展示内容。</p>
+<p>另外，这里解决的是三维空间尺寸约束。若要求模型在透视相机的 UI 窗口中始终完整可见，还需要考虑视角、FOV 和屏幕投影，世界 AABB 本身不是“画面一定不裁切”的保证。</p>
+<h2 id="排查中最有用的几项信息"><a href="#排查中最有用的几项信息" class="headerlink" title="排查中最有用的几项信息"></a>排查中最有用的几项信息</h2><p>这次从 6 月中旬的包围盒异常，逐步查到骨架重绑、离屏更新和展示测量时序。对同类问题，我会先记录四件事：当前姿势、参与合并的 Renderer、各轴极值来源，以及测量发生在哪个加载阶段。</p>
+<p>只调整最终缩放比例，很容易把异常暂时藏起来。先确认测到的是哪个对象、哪一帧、哪个空间里的尺寸，后面的适配公式反而很简单。</p>
+<p>参考：<a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Renderer-bounds.html">Renderer.bounds</a>、<a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/SkinnedMeshRenderer.BakeMesh.html">SkinnedMeshRenderer.BakeMesh</a>、<a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/SkinnedMeshRenderer-updateWhenOffscreen.html">updateWhenOffscreen</a>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/tags/SkinnedMeshRenderer/" rel="tag"># SkinnedMeshRenderer</a>
+              <a href="/tags/%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="tag"># 问题排查</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/" rel="prev" title="Unity Timeline 动态绑定与资源制作流程">
+                  <i class="fa fa-angle-left"></i> Unity Timeline 动态绑定与资源制作流程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/" rel="next" title="Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions">
+                  Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="选择语言">
+      
+        <option value="zh-CN" data-href="/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

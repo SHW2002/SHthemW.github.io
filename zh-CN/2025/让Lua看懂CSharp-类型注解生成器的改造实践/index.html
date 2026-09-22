@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 CS 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。 我在一个已有的开源生成器上做了一些修改，把项目中经常遇到的类型提示问题补起来。这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="改造EmmyLua(LuaLS)的UnityAPI注解生成器">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 CS 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。 我在一个已有的开源生成器上做了一些修改，把项目中经常遇到的类型提示问题补起来。这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp">
+<meta property="article:published_time" content="2025-03-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-03-26T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="CSharp">
+<meta property="article:tag" content="Lua">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="开源">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/","path":"zh-CN/2025/让Lua看懂CSharp-类型注解生成器的改造实践/","title":"改造EmmyLua(LuaLS)的UnityAPI注解生成器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>改造EmmyLua(LuaLS)的UnityAPI注解生成器 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the footer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%B3%A8%E8%A7%A3%EF%BC%8C%E5%B9%B6%E4%B8%8D%E6%94%B9%E5%8F%98%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="nav-number">1.</span> <span class="nav-text">生成注解，并不改变运行时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E7%BB%A7%E6%89%BF%E4%BC%9A%E6%8A%8A%E7%B1%BB%E5%9E%8B%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%9C%A8%E5%93%AA"><span class="nav-number">2.</span> <span class="nav-text">泛型继承会把类型信息丢在哪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%90%8D%E4%B8%8E-CS-%E8%A1%A8%E7%9A%84%E8%AE%BF%E9%97%AE%E8%B7%AF%E5%BE%84"><span class="nav-number">3.</span> <span class="nav-text">类型名与 CS 表的访问路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E5%A7%94%E6%89%98%E4%B8%8E-Lua-function-%E7%9A%84%E5%85%BC%E5%AE%B9"><span class="nav-number">4.</span> <span class="nav-text">C# 委托与 Lua function 的兼容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E4%B8%8E%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E4%B8%8D%E8%83%BD%E6%B7%B7%E6%B7%86"><span class="nav-number">5.</span> <span class="nav-text">静态方法与实例方法不能混淆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A9%E7%94%9F%E6%88%90%E8%BF%87%E7%A8%8B%E9%80%82%E5%90%88%E5%8F%8D%E5%A4%8D%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">让生成过程适合反复使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E9%A1%B9%E7%9B%AE%E6%94%B9%E5%8A%A8%E5%88%B0%E4%B8%8A%E6%B8%B8%E5%90%88%E5%B9%B6"><span class="nav-number">7.</span> <span class="nav-text">从项目改动到上游合并</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="改造EmmyLua(LuaLS)的UnityAPI注解生成器 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          改造EmmyLua(LuaLS)的UnityAPI注解生成器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-03-27 00:00:00" itemprop="dateCreated datePublished" datetime="2025-03-27T00:00:00+08:00">2025-03-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">开发工具</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 <code>CS</code> 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。</p>
+<p>我在一个已有的开源生成器上做了一些修改，把项目中经常遇到的类型提示问题补起来。这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其中几个最有价值的处理。</p>
+<span id="more"></span>
+<h2 id="生成注解，并不改变运行时"><a href="#生成注解，并不改变运行时" class="headerlink" title="生成注解，并不改变运行时"></a>生成注解，并不改变运行时</h2><p>工具在 Unity 编辑器中通过反射读取 C# 程序集，再生成 Lua 语言服务能够理解的类型声明。注解文件提供给编辑器分析，不应该作为业务脚本被加载执行。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C# 程序集</span><br><span class="line">    ↓ 反射读取类型、成员和继承关系</span><br><span class="line">Lua 注解文件</span><br><span class="line">    ↓ 语言服务建立索引</span><br><span class="line">字段补全、参数提示与静态诊断</span><br></pre></td></tr></table></figure>
+<p>例如一个普通类型可以生成这样的声明：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@class Demo.InventoryService</span></span><br><span class="line"><span class="comment">---@field Capacity integer</span></span><br><span class="line"><span class="keyword">local</span> InventoryService = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">---@param itemId integer</span></span><br><span class="line"><span class="comment">---@return boolean</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">InventoryService:Contains</span><span class="params">(itemId)</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>这里的方法体是空的，因为它的作用是告诉语言服务“存在这个方法”，不是重新实现 C# 逻辑。真正的跨语言调用仍然由 xLua 等运行时桥接完成。</p>
+<p><img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp" alt="生成注解后，Lua 编辑器能够列出 Unity Transform 类型及成员" width="520" style="display:block;width:520px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<p><em>当时的补全效果，裁去业务代码，仅保留类型与成员提示。</em></p>
+<h2 id="泛型继承会把类型信息丢在哪"><a href="#泛型继承会把类型信息丢在哪" class="headerlink" title="泛型继承会把类型信息丢在哪"></a>泛型继承会把类型信息丢在哪</h2><p>最常见的情况是泛型单例：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Singleton</span>&lt;<span class="title">T</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> T Instance &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">InventoryService</span> : <span class="title">Singleton</span>&lt;<span class="title">InventoryService</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Capacity &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果生成器只看泛型定义，<code>Instance</code> 的类型只能写成 <code>T</code>。但对 <code>InventoryService</code> 来说，继承关系已经明确提供了实参，编辑器本来可以知道 <code>Instance</code> 就是 <code>InventoryService</code>。</p>
+<p>我补充的处理是：在生成具体派生类时检查父类的泛型信息，把能够确定的字段与属性类型落实到派生类的声明中。于是调用 <code>InventoryService.Instance.Capacity</code> 时，类型链可以继续下去。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@class Demo.InventoryService : Demo.Singleton</span></span><br><span class="line"><span class="comment">---@field Instance Demo.InventoryService</span></span><br><span class="line"><span class="comment">---@field Capacity integer</span></span><br><span class="line"><span class="keyword">local</span> InventoryService = &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>这不是一套完整的 C# 泛型推导系统。这个阶段的实现主要覆盖<strong>非泛型派生类、直接父类只有一个泛型参数、继承字段与属性</strong>的常见场景；多参数映射、复杂嵌套以及方法的泛型参数和返回值仍需另外处理。</p>
+<p>把边界说明清楚很有必要：类型提示在大部分调用链上改善，并不意味着所有泛型组合都能正确生成。</p>
+<h2 id="类型名与-CS-表的访问路径"><a href="#类型名与-CS-表的访问路径" class="headerlink" title="类型名与 CS 表的访问路径"></a>类型名与 CS 表的访问路径</h2><p>xLua 中常通过 <code>CS.UnityEngine.Vector3</code> 访问 C# 类型，但已有注解可能写成 <code>UnityEngine.Vector3</code>。如果把两种写法当成互不相干的类型，赋值与字段访问就会出现无意义的提示。</p>
+<p>工具默认生成正常的类型名，再提供可选的 <code>CS.</code> 前缀兼容声明。目标是让这两种注解写法描述同一个类型，同时让访问 <code>CS</code> 表时能够获得成员提示。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@type UnityEngine.Vector3</span></span><br><span class="line"><span class="keyword">local</span> a = CS.UnityEngine.Vector3.zero</span><br><span class="line"></span><br><span class="line"><span class="comment">---@type CS.UnityEngine.Vector3</span></span><br><span class="line"><span class="keyword">local</span> b = CS.UnityEngine.Vector3.zero</span><br></pre></td></tr></table></figure>
+<p>这里要同时关心类型别名和表的字段声明。仅仅建立一个名称别名，并不自动保证语言服务在 <code>CS.UnityEngine</code> 这条访问路径上能够继续识别成员；这也是改造中实际修过的问题之一。</p>
+<p>项目需要保留哪种写法，最好在接入时明确下来，避免生成文件与手写注解形成两套相互不兼容的命名习惯。</p>
+<h2 id="C-委托与-Lua-function-的兼容"><a href="#C-委托与-Lua-function-的兼容" class="headerlink" title="C# 委托与 Lua function 的兼容"></a>C# 委托与 Lua function 的兼容</h2><p>运行时桥接通常允许把 Lua 函数传给某些 C# 委托，但语言服务未必知道这条转换规则。例如：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> onDone = <span class="function"><span class="keyword">function</span><span class="params">()</span></span> <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">---@type System.Action</span></span><br><span class="line"><span class="keyword">local</span> callback</span><br><span class="line">callback = onDone</span><br></pre></td></tr></table></figure>
+<p>没有额外信息时，这可能被诊断为 <code>function</code> 不能赋给 <code>System.Action</code>。</p>
+<p>我增加了可配置的兼容类型列表，在需要的声明位置将指定委托表达为联合类型：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@param callback System.Action | function</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">RunWhenReady</span><span class="params">(callback)</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>这样保留了原 C# 类型，同时允许 Lua 函数传入。这个处理也要覆盖方法重载，不能只修普通声明，否则同一套 API 会因为是否进入重载分支而产生不同提示。</p>
+<p>代价是 <code>function</code> 本身比较宽泛，它不能替代精确的参数与返回值检查。所以兼容列表只应包含运行时确实支持转换的类型。若某个回调需要严格签名，更合适的办法是进一步生成明确的 <code>fun(...)</code> 声明。</p>
+<h2 id="静态方法与实例方法不能混淆"><a href="#静态方法与实例方法不能混淆" class="headerlink" title="静态方法与实例方法不能混淆"></a>静态方法与实例方法不能混淆</h2><p>Lua 的点调用与冒号调用在参数上有区别，冒号会隐式传入 <code>self</code>。如果把 C# 静态方法生成为实例方法，编辑器看到的参数列表就会错位。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 静态方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Demo.Utility.Create</span><span class="params">()</span></span> <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 实例方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Demo.Service:Refresh</span><span class="params">()</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>生成器需要根据反射结果中的 <code>IsStatic</code> 决定声明方式。我也修复了静态函数仍然携带实例参数的情况，并整理了泛型名称后缀、匿名类型等不适合直接暴露的类型名称。</p>
+<p>这些问题看起来零碎，但它们决定了使用者能否信任提示。如果日常面对很多错误警告，人反而会习惯性忽略真正的问题。</p>
+<h2 id="让生成过程适合反复使用"><a href="#让生成过程适合反复使用" class="headerlink" title="让生成过程适合反复使用"></a>让生成过程适合反复使用</h2><p>除了类型映射，我还补了几项使用上的功能：</p>
+<ul>
+<li>按命名空间选择要生成的程序集内容，避免把无关类型全部塞进索引。</li>
+<li>为 C# 注入的全局变量和 <code>typeof</code> 等入口生成声明。</li>
+<li>按配置行数拆分注解文件，便于管理较大的输出。</li>
+<li>用编辑器窗口保存生成选项，减少每次修改源码配置的操作。</li>
+</ul>
+<p>文件拆分是否改善分析速度，与语言服务和项目规模有关，我没有做跨编辑器的统一性能基准。更确定的收益是生成范围和输出组织都可以控制。</p>
+<p>使用 Lua Language Server 时，可以把生成目录加入 <code>workspace.library</code>。无论文件放在哪里，都应让语言服务只索引需要的声明，避免旧输出和新输出同时存在、重复定义同一类型。</p>
+<p>生成目录也应专用。这个工具会清理目标目录中的旧注解，因此不能把手写业务脚本和生成文件混放。</p>
+<h2 id="从项目改动到上游合并"><a href="#从项目改动到上游合并" class="headerlink" title="从项目改动到上游合并"></a>从项目改动到上游合并</h2><p>这次改造建立在原作者的生成逻辑上，我主要补充了项目实际需要的能力与问题修复。提交上游时，把新增选项、兼容范围和使用说明一起整理，比只提交一份能在自己工程里运行的脚本更容易让其他人理解。</p>
+<p><a href="https://github.com/ak47007tiger/EmmyLuaXLuaSnippetGenerator/pull/2">PR #2</a> 于 2025 年 3 月 27 日合并。工具仓库：<a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator">EmmyLua-Snippet-Generator</a>；原项目：<a href="https://github.com/ak47007tiger/EmmyLuaXLuaSnippetGenerator">EmmyLuaXLuaSnippetGenerator</a>。</p>
+<p>跨语言类型提示的价值，首先体现在日常写代码时少一点猜测。把运行时已经掌握的类型信息传给编辑器，就能让调用链、参数和字段更早暴露问题；但最终执行是否合法，仍然要由真实的运行时规则与测试确认。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Lua/" rel="tag"># Lua</a>
+              <a href="/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/tags/CSharp/" rel="tag"># CSharp</a>
+              <a href="/tags/%E5%BC%80%E6%BA%90/" rel="tag"># 开源</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-CN/2025/%E6%B8%B8%E6%88%8FGM%E5%B7%A5%E5%85%B7%E7%9A%84%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%94%B6%E8%97%8F%E8%AE%BE%E8%AE%A1/" rel="prev" title="游戏 GM 工具的动态注册与收藏设计">
+                  <i class="fa fa-angle-left"></i> 游戏 GM 工具的动态注册与收藏设计
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/" rel="next" title="从 947 次重复输出开始整理游戏日志">
+                  从 947 次重复输出开始整理游戏日志 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="选择语言">
+      
+        <option value="zh-CN" data-href="/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

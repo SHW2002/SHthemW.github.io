@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="最近整理了一次角色动画模块。原先本地玩家、网络同步玩家和 AI 共用一个动画组件，随着手持物、送礼等行为接入，业务层开始出现越来越多“如果是其他玩家，就额外处理一下”的代码。 这次调整主要做了两件事：根据 Animator 的实际驱动方式拆分实现；让角色实体以普通 C# 对象的方式持有动画驱动器，负责它的创建与释放。下面保留这次重构时的思路，说明原先哪里不方便，以及新结构怎样消除这些特殊处理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity 角色动画模块的组合式重构">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="最近整理了一次角色动画模块。原先本地玩家、网络同步玩家和 AI 共用一个动画组件，随着手持物、送礼等行为接入，业务层开始出现越来越多“如果是其他玩家，就额外处理一下”的代码。 这次调整主要做了两件事：根据 Animator 的实际驱动方式拆分实现；让角色实体以普通 C# 对象的方式持有动画驱动器，负责它的创建与释放。下面保留这次重构时的思路，说明原先哪里不方便，以及新结构怎样消除这些特殊处理。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/parameter-controller.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/state-controller.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/old-animation-component.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/driver-composition.svg">
+<meta property="article:published_time" content="2025-12-04T10:15:10.000Z">
+<meta property="article:modified_time" content="2025-12-04T10:15:10.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="动画">
+<meta property="article:tag" content="重构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/parameter-controller.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/","path":"zh-CN/2025/Unity角色动画模块的组合式重构/","title":"Unity 角色动画模块的组合式重构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unity 角色动画模块的组合式重构 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the footer</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A7%E7%89%88%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">旧版的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E7%94%A8%E4%B8%80%E4%B8%AA%E7%B1%BB%EF%BC%8C%E5%8D%B4%E4%BD%BF%E7%94%A8%E4%B8%A4%E5%A5%97%E6%8E%A7%E5%88%B6%E6%96%B9%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">共用一个类，却使用两套控制方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E8%A1%8C%E4%B8%BA%E9%9C%80%E8%A6%81%E5%9C%A8%E5%A4%96%E9%83%A8%E8%A1%A5%E7%89%B9%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">通用行为需要在外部补特例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E5%AD%98%E5%9C%A8%EF%BC%8C%E4%B8%8D%E4%BB%A3%E8%A1%A8%E7%BB%84%E4%BB%B6%E5%B7%B2%E7%BB%8F%E5%8F%AF%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">组件存在，不代表组件已经可用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89%E9%A9%B1%E5%8A%A8%E6%96%B9%E5%BC%8F%E6%8B%86%E5%88%86%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">按驱动方式拆分实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Controller-%E4%B8%8E-AnimDriver-%E5%88%86%E5%88%AB%E7%BB%84%E5%90%88"><span class="nav-number">2.1.</span> <span class="nav-text">Controller 与 AnimDriver 分别组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E4%B8%AA%E4%B8%9A%E5%8A%A1%E6%8E%A5%E5%8F%A3%E9%87%87%E7%94%A8%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">同一个业务接口采用不同实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A9%E5%AE%9E%E4%BD%93%E7%AE%A1%E7%90%86%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">3.</span> <span class="nav-text">让实体管理生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%99%E6%AC%A1%E9%87%8D%E6%9E%84%E8%A7%A3%E5%86%B3%E7%9A%84%E8%8C%83%E5%9B%B4"><span class="nav-number">4.</span> <span class="nav-text">这次重构解决的范围</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Unity 角色动画模块的组合式重构 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unity 角色动画模块的组合式重构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-12-04 18:15:10" itemprop="dateCreated datePublished" datetime="2025-12-04T18:15:10+08:00">2025-12-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">游戏开发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>最近整理了一次角色动画模块。原先本地玩家、网络同步玩家和 AI 共用一个动画组件，随着手持物、送礼等行为接入，业务层开始出现越来越多“如果是其他玩家，就额外处理一下”的代码。</p>
+<p>这次调整主要做了两件事：根据 Animator 的实际驱动方式拆分实现；让角色实体以普通 C# 对象的方式持有动画驱动器，负责它的创建与释放。下面保留这次重构时的思路，说明原先哪里不方便，以及新结构怎样消除这些特殊处理。</p>
+<span id="more"></span>
+<h2 id="旧版的问题"><a href="#旧版的问题" class="headerlink" title="旧版的问题"></a>旧版的问题</h2><h3 id="共用一个类，却使用两套控制方式"><a href="#共用一个类，却使用两套控制方式" class="headerlink" title="共用一个类，却使用两套控制方式"></a>共用一个类，却使用两套控制方式</h3><p>旧版的 <code>ModelPlayerAnim</code> 挂在角色模型上，里面同时包含参数更新、状态切换、网络广播处理和手持动作加载等接口。</p>
+<p>这些方法表面上都在操作 Animator，实际却依赖不同的上下文：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>输入来源</th>
+<th>驱动动画的方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本地玩家</td>
+<td>本地输入与角色状态</td>
+<td>设置参数，由 Animator 的过渡条件决定状态</td>
+</tr>
+<tr>
+<td>远端玩家</td>
+<td>网络收到的动画状态</td>
+<td>根据状态信息直接播放或 CrossFade</td>
+</tr>
+<tr>
+<td>AI 角色</td>
+<td>AI 决策</td>
+<td>在当时的实现中，与本地玩家一样通过参数驱动</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>本地玩家需要 <code>SetFloat</code>、<code>SetBool</code> 等接口；远端玩家需要直接切换状态，却不应该重新执行一遍本地输入决策。把两条路线放进同一个类之后，每种角色都会看到一些自己根本不需要的方法。</p>
+<p><img src="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/parameter-controller.webp" alt="通过过渡条件驱动的 Animator 状态机" width="560" style="display:block;width:560px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<p><em>参数驱动的控制器保留过渡条件，状态切换由 Animator 完成。</em></p>
+<p><img src="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/state-controller.webp" alt="用于状态直驱的 Animator 状态布局" width="560" style="display:block;width:560px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<p><em>状态驱动的控制器主要接收明确的播放目标，两者需要的控制接口不同。</em></p>
+<h3 id="通用行为需要在外部补特例"><a href="#通用行为需要在外部补特例" class="headerlink" title="通用行为需要在外部补特例"></a>通用行为需要在外部补特例</h3><p>手持物更新是一个很直观的例子。业务层只是想表达“现在进入手持状态”，但原来的接口主要按本地玩家设计，内部设置了 Animator 参数。</p>
+<p>远端玩家的控制器不依赖这些参数过渡，于是调用者还得知道它的状态名、动画层和融合时间，再补一次 <code>CrossFade</code>。结果是动画知识泄漏到了物品、角色同步等模块里，同一个手持行为也有了两处维护入口。</p>
+<p>下面是经过简化的旧调用方式：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">player.Animation.SetHolding(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (player.IsRemote)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 调用者还要了解远端动画的实现细节。</span></span><br><span class="line">    player.Animator.CrossFade(holdState, blendTime, holdLayer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本地与远端的手持更新流程不同，已经引发过动作不一致的问题。当时通过补特殊处理解决了表现，但如果继续沿这个方向扩展，后面的每个新行为都有可能再复制一遍分支。</p>
+<h3 id="组件存在，不代表组件已经可用"><a href="#组件存在，不代表组件已经可用" class="headerlink" title="组件存在，不代表组件已经可用"></a>组件存在，不代表组件已经可用</h3><p>旧动画组件会随角色一起实例化，但它依赖的模型、Animator 和骨架要等后续加载完成才真正有效。</p>
+<p><img src="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/old-animation-component.webp" alt="旧版动画业务组件挂在角色模型上" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<p><em>旧结构把动画业务组件直接挂在模型上，组件的存在时间早于业务就绪时间。</em></p>
+<p>为了避免空引用，方法内部经常写成“Animator 还没有就返回”。这种做法不会立即崩溃，却可能悄悄丢掉一次必要的状态更新。调用成功返回，并不能说明动作真的已经应用。</p>
+<h2 id="按驱动方式拆分实现"><a href="#按驱动方式拆分实现" class="headerlink" title="按驱动方式拆分实现"></a>按驱动方式拆分实现</h2><h3 id="Controller-与-AnimDriver-分别组合"><a href="#Controller-与-AnimDriver-分别组合" class="headerlink" title="Controller 与 AnimDriver 分别组合"></a>Controller 与 AnimDriver 分别组合</h3><p>角色实体现在分别持有移动控制器和动画驱动器，两者不再互相决定对方的类型。可以把当时的组合关系写成下面的表：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>动画驱动器</th>
+<th>本地控制器</th>
+<th>远端控制器</th>
+<th>AI 控制器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>参数驱动</td>
+<td>本地玩家</td>
+<td>—</td>
+<td>AI 角色</td>
+</tr>
+<tr>
+<td>状态驱动</td>
+<td>—</td>
+<td>远端玩家</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>这里按<strong>驱动方式</strong>区分动画实现，而不是为每一种玩家类型复制完整的动画模块。AI 与本地玩家的决策来源不同，但如果都使用同一套参数状态机，就可以复用参数驱动这一层。</p>
+<p><img src="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/driver-composition.svg" alt="角色实体分别持有移动控制器和动画驱动器的组合关系" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<p>实体负责把合适的对象组装起来；业务层面向行为接口调用，不再逐个判断玩家类型。</p>
+<h3 id="同一个业务接口采用不同实现"><a href="#同一个业务接口采用不同实现" class="headerlink" title="同一个业务接口采用不同实现"></a>同一个业务接口采用不同实现</h3><p>以手持动作为例，对外保留一个“设置手持状态”的接口。参数驱动器设置布尔参数，状态驱动器直接切换对应动画层的状态。</p>
+<p>下面只展示这个差异，示例名称与具体业务配置无关：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">AnimationDriver</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">SetHolding</span>(<span class="params"><span class="built_in">bool</span> holding</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">Dispose</span>()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">ParameterAnimationDriver</span> : <span class="title">AnimationDriver</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Animator animator;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">int</span> Holding = Animator.StringToHash(<span class="string">&quot;Holding&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ParameterAnimationDriver</span>(<span class="params">Animator animator</span>)</span></span><br><span class="line">        =&gt; <span class="keyword">this</span>.animator = animator;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">SetHolding</span>(<span class="params"><span class="built_in">bool</span> holding</span>)</span></span><br><span class="line">        =&gt; animator.SetBool(Holding, holding);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Dispose</span>()</span> &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>状态驱动器则把动画层、目标状态和过渡时间留在自己内部：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">SetHolding</span>(<span class="params"><span class="built_in">bool</span> holding</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">int</span> targetState = holding ? holdStateHash : emptyStateHash;</span><br><span class="line">    animator.CrossFade(targetState, transitionDuration, upperBodyLayer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这并不要求两种驱动器使用相同的底层操作。需要一致的是行为含义：调用 <code>SetHolding(true)</code> 后，该角色应当进入对应的手持表现。怎样让 Animator 得到这个结果，由各自的实现负责。</p>
+<p>这样，手持物模块只需要更新资源并调用动画接口，不再维护远端玩家的状态名和过渡细节。</p>
+<h2 id="让实体管理生命周期"><a href="#让实体管理生命周期" class="headerlink" title="让实体管理生命周期"></a>让实体管理生命周期</h2><p>动画驱动器改为普通 C# 对象，由实体在依赖准备好之后创建，并在实体退出时释放。它不再依赖一个提前挂好的 MonoBehaviour 来表示“动画模块已经存在”。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生命周期示意，模型加载与资源释放由所在项目的实体框架负责。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnModelReady</span>(<span class="params">Animator animator</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    animationDriver = CreateAnimationDriver(animator);</span><br><span class="line">    ApplyCurrentPresentation();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnEntityHide</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    animationDriver?.Dispose();</span><br><span class="line">    animationDriver = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模型未就绪时应当怎样处理，要由调用方明确决定。必要的业务状态可以先保留，等模型就绪后重新应用；一个允许丢弃的瞬时表现则可以直接跳过。驱动器内部不再用同一个空判断悄悄处理所有情况。</p>
+<p>例如远端角色还未完成生成时，调用点可以显式忽略一条过渡中的动画消息；但“当前正在手持什么”是持续状态，不能仅因为加载期间没有驱动器就永久丢失。</p>
+<p>这次调整并没有让异步加载的问题消失，而是把“尚未就绪”和“操作已经执行”分开表达，排查时能够知道一次操作究竟在哪里被忽略。</p>
+<h2 id="这次重构解决的范围"><a href="#这次重构解决的范围" class="headerlink" title="这次重构解决的范围"></a>这次重构解决的范围</h2><p>重构后，参数驱动与状态驱动分别维护自己的过渡逻辑，公共行为通过一致的接口暴露，Controller 与 AnimDriver 可以按角色需要组合。后续接入动态手持动作时，就有了明确的实现位置。</p>
+<p>这套拆分也有一个前提：项目确实存在两种不同的动画控制方式。如果所有角色都采用相同的驱动流程，没有必要仅为了增加层次而提前拆出多套类。</p>
+<p>对这次问题来说，值得保留的判断依据是：当调用者必须反复了解某个角色的内部动画机制，才能正确调用一个看起来通用的接口时，应当回头检查这个接口的职责。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/tags/%E5%8A%A8%E7%94%BB/" rel="tag"># 动画</a>
+              <a href="/tags/%E9%87%8D%E6%9E%84/" rel="tag"># 重构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-CN/2025/%E4%BD%BF%E7%94%A8Android-Studio%E7%9C%9F%E6%9C%BA%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90%E9%97%AA%E9%80%80%E5%8E%9F%E5%9B%A0/" rel="prev" title="使用Android Studio真机调试分析闪退原因">
+                  <i class="fa fa-angle-left"></i> 使用Android Studio真机调试分析闪退原因
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2025/en-2025-12-16-Troubleshooting-the-Issue-of-Loading-SpriteTexture2D-Resource-Types-with-the-GameFramework-in-Unity/" rel="next" title="Troubleshooting the Issue of Loading Sprite&#x2F;Texture2D Resource Types with the GameFramework in Unity">
+                  Troubleshooting the Issue of Loading Sprite/Texture2D Resource Types with the GameFramework in Unity <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+  <div class="languages">
+    <label class="lang-select-label">
+      <i class="fa fa-language"></i>
+      <span>简体中文</span>
+      <i class="fa fa-angle-up" aria-hidden="true"></i>
+    </label>
+    <select class="lang-select" data-canonical="" aria-label="选择语言">
+      
+        <option value="zh-CN" data-href="/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/" selected="">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/" selected="">
+          English
+        </option>
+      
+    </select>
+  </div>
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
