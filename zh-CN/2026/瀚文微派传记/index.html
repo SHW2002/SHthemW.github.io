@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="这篇文章回顾了我在微派从 2024 年到 2026 年的工作与成长：从梦幻岛的业务开发和工具改进，到躲猫猫的实时玩法与多人同步，再到《小岛有晴天》中对角色、相机与操控（3C）模块的完整负责，也记录了沿途的开源贡献和团队协作。整理这些经历时，最有感触的是，许多当时只是想把眼前问题解决好的小事，回头看已经连成了一条路。很感谢一路上愿意指导、配合和信任我的同事，也希望自己能继续保持这份耐心，把功能做扎实">
+    <meta name="description" content="沈瀚文（ShenHanWen &#x2F; SHW2002）· 2024—2026 年工作与成长回顾 取材截至 2026 年 9 月 21 日。 沈瀚文在微派的这段经历，可以从一个钓鱼玩法的UI界面讲起。那时需要弄清楚的，是标题应不应该固定、列表如何滚动。后来，同一个人的工作记录里出现了跨端迁移、动画同步、代码生成，以及两名玩家牵手时的关节约束。把这些记录连起来，会看到职责一点点变宽：先把手里的功">
 <meta property="og:type" content="article">
 <meta property="og:title" content="瀚文微派传记">
 <meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2026/%E7%80%9A%E6%96%87%E5%BE%AE%E6%B4%BE%E4%BC%A0%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
-<meta property="og:description" content="这篇文章回顾了我在微派从 2024 年到 2026 年的工作与成长：从梦幻岛的业务开发和工具改进，到躲猫猫的实时玩法与多人同步，再到《小岛有晴天》中对角色、相机与操控（3C）模块的完整负责，也记录了沿途的开源贡献和团队协作。整理这些经历时，最有感触的是，许多当时只是想把眼前问题解决好的小事，回头看已经连成了一条路。很感谢一路上愿意指导、配合和信任我的同事，也希望自己能继续保持这份耐心，把功能做扎实">
+<meta property="og:description" content="沈瀚文（ShenHanWen &#x2F; SHW2002）· 2024—2026 年工作与成长回顾 取材截至 2026 年 9 月 21 日。 沈瀚文在微派的这段经历，可以从一个钓鱼玩法的UI界面讲起。那时需要弄清楚的，是标题应不应该固定、列表如何滚动。后来，同一个人的工作记录里出现了跨端迁移、动画同步、代码生成，以及两名玩家牵手时的关节约束。把这些记录连起来，会看到职责一点点变宽：先把手里的功">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-09-22T03:20:06.000Z">
-<meta property="article:modified_time" content="2026-09-22T03:34:00.494Z">
+<meta property="article:modified_time" content="2026-09-22T03:40:17.488Z">
 <meta property="article:author" content="HanWen">
 <meta name="twitter:card" content="summary">
 
@@ -219,7 +219,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2026-09-22 11:20:06 / 修改时间：11:34:00" itemprop="dateCreated datePublished" datetime="2026-09-22T11:20:06+08:00">2026-09-22</time>
+      <time title="创建时间：2026-09-22 11:20:06 / 修改时间：11:40:17" itemprop="dateCreated datePublished" datetime="2026-09-22T11:20:06+08:00">2026-09-22</time>
     </span>
 
   
@@ -238,15 +238,16 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>这篇文章回顾了我在微派从 2024 年到 2026 年的工作与成长：从梦幻岛的业务开发和工具改进，到躲猫猫的实时玩法与多人同步，再到《小岛有晴天》中对角色、相机与操控（3C）模块的完整负责，也记录了沿途的开源贡献和团队协作。整理这些经历时，最有感触的是，许多当时只是想把眼前问题解决好的小事，回头看已经连成了一条路。很感谢一路上愿意指导、配合和信任我的同事，也希望自己能继续保持这份耐心，把功能做扎实，把经验留下来，让下一次交付比上一次更从容。</p>
-<span id="more"></span>
-<p><strong>沈瀚文（ShenHanWen / SHW2002）· 2024—2026 年工作与成长回顾</strong></p>
+    <div class="post-body" itemprop="articleBody"><p><strong>沈瀚文（ShenHanWen &#x2F; SHW2002）· 2024—2026 年工作与成长回顾</strong></p>
 <p><em>取材截至 2026 年 9 月 21 日。</em></p>
-<p>沈瀚文在微派的这段经历，可以从一个鱼篓界面讲起。那时需要弄清楚的，是放鱼和换鱼怎样跳转、标题应不应该固定、列表如何滚动。后来，同一个人的工作记录里出现了跨端迁移、动画同步、代码生成，以及两名玩家牵手时的关节约束。把这些记录连起来，会看到职责一点点变宽：先把手里的功能做完，再让它经得起完整流程，随后开始为下一次开发、为接手的同事准备可以复用的东西。</p>
+<p>沈瀚文在微派的这段经历，可以从一个钓鱼玩法的UI界面讲起。那时需要弄清楚的，是标题应不应该固定、列表如何滚动。后来，同一个人的工作记录里出现了跨端迁移、动画同步、代码生成，以及两名玩家牵手时的关节约束。把这些记录连起来，会看到职责一点点变宽：先把手里的功能做完，再让它经得起完整流程，随后开始为下一次开发、为接手的同事准备可以复用的东西。</p>
+<span id="more"></span>
+
 <p>2024 年，他在实习与毕业的交接中走进商业游戏开发。计算机和游戏原本就是兴趣，真正进入团队后，兴趣有了具体的承载：正在运营的版本、等待接入的资源、需要一起确认的需求，还有上线之后玩家的反馈。梦幻岛、躲猫猫和《小岛有晴天》各自留下了一段不同的经历，而贯穿其中的，是他逐渐学会把眼前的问题处理得更完整，也把解决办法留下来。</p>
 <h2 id="1-2024—2025-年-·-梦幻岛：在成熟项目中建立业务基础"><a href="#1-2024—2025-年-·-梦幻岛：在成熟项目中建立业务基础" class="headerlink" title="1 2024—2025 年 · 梦幻岛：在成熟项目中建立业务基础"></a>1 2024—2025 年 · 梦幻岛：在成熟项目中建立业务基础</h2><p>梦幻岛是这段故事的重要起点。项目已经运行着丰富的玩法，也有长期积累的规则，新加入的开发者需要一边做事，一边读懂它。沈瀚文从界面、交互与表现问题入手，逐渐参与钓鱼养成、渔具和载具等成组功能。年度总结里，他特别记下梦幻岛 2.6 在 WePlay 华语服上线：这是他第一次参与研发并跟着走完上线流程，玩家对新玩法的热情让这份工作有了直接的回应。第一次完整交付带来的认识，也具体到了每一个入口：按钮点下去之后，服务器数据、界面和角色状态需要一起接得住。</p>
 <h3 id="1-1-钓鱼与载具：从首次上线到状态分工"><a href="#1-1-钓鱼与载具：从首次上线到状态分工" class="headerlink" title="1.1 钓鱼与载具：从首次上线到状态分工"></a>1.1 钓鱼与载具：从首次上线到状态分工</h3><ul>
-<li><strong>走完第一次上线：</strong> 参与梦幻岛 2.6 钓鱼相关研发，随团队完成华语服上线，开始积累从需求到发布的完整经验。</li>
+<li><p><strong>走完第一次上线：</strong> 参与梦幻岛 2.6 钓鱼相关研发，随团队完成华语服上线，开始积累从需求到发布的完整经验。</p>
+</li>
 <li><p><strong>把角色状态分清楚：</strong> 将“已在载具中”与“正在驾驶”拆开，为乘客活动、驾驶和离船建立各自的行为边界。</p>
 <ul>
 <li>以 <code>isInVehicle</code> 与 <code>isDriving</code> 分别表达登船和驾驶；进入驾驶必须已经在船上，离船时同步退出驾驶。</li>
@@ -462,7 +463,8 @@
 </ul>
 <p>绳索移动中的取舍，随后延伸到了两个人之间。牵手既要让双方共享稳定的位置与姿态，也要为不同动作保留可以调整的空间。沈瀚文将问题分成共同接触点、转向跟随和关节姿态几个部分，分别明确计算方式与更新顺序，再把它们接到同一套交互流程中。这使体验中的调整能够对应到具体机制，也让新资源沿着已有规则继续适配。</p>
 <ul>
-<li><strong>三个问题，当天收尾：</strong> 据他向负责人的进度同步，初版体验后测试同事当轮测出 <strong>3 个 Bug</strong>，这些问题与冒烟发现的问题均在 <strong>当天完成修复</strong>。</li>
+<li><p><strong>三个问题，当天收尾：</strong> 据他向负责人的进度同步，初版体验后测试同事当轮测出 <strong>3 个 Bug</strong>，这些问题与冒烟发现的问题均在 <strong>当天完成修复</strong>。</p>
+</li>
 <li><p><strong>让一对动作共同开始和结束：</strong> 每台客户端先准备双方资源，再在本机同一帧应用两人的位置与动作，按关系标识、序号和阶段处理消息与清理。</p>
 <ul>
 <li>将资源等待与正式播放计时分开，按关系标识、序号和阶段检查消息，处理过期数据。</li>
