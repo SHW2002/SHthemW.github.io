@@ -74,6 +74,12 @@
 
 
 
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -162,7 +168,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -230,13 +236,6 @@
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-07-01 00:00:00" itemprop="dateModified" datetime="2026-07-01T00:00:00+08:00">2026-07-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
@@ -264,9 +263,11 @@
     <div class="post-body" itemprop="articleBody"><p>排查一个线上问题时，日志本应提供线索，但大量高频输出也会让问题更难看清。后来我专门做了一次统计：从进入游戏开始，采样到帧率稳定后的五秒，查看每条日志分别打印了多少次。</p>
 <p>结果排在第一的一条输出出现了 <strong>947 次</strong>，后面的几条则是几十次。删掉这条重复日志后，当时的主观流畅度已有明显改善。这让我开始系统整理日志频率、用途和开关。</p>
 <span id="more"></span>
+
 <h2 id="先限定采样窗口"><a href="#先限定采样窗口" class="headerlink" title="先限定采样窗口"></a>先限定采样窗口</h2><p>这里的 947 次不是“每秒 947 次”，也不是“仅在稳定后的五秒里打印 947 次”。采样覆盖了整个进入过程，并在帧率稳定后继续了五秒。</p>
 <p>统计窗口必须写清楚，否则同一个数字很容易被解读成不同的性能结论。我当时关注的是：在一次常见进入流程里，哪些输出明显重复、值得优先检查。</p>
-<p><img src="/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/log-frequency.svg" alt="同一次采样中，高频重复日志为947次，其余四类输出为49、40、40和35次" width="530" style="display:block;width:530px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<img src="/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/log-frequency.svg" alt="同一次采样中，高频重复日志为947次，其余四类输出为49、40、40和35次" width="530" style="display:block;width:530px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
 <p><em>根据当时的统计截图重绘，保留计数，将内部函数与模块名称替换为用途描述。</em></p>
 <p>聚合时最好按固定事件或日志模板计数。如果一条日志把时间、对象 ID 和位置全部拼进文本，每次生成的字符串都不同，按完整内容分组就可能掩盖重复调用。</p>
 <h2 id="高频不代表一定该删除"><a href="#高频不代表一定该删除" class="headerlink" title="高频不代表一定该删除"></a>高频不代表一定该删除</h2><p>计数只是筛选线索。网络连接、关键资源加载和异常状态等信息，即使在进入阶段比较密集，也可能对线上问题有价值。</p>
@@ -275,6 +276,7 @@
 <h2 id="屏幕上不显示，不等于没有开销"><a href="#屏幕上不显示，不等于没有开销" class="headerlink" title="屏幕上不显示，不等于没有开销"></a>屏幕上不显示，不等于没有开销</h2><p>日志涉及的成本可能发生在多个位置：准备参数、格式化字符串、Lua 与 C# 之间的调用、堆栈采集，以及后面的输出与显示。</p>
 <p>因此 Console 面板里的折叠或过滤，不能直接当作前面这些工作没有发生。尤其是字符串已经拼好才传入日志函数时，函数内部判断关闭也来不及消除拼接成本。</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 即使方法内部忽略 Debug，参数求值仍然会发生。</span></span><br><span class="line">Log.Debug(<span class="string">$&quot;Preview objects: <span class="subst">&#123;BuildObjectDescription()&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在准备昂贵诊断信息之前判断开关。</span></span><br><span class="line"><span class="keyword">if</span> (LogSettings.PreviewDebugEnabled)</span><br><span class="line">    Log.Debug(<span class="string">$&quot;Preview objects: <span class="subst">&#123;BuildObjectDescription()&#125;</span>&quot;</span>);</span><br></pre></td></tr></table></figure>
+
 <p>Lua 的拼接表达式也有同样的问题。宏、条件方法或延迟构造可以作为另一种实现方式，但应该先确认项目的日志层到底在哪里过滤，避免只优化显示端。</p>
 <h2 id="分级与模块标签分别解决不同问题"><a href="#分级与模块标签分别解决不同问题" class="headerlink" title="分级与模块标签分别解决不同问题"></a>分级与模块标签分别解决不同问题</h2><p>日志等级表达重要性，模块标签表达来源，两者可以一起使用。例如只观察资源模块的 Debug，同时保留其他模块的 Warning 和 Error。</p>
 <p>对经常排查的模块，默认关闭详细日志，保留可主动开启的入口。这样平时不会被无关信息淹没，需要联调时也不用到处临时加 <code>print</code>。</p>

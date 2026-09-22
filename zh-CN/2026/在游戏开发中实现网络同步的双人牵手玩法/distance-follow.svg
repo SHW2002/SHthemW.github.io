@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="670" viewBox="0 0 1040 670" role="img" aria-labelledby="title desc">
+<title id="title">按距离选择速度并推进接收方</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。</desc>
+<defs>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+</defs>
+<rect width="1040" height="670" fill="#FFFFFF"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">0</tspan></text>
+<path d="M135.00 340.00L968.00 340.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<path d="M135.00 340.00L135.00 51.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<text x="980" y="348" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">d</text>
+<text x="115" y="48" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">v</text>
+<path d="M135.00 270.00L932.00 270.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<text x="116" y="278.0" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="end">v<tspan baseline-shift="sub" font-size="70%">min</tspan></text>
+<path d="M135.00 116.00L932.00 116.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<text x="116" y="124.0" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="end">v<tspan baseline-shift="sub" font-size="70%">max</tspan></text>
+<path d="M135.00 340.00L870.00 60.00" fill="none" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="7 7"/>
+<path d="M135.00 340.00L193.80 340.00" fill="none" stroke="#FF0000" stroke-width="3"/>
+<path d="M193.80 270.00L318.75 270.00L723.00 116.00L928.80 116.00" fill="none" stroke="#FF0000" stroke-width="3"/>
+<circle cx="193.80" cy="340.00" r="4" fill="#FF0000" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="193.80" cy="270.00" r="4" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<text x="193.8" y="375" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">r<tspan baseline-shift="sub" font-size="70%">stop</tspan></text>
+<text x="490" y="195" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">k</text>
+<path d="M817.50 340.00L817.50 116.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M812.50 116.00L822.50 116.00" fill="none" stroke="#000000" stroke-width="2"/>
+<path d="M817.50 111.00L817.50 121.00" fill="none" stroke="#000000" stroke-width="2"/>
+<text x="817.5" y="390" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">d(t0)</text>
+<path d="M170.00 448.00L820.00 448.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M170.00 443.00L170.00 453.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M820.00 443.00L820.00 453.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<text x="495.0" y="432" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">d</text>
+<path d="M170.00 535.00L820.00 535.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M815.00 535.00L825.00 535.00" fill="none" stroke="#FF0000" stroke-width="2"/>
+<path d="M820.00 530.00L820.00 540.00" fill="none" stroke="#FF0000" stroke-width="2"/>
+<text x="834" y="566" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">t</tspan></text>
+<path d="M170.00 590.00L410.00 590.00" fill="none" stroke="#0000FF" stroke-width="3" marker-end="url(#b)"/>
+<path d="M170.00 622.00L410.00 622.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M170.00 617.00L170.00 627.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M410.00 617.00L410.00 627.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<text x="290.0" y="658" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">v · Δt</text>
+<g data-role="recipient" data-x="170.00" data-y="535.00" transform="translate(170.00 535.00) scale(1)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="188" y="550" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">d</tspan></text>
+<g data-role="initiator" data-x="938.00" data-y="468.00" transform="translate(938.00 468.00) scale(1)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="956" y="483" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<path d="M938.00 468.00L820.00 535.00" fill="none" stroke="#FF0000" stroke-width="1.5" stroke-dasharray="7 7"/>
+</g>
+</svg>

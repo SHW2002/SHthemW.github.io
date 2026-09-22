@@ -66,6 +66,12 @@
 
 
 
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -153,7 +159,7 @@
         <span class="site-state-item-name">categories</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -217,13 +223,6 @@
       <span class="post-meta-item-text">Posted on</span>
 
       <time title="Created: 2026-07-21 17:04:50" itemprop="dateCreated datePublished" datetime="2026-07-21T17:04:50+08:00">2026-07-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-09-22 16:46:42" itemprop="dateModified" datetime="2026-09-22T16:46:42+08:00">2026-09-22</time>
     </span>
 
   
@@ -305,13 +304,6 @@
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-09-22 16:46:42" itemprop="dateModified" datetime="2026-09-22T16:46:42+08:00">2026-09-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">In</span>
@@ -331,7 +323,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>Recently, our company launched a casual mini-game, and I handled the animation part, developing a basic yet functional action synchronization solution in the project. It is based on broadcasting states for synchronization, and the principle is not complicated. However, what works best is what fits the needs—this solution is sufficient for most mini-games that are not sensitive to latency, and it can be quickly set up without relying on third-party plugins. Therefore, I would like to share the thought process behind building it.</p>
-<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;"></p>
+<img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;">
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/en/2026/en-2026-03-04-Implementing-Animation-Synchronization-with-Pass-Through-States-in-Unity-Mecanim/#more" rel="contents">
@@ -395,13 +387,6 @@
       <span class="post-meta-item-text">Posted on</span>
 
       <time title="Created: 2025-12-16 17:37:03" itemprop="dateCreated datePublished" datetime="2025-12-16T17:37:03+08:00">2025-12-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-09-22 16:46:42" itemprop="dateModified" datetime="2026-09-22T16:46:42+08:00">2026-09-22</time>
     </span>
 
   
@@ -480,13 +465,6 @@
 
       <time title="Created: 2025-10-20 19:29:30" itemprop="dateCreated datePublished" datetime="2025-10-20T19:29:30+08:00">2025-10-20</time>
     </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-09-22 16:46:42" itemprop="dateModified" datetime="2026-09-22T16:46:42+08:00">2026-09-22</time>
-    </span>
 
   
 </div>
@@ -563,13 +541,6 @@
 
       <time title="Created: 2024-03-09 12:31:57" itemprop="dateCreated datePublished" datetime="2024-03-09T12:31:57+08:00">2024-03-09</time>
     </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-09-22 16:46:42" itemprop="dateModified" datetime="2026-09-22T16:46:42+08:00">2026-09-22</time>
-    </span>
 
   
 </div>
@@ -586,7 +557,7 @@
 <p>Thanks to everyone who liked and favorited!</p>
 </blockquote>
 <p>Imagine a small bridge with an archway. The player first goes up the bridge from the left, then down from the right, and finally walks through the archway in the middle.</p>
-<p>This is a very simple and common scenario. However, implementing it in a 2D top-down game is more complex than it might seem — how can the collision box that prevents the player from jumping off the bridge not also block the player trying to pass through the archway?</p>
+<p>This is a very simple and common scenario. However, implementing it in a 2D top-down game is more complex than it might seem – how can the collision box that prevents the player from jumping off the bridge not also block the player trying to pass through the archway?</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s6.png" alt="好吧这两个数字可能被压的太扁了"></p>
           <!--noindex-->
             <div class="post-button">
@@ -651,13 +622,6 @@
       <span class="post-meta-item-text">Posted on</span>
 
       <time title="Created: 2023-11-30 16:53:46" itemprop="dateCreated datePublished" datetime="2023-11-30T16:53:46+08:00">2023-11-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-09-22 16:46:42" itemprop="dateModified" datetime="2026-09-22T16:46:42+08:00">2026-09-22</time>
     </span>
 
   

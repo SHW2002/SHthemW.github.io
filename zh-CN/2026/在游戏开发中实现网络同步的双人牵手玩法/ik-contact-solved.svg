@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="650" viewBox="0 0 1040 650" role="img" aria-labelledby="title desc">
+<title id="title">从两侧接触姿态形成共同目标</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。实线骨链包含双方各自的肩、肘、腕三个节点。</desc>
+<defs>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+</defs>
+<rect width="1040" height="650" fill="#FFFFFF"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">1</tspan></text>
+<path d="M315.00 270.00L315.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M315.00 270.00L389.32 370.51L504.00 362.00" fill="none" stroke="#FF0000" stroke-width="3.5"/>
+<path d="M504.00 362.00L520.00 362.00" fill="none" stroke="#FF0000" stroke-width="2.2"/>
+<g data-bone-node="S_i">
+<circle cx="315.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="300" y="255" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">S<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<g data-bone-node="E_i">
+<circle cx="389.32" cy="370.51" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="374.3152937564052" y="393.5098856526024" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">E<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<g data-bone-node="W_i">
+<circle cx="504.00" cy="362.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="496.0" y="342.0" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">W<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<g data-role="initiator" data-x="315.00" data-y="565.00" transform="translate(315.00 565.00) scale(1.2)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="333" y="580" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<path d="M725.00 270.00L725.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M725.00 270.00L650.68 370.51L536.00 362.00" fill="none" stroke="#0000FF" stroke-width="3.5"/>
+<path d="M536.00 362.00L520.00 362.00" fill="none" stroke="#0000FF" stroke-width="2.2"/>
+<g data-bone-node="S_r">
+<circle cx="725.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="740" y="255" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">S<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<g data-bone-node="E_r">
+<circle cx="650.68" cy="370.51" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="665.6847062435949" y="393.5098856526024" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">E<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<g data-bone-node="W_r">
+<circle cx="536.00" cy="362.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="544.0" y="342.0" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">W<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<g data-role="recipient" data-x="725.00" data-y="565.00" transform="translate(725.00 565.00) scale(1.2)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="743" y="580" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<path d="M515.00 362.00L525.00 362.00" fill="none" stroke="#000000" stroke-width="2"/>
+<path d="M520.00 357.00L520.00 367.00" fill="none" stroke="#000000" stroke-width="2"/>
+<text x="520.0" y="401.0" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">C</text>
+<path d="M489.00 407.00L512.00 373.00" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#k)"/>
+<path d="M555.00 328.00L527.00 355.00" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#k)"/>
+<path d="M531.25 352.08L531.44 352.61L531.61 353.13L531.78 353.67L531.93 354.20L532.08 354.74L532.21 355.28L532.33 355.82L532.45 356.37L532.55 356.91L532.64 357.46L532.72 358.01L532.80 358.57L532.86 359.12L532.91 359.67L532.95 360.23L532.97 360.79L532.99 361.34L533.00 361.90L533.00 362.46L532.98 363.01L532.96 363.57L532.92 364.12L532.88 364.68L532.82 365.23L532.75 365.79L532.67 366.34L532.59 366.89L532.49 367.43L532.38 367.98L532.26 368.52L532.13 369.06L531.99 369.60L531.83 370.14L531.67 370.67L531.50 371.20L531.32 371.73L531.13 372.25L530.93 372.77L530.71 373.28L530.49 373.80" fill="none" stroke="#FF0000" stroke-width="1.5"/>
+<path d="M509.51 373.80L509.29 373.28L509.07 372.77L508.87 372.25L508.68 371.73L508.50 371.20L508.33 370.67L508.17 370.14L508.01 369.60L507.87 369.06L507.74 368.52L507.62 367.98L507.51 367.43L507.41 366.89L507.33 366.34L507.25 365.79L507.18 365.23L507.12 364.68L507.08 364.12L507.04 363.57L507.02 363.01L507.00 362.46L507.00 361.90L507.01 361.34L507.03 360.79L507.05 360.23L507.09 359.67L507.14 359.12L507.20 358.57L507.28 358.01L507.36 357.46L507.45 356.91L507.55 356.37L507.67 355.82L507.79 355.28L507.92 354.74L508.07 354.20L508.22 353.67L508.39 353.13L508.56 352.61L508.75 352.08" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+</g>
+</svg>

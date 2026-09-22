@@ -73,6 +73,12 @@
 
 
 
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -161,7 +167,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -256,13 +262,14 @@
     <div class="post-body" itemprop="articleBody"><p>项目里的 Timeline 越来越多之后，主场景也跟着引用了越来越多的动画和表现资源。美术制作时，把 Timeline 挂到场景中的 PlayableDirector 上很方便；但如果把这份引用关系一直保留到运行时，场景就会持续携带这些资源依赖。</p>
 <p>这次调整把 Timeline 资源与场景对象的绑定信息单独保存，需要播放时再加载并恢复绑定。美术仍然在场景中制作和预览，交付时多一个导出步骤，运行时则按实际需要装配。</p>
 <span id="more"></span>
+
 <h2 id="TimelineAsset-与绑定信息是两部分"><a href="#TimelineAsset-与绑定信息是两部分" class="headerlink" title="TimelineAsset 与绑定信息是两部分"></a>TimelineAsset 与绑定信息是两部分</h2><p>TimelineAsset 保存轨道、片段和时间等内容，但一条轨道究竟控制场景中的哪个对象，通常由 PlayableDirector 保存。</p>
 <p>例如一个 AnimationTrack 需要绑定 Animator，一个 ActivationTrack 需要绑定 GameObject。把 TimelineAsset 从 Director 上取下来再动态加载回来，并不会凭空知道之前拖进去的是哪一个场景对象。</p>
 <p>因此需要一起解决两件事：资源如何按需加载，以及加载后如何恢复轨道目标。</p>
-<p><img src="/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/timeline-binding.svg" alt="制作阶段导出 Timeline 绑定，运行时加载资源并通过场景索引恢复轨道引用" width="550" style="display:block;width:550px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<img src="/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/timeline-binding.svg" alt="制作阶段导出 Timeline 绑定，运行时加载资源并通过场景索引恢复轨道引用" width="550" style="display:block;width:550px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
 <p>动态绑定能够切断场景到部分资源的直接引用链，但不自动保证首包一定减少多少。最终打包结果还取决于资源分组和其他引用是否仍然存在，不能只根据场景 Inspector 已经清空就判断收益。</p>
 <h2 id="导出时保存哪些内容"><a href="#导出时保存哪些内容" class="headerlink" title="导出时保存哪些内容"></a>导出时保存哪些内容</h2><p>我为每个 Timeline 保存一份绑定描述，记录资源信息与各条轨道的目标：</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -270,8 +277,7 @@
 <th>用途</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>Timeline 资源路径与 GUID</td>
 <td>编辑器定位与对应关系检查</td>
 </tr>
@@ -291,16 +297,16 @@
 <td>对象类型、组件类型</td>
 <td>区分绑定 GameObject 还是某个组件</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>数据本身采用 XML 保存。关键不在 XML 这个格式，而在于文件保存的是可恢复的定位信息，没有继续持有原场景对象的直接引用。</p>
 <p>下面是一条经过简化的描述：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">TrackBindingData</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">TrackName</span>&gt;</span>Character<span class="tag">&lt;/<span class="name">TrackName</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">TrackType</span>&gt;</span>AnimationTrack<span class="tag">&lt;/<span class="name">TrackType</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">BoundObjectPath</span>&gt;</span>Stage/Actor<span class="tag">&lt;/<span class="name">BoundObjectPath</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">BoundComponentType</span>&gt;</span>Animator<span class="tag">&lt;/<span class="name">BoundComponentType</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">TrackBindingData</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
 <p>导出器从 <code>timeline.outputs</code> 遍历轨道，通过 <code>director.GetGenericBinding(output.sourceObject)</code> 读取当前绑定。如果目标是组件，就保存它所在对象的路径和组件类型；如果目标是 GameObject，就保存对象本身的类型。</p>
 <p>文件成功写出之后，再清除 Director 的轨道绑定和 <code>playableAsset</code>。编辑器侧同时记录 Undo 并标记对象变更，避免用户看到场景清空时无法撤销。</p>
 <h2 id="运行时怎样找回引用"><a href="#运行时怎样找回引用" class="headerlink" title="运行时怎样找回引用"></a>运行时怎样找回引用</h2><p>播放前先加载 TimelineAsset 和绑定描述，给 Director 设置资源，再把描述中的目标恢复成对象引用。核心调用仍然是 Unity 自带的 API：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">director.playableAsset = timeline;</span><br><span class="line"></span><br><span class="line"><span class="keyword">foreach</span> (TrackAsset track <span class="keyword">in</span> timeline.GetOutputTracks())</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!bindings.TryGetValue(track.name, <span class="keyword">out</span> <span class="keyword">var</span> binding))</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">    UnityEngine.Object target = ResolveTarget(binding, sceneRoot);</span><br><span class="line">    <span class="keyword">if</span> (target == <span class="literal">null</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ReportMissingBinding(track.name, binding);</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    director.SetGenericBinding(track, target);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这是绑定流程的示意，资源加载、失败汇总和是否允许播放由外层管理。一个关键轨道没有绑上时，不能只打一条日志就当成播放准备成功。</p>
 <p>我在当前版本里按轨道名称建立查找表，所以同一份资源中的输出轨道名称需要保持唯一，重命名之后也要重新导出。如果要支持任意重名轨道，就需要改用更稳定的标识，不能继续让同名项覆盖。</p>
 <p>这个工具处理的是轨道的 Generic Binding。片段内部的 <code>ExposedReference</code> 等引用有自己的解析机制，不能假设导出轨道绑定就已经覆盖了 Timeline 中的所有依赖。</p>

@@ -73,6 +73,12 @@
 
 
 
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -161,7 +167,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -256,44 +262,43 @@
     <div class="post-body" itemprop="articleBody"><p>配置表有了类型定义之后，业务代码里仍然可能散落着很多数字 ID。读代码时需要回到表格查含义，复制到另一处时也容易写错。手工维护一份常量文件能够改善可读性，但会增加一份需要同步的数据。</p>
 <p>我从 2025 年 9 月开始扩展项目的导表流程，让道具 ID 随导表一起生成。到 2026 年初，实体、界面、音效等类型也有类似需求，于是又把重复的输出流程抽成公共生成器，并继续接入 NPC ID。</p>
 <span id="more"></span>
+
 <h2 id="让数据表成为唯一的数据来源"><a href="#让数据表成为唯一的数据来源" class="headerlink" title="让数据表成为唯一的数据来源"></a>让数据表成为唯一的数据来源</h2><p>这里没有替换 Luban 的数据导出能力。Luban 先完成表格解析与数据输出，项目自己的后处理再读取导出结果，生成业务常量。</p>
-<p><img src="/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/id-generation.svg" alt="配置表经 Luban 导出，再由各类 ID 生成器共用输出逻辑生成 C# 常量" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<img src="/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/id-generation.svg" alt="配置表经 Luban 导出，再由各类 ID 生成器共用输出逻辑生成 C# 常量" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
 <p>例如下面是一组虚构的配置：</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
-<th style="text-align:right">ID</th>
+<th align="right">ID</th>
 <th>系统</th>
 <th>名称</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td style="text-align:right">101</td>
+<tbody><tr>
+<td align="right">101</td>
 <td>Tool</td>
 <td>小铲子</td>
 </tr>
 <tr>
-<td style="text-align:right">102</td>
+<td align="right">102</td>
 <td>Tool</td>
 <td>喷壶</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>生成后，业务可以这样引用：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">ItemId</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">int</span> Undefined = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>小铲子<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">int</span> Tool_XiaoChanZi = <span class="number">101</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>喷壶<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">const</span> <span class="built_in">int</span> Tool_PenHu = <span class="number">102</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>数值仍然来自配置表，常量名负责提供可读的访问入口。修改生成文件没有意义，下次导表就会被覆盖，因此文件头也明确标记为自动生成。</p>
 <h2 id="名称生成需要处理哪些约束"><a href="#名称生成需要处理哪些约束" class="headerlink" title="名称生成需要处理哪些约束"></a>名称生成需要处理哪些约束</h2><p>项目当时采用“系统名 + 名称拼音”的方式生成道具常量。这能减少不同系统之间的命名冲突，也让开发者在输入系统前缀后获得一组较容易辨认的提示。</p>
 <p>生成前先检查系统字段能否对应到有效枚举。如果配置里填了不存在的系统值，应该在生成阶段报告所在数据，而不是输出一个看起来正常、实际含义不明的常量。</p>
 <p>中文名转拼音之后仍然可能重名，因此实现中维护一个已用名称集合。再次遇到同名结果时，为后来的常量附加数据 ID，并输出警告。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Tool_XiaoChanZi</span><br><span class="line">Tool_XiaoChanZi_103</span><br></pre></td></tr></table></figure>
+
 <p>这是一种务实的兼容方式，但它并不保证名称永远不变。修改文案、调整重名项的先后顺序，都可能影响生成结果。需要长期稳定的引用时，更合适的是在表里提供单独的代码名字段，让展示文案与程序标识分别维护。</p>
 <p>拼音也不是完整的 C# 标识符清洗。项目的名称约定能覆盖日常数据，并不意味着任意标点、数字开头或关键字都可以直接生成合法代码。这类情况需要在输入约束或生成器中明确处理，最后仍要通过编译检查。</p>
 <h2 id="重复的是输出流程，变化的是表格规则"><a href="#重复的是输出流程，变化的是表格规则" class="headerlink" title="重复的是输出流程，变化的是表格规则"></a>重复的是输出流程，变化的是表格规则</h2><p>生成器逐渐增多之后，很多代码开始重复：检查参数、创建命名空间、写注释、输出常量和建立目录。每增加一种表，就要复制一段基本相同的文件写入逻辑。</p>
 <p>我把它们拆成两层：</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -301,8 +306,7 @@
 <th>负责的事情</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>各表生成器</td>
 <td>读取数据、选择条目、校验业务字段、决定常量名称</td>
 </tr>
@@ -310,11 +314,10 @@
 <td>公共基类</td>
 <td>组织 C# 结构、生成注释、输出常量或枚举、写入文件</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>上层向公共方法提供一组简单的数据项：常量名、ID 和描述。这样新增一种表时，关注点就落在“哪些条目需要生成、应该叫什么”，不必再次维护文件格式。</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">IdGenerator</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">GenerateCode</span>()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">WriteConstants</span>(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="built_in">string</span> targetNamespace,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="built_in">string</span> className,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="built_in">string</span> outputPath,</span></span></span><br><span class="line"><span class="params"><span class="function">        IReadOnlyList&lt;IdEntry&gt; entries</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> content = BuildSource(targetNamespace, className, entries);</span><br><span class="line">        WriteWhenChanged(outputPath, content);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这里展示的是职责结构，省略了项目自己的数据类型。常量和枚举可以分别提供输出入口，不必为了统一形式强行把所有表都生成同一种声明。</p>
 <h2 id="发现和执行生成器"><a href="#发现和执行生成器" class="headerlink" title="发现和执行生成器"></a>发现和执行生成器</h2><p>项目的生成器都位于同一个工具程序集里，因此加载器可以反射查找公共基类的非抽象派生类，筛选有无参构造函数的类型，再实例化并统一执行。</p>
 <p>实际执行前按类型名排序，使同一组生成器的执行顺序确定。这个顺序只用于保持行为可预期，不应该承载隐含的跨生成器依赖；如果 B 必须读取 A 的结果，就需要显式安排依赖关系。</p>
@@ -322,6 +325,7 @@
 <p>这次实现会记录单个生成器的异常，并继续尝试剩余生成器。这样的行为便于一次发现多个问题，但“后面的表生成完成”不能当作整个流程成功。接入自动构建时，需要汇总错误并通过失败状态阻止使用不完整的输出。</p>
 <h2 id="内容不变时跳过写入"><a href="#内容不变时跳过写入" class="headerlink" title="内容不变时跳过写入"></a>内容不变时跳过写入</h2><p>即使生成结果完全相同，直接覆盖文件也会改变修改时间，增加文件监听、资源刷新或编译链路的无效工作。因此公共输出方法先比较内容：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">WriteWhenChanged</span>(<span class="params"><span class="built_in">string</span> outputPath, <span class="built_in">string</span> content</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> directory = Path.GetDirectoryName(outputPath);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">string</span>.IsNullOrEmpty(directory))</span><br><span class="line">        Directory.CreateDirectory(directory);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (File.Exists(outputPath) &amp;&amp;</span><br><span class="line">        <span class="built_in">string</span>.Equals(File.ReadAllText(outputPath), content,</span><br><span class="line">            StringComparison.Ordinal))</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    File.WriteAllText(outputPath, content);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>要让这个比较有意义，生成内容本身也必须稳定。不要在每次输出里加入当前时间，也不要依赖无序集合决定条目顺序。输入与生成规则都没变化时，重复执行应得到相同文本。</p>
 <h2 id="常量能提前暴露哪些问题"><a href="#常量能提前暴露哪些问题" class="headerlink" title="常量能提前暴露哪些问题"></a>常量能提前暴露哪些问题</h2><p>使用命名常量后，删除或重命名配置导致某个符号消失，会在代码编译时暴露引用错误；使用者也可以通过注释看到这条配置的含义。</p>
 <p>但常量只能覆盖编译期可见的引用。网络下发的 ID、存档里的旧 ID，以及运行时拼出的资源关系，仍然需要数据校验。生成代码不会自动证明所有配置引用都有效。</p>

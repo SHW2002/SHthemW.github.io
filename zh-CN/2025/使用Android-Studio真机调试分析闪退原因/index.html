@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_45cdf3e4-8095-4e30-b735-340de212c10g.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_d31fff91-ee52-49a9-a0e3-7dd5897221eg.png">
 <meta property="article:published_time" content="2025-10-20T11:29:30.000Z">
-<meta property="article:modified_time" content="2026-09-22T08:46:41.912Z">
+<meta property="article:modified_time" content="2026-09-22T04:52:42.038Z">
 <meta property="article:author" content="HanWen">
 <meta property="article:tag" content="Software, Unity">
 <meta name="twitter:card" content="summary">
@@ -83,6 +83,12 @@
   <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
 
 
 
@@ -173,7 +179,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -239,13 +245,6 @@
 
       <time title="创建时间：2025-10-20 19:29:30" itemprop="dateCreated datePublished" datetime="2025-10-20T19:29:30+08:00">2025-10-20</time>
     </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-09-22 16:46:41" itemprop="dateModified" datetime="2026-09-22T16:46:41+08:00">2026-09-22</time>
-    </span>
 
   
     <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
@@ -265,15 +264,18 @@
     
     <div class="post-body" itemprop="articleBody"><p>软件在真机上Crash后, 我们往往不能直接得到错误日志, 因此通常需要借助第三方工具来实现对日志的抓取和分析. 本文记录一次Unity游戏在安卓环境下频繁闪退的Debug过程, 使用Android Studio 2025.1.4.8进行日志抓取.</p>
 <span id="more"></span>
+
 <hr>
-<p><br></p>
+<br>
+
 <h2 id="手机端"><a href="#手机端" class="headerlink" title="手机端"></a>手机端</h2><ol>
 <li><p>准备能复现问题的手机, 进入开发者模式以进行调试. 不同手机品牌进入开发者模式的方式可能不同 (大体上都是类似的步骤, 只是菜单和选项名称有差异), 可以百度一下. 本文以我手里的小米15做演示.</p>
 </li>
 <li><p>打开设置, 在搜索栏里搜索”全部参数与信息” (或者从”关于本机” 等界面点进来, 随意), 进入详情界面:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/Screenshot_2025-10-20-19-40-07-064_com.android.se.jpg" alt="Screenshot_2025-10-20-19-40-07-064_com.android.se" style="zoom:25%;">    <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/Screenshot_2025-10-20-19-40-18-819_com.android.se.jpg" alt="Screenshot_2025-10-20-19-40-18-819_com.android.se" style="zoom:25%;"></p>
 </li>
-<li><p>连续点击五次系统版本号 (我的手机上是”OS版本”), 直到弹出”你已经处于开发者模式” 或类似的讯息:<br><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/Screenshot_2025-10-20-19-42-52-995_com.android.se.jpg" alt="Screenshot_2025-10-20-19-42-52-995_com.android.se" style="zoom:25%;"></p>
+<li><p>连续点击五次系统版本号 (我的手机上是”OS版本”), 直到弹出”你已经处于开发者模式” 或类似的讯息:</p>
+<img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/Screenshot_2025-10-20-19-42-52-995_com.android.se.jpg" alt="Screenshot_2025-10-20-19-42-52-995_com.android.se" style="zoom:25%;">
 </li>
 <li><p>打开手机的USB调试:<br><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/Screenshot_2025-10-20-19-51-25-648_com.android.se.jpg" alt="Screenshot_2025-10-20-19-51-25-648_com.android.se" style="zoom:25%;">    <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/Screenshot_2025-10-20-19-51-16-138_com.android.se.jpg" alt="Screenshot_2025-10-20-19-51-16-138_com.android.se" style="zoom:25%;"></p>
 <p>USB调试是比较敏感的权限, 部分比较新的手机可能会弹窗警告. 如果你信任用于调试的设备, 可以全选同意, 调试完成后关闭USB调试即可.</p>
@@ -281,36 +283,41 @@
 <li><p>至此, 手机端的准备工作已经完成.</p>
 </li>
 </ol>
-<p><br></p>
+<br>
+
 <h2 id="PC端"><a href="#PC端" class="headerlink" title="PC端"></a>PC端</h2><ol>
 <li><p>下载并安装Android Studio: 直接在官网下载 <a href="https://developer.android.google.cn/studio?hl=zh-cn">下载 Android Studio 和应用工具 - Android 开发者  | Android Developers</a></p>
 </li>
 <li><p>初次启动时AS应该会让你创建一个项目, 如下图所示. 我们本次的目的只是抓取日志, 并不需要运行AS中的项目, 所以选择第一项 “空项目” 即可. 理论上随便选一个其它的也没有什么影响, 我们只要进入AS的主界面即可.</p>
-<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_8749a89b-cc2b-4037-b858-35263e9c312g.jpg" alt="img_v3_02r8_8749a89b-cc2b-4037-b858-35263e9c312g" style="zoom:33%;"></p>
+<img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_8749a89b-cc2b-4037-b858-35263e9c312g.jpg" alt="img_v3_02r8_8749a89b-cc2b-4037-b858-35263e9c312g" style="zoom:33%;">
+
 <p>项目名称什么的随便填填, 我们只是需要一个空项目用于测试而已</p>
-<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_50547352-34c5-491a-ae11-f031e443f25g.jpg" alt="img_v3_02r8_50547352-34c5-491a-ae11-f031e443f25g" style="zoom: 33%;"></p>
+<img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_50547352-34c5-491a-ae11-f031e443f25g.jpg" alt="img_v3_02r8_50547352-34c5-491a-ae11-f031e443f25g" style="zoom: 33%;">
 </li>
 <li><p>AS主界面如下图所示:</p>
-<p>   <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_e7f3a6c7-5b72-4e10-bcca-894f9f3f447g.jpg" alt="img_v3_02r8_e7f3a6c7-5b72-4e10-bcca-894f9f3f447g" style="zoom: 25%;"></p>
+   <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_e7f3a6c7-5b72-4e10-bcca-894f9f3f447g.jpg" alt="img_v3_02r8_e7f3a6c7-5b72-4e10-bcca-894f9f3f447g" style="zoom: 25%;">
+
 <p>   新版本的AS很莫名其妙的把顶上的菜单栏默认隐藏了, 如果你看不到顶部菜单栏, 先按Ctrl+Alt+S调出设置界面, 然后搜menu, 把如下所示的”Main Menu”选项设为”Show above Main ToolBar”即可.</p>
-<p>   <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_4994c003-41a6-43f8-bffe-37dd171d233g.jpg" alt="img_v3_02r8_4994c003-41a6-43f8-bffe-37dd171d233g" style="zoom: 25%;"></p>
+   <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_4994c003-41a6-43f8-bffe-37dd171d233g.jpg" alt="img_v3_02r8_4994c003-41a6-43f8-bffe-37dd171d233g" style="zoom: 25%;">
 </li>
 <li><p>接下来安装用于USB调试的插件. 按Ctrl+Alt+S打开设置界面, 搜索”Android SDK”, 并选中右侧选项中的”SDK Tools”:</p>
-<p>   <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_555b22e5-4d2b-48cf-a55b-e7c75e2c357g.jpg" alt="img_v3_02r8_555b22e5-4d2b-48cf-a55b-e7c75e2c357g" style="zoom:33%;"></p>
-<p>   不同版本的Android Studio这里似乎有区别, 一些老版本的”Android SDK”选项位于”Appearance &amp; Behaviour/System Settings” 分类下, 和图示旅游不同. 还是直接搜索比较方便快捷.</p>
+   <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_555b22e5-4d2b-48cf-a55b-e7c75e2c357g.jpg" alt="img_v3_02r8_555b22e5-4d2b-48cf-a55b-e7c75e2c357g" style="zoom:33%;">
+
+<p>   不同版本的Android Studio这里似乎有区别, 一些老版本的”Android SDK”选项位于”Appearance &amp; Behaviour&#x2F;System Settings” 分类下, 和图示旅游不同. 还是直接搜索比较方便快捷.</p>
 <p>   在列表中选择”Google USB Driver”这个选项, 点击右下角的”Apply”按钮安装.</p>
 <p>   <img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_233dea20-02ce-47b9-a78e-4b167ced56bg.jpg" alt="img_v3_02r8_233dea20-02ce-47b9-a78e-4b167ced56bg"></p>
 <p>   安装会花费一定的时间, 耐心等待即可.</p>
 </li>
 </ol>
-<p><br></p>
+<br>
+
 <h2 id="日志抓取"><a href="#日志抓取" class="headerlink" title="日志抓取"></a>日志抓取</h2><p>至此准备工作就全部完成了. 用一根<strong>支持数据传输</strong>的USB线缆连接刚才操作过的手机和电脑, 如果你的手机在连接电脑时弹窗, 选择”允许传输数据”和”信任该设备”等选项.</p>
 <p>此时如果你的操作无误, AS的屏幕顶端应该显示类似的信息:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_08cf67f2-34a2-4ff5-8057-f616efc7e22g.jpg" alt="img_v3_02r8_08cf67f2-34a2-4ff5-8057-f616efc7e22g"></p>
 <p>可以看到自己设备的名称了.</p>
 <ol>
 <li><p>在菜单栏的View-Tool Windows下选择Logcat, 这是新版AS自带的日志处理工具:</p>
-<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_dc00dc47-c418-4e08-936d-77e72177c7fg.jpg" alt="img_v3_02r8_dc00dc47-c418-4e08-936d-77e72177c7fg" style="zoom: 100%;"></p>
+<img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_dc00dc47-c418-4e08-936d-77e72177c7fg.jpg" alt="img_v3_02r8_dc00dc47-c418-4e08-936d-77e72177c7fg" style="zoom: 100%;">
 </li>
 <li><p>Logcat窗口大约如下所示: 如果你的设备已经连接, 可能会疯狂的弹出各种日志. 此时可以在上面的筛选框中进行筛选. 通常, 对特定应用程序的Debug可以直接使用应用程序的包名, 如com.tencent.wechat等.<br><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/img_v3_02r8_45cdf3e4-8095-4e30-b735-340de212c10g.jpg" alt="img_v3_02r8_45cdf3e4-8095-4e30-b735-340de212c10g"></p>
 </li>

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="590" viewBox="0 0 1040 590" role="img" aria-labelledby="title desc">
+<title id="title">贴地候选、开启与落点限高</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。</desc>
+<defs>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+</defs>
+<rect width="1040" height="590" fill="#FFFFFF"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">1</tspan></text>
+<path d="M54.00 490.00L54.00 62.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<text x="42" y="51" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">Y</text>
+<path d="M83.00 250.00L535.00 250.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M83.00 190.00L535.00 190.00" fill="none" stroke="#0000FF" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M83.00 310.00L535.00 310.00" fill="none" stroke="#0000FF" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M85.00 250.00L183.00 250.00L327.00 292.00L526.00 292.00" fill="none" stroke="#000000" stroke-width="3"/>
+<path d="M165.00 250.00L165.00 310.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M170.00 250.00L160.00 250.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M170.00 310.00L160.00 310.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<text x="204" y="350" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">h<tspan baseline-shift="sub" font-size="70%">max</tspan></text>
+<path d="M165.00 190.00L165.00 250.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M170.00 190.00L160.00 190.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M170.00 250.00L160.00 250.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<text x="206" y="219" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">h<tspan baseline-shift="sub" font-size="70%">max</tspan></text>
+<path d="M322.00 292.00L332.00 292.00" fill="none" stroke="#0000FF" stroke-width="2"/>
+<path d="M327.00 287.00L327.00 297.00" fill="none" stroke="#0000FF" stroke-width="2"/>
+<text x="309" y="322" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">G</text>
+<path d="M327.00 95.00L327.00 465.00" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#k)"/>
+<path d="M322.00 95.00L332.00 95.00" fill="none" stroke="#000000" stroke-width="2"/>
+<path d="M327.00 90.00L327.00 100.00" fill="none" stroke="#000000" stroke-width="2"/>
+<text x="341" y="83" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">S</text>
+<path d="M270.00 95.00L270.00 265.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M275.00 95.00L265.00 95.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M275.00 265.00L265.00 265.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<text x="236" y="173" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="end">h<tspan baseline-shift="sub" font-size="70%">probe</tspan></text>
+<path d="M549.00 95.00L549.00 465.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M554.00 95.00L544.00 95.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M554.00 465.00L544.00 465.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<text x="567" y="454" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="start">L<tspan baseline-shift="sub" font-size="70%">probe</tspan></text>
+<path d="M449.00 250.00L449.00 292.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M454.00 250.00L444.00 250.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M454.00 292.00L444.00 292.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<text x="478" y="280.0" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">Δh</text>
+<path d="M660.00 211.00L1004.00 211.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<path d="M660.00 211.00L660.00 108.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<text x="645" y="219" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="22" text-anchor="end">0</text>
+<text x="645" y="143" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="22" text-anchor="end">1</text>
+<text x="655" y="92" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">g(t)</text>
+<text x="1012" y="219" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="start">t</text>
+<path d="M660.00 405.00L1004.00 405.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<path d="M660.00 405.00L660.00 302.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<text x="645" y="413" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="22" text-anchor="end">0</text>
+<text x="645" y="337" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="22" text-anchor="end">1</text>
+<text x="655" y="286" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">s(t)</text>
+<text x="1012" y="413" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="start">t</text>
+<path d="M660.00 211.00L737.00 211.00L737.00 135.00L998.00 135.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M660.00 405.00L891.00 405.00L891.00 329.00L998.00 329.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M908.00 95.00L908.00 470.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<text x="908" y="500" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">t<tspan baseline-shift="sub" font-size="70%">1</tspan></text>
+<path d="M737.00 530.00L891.00 530.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M737.00 525.00L737.00 535.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<path d="M891.00 525.00L891.00 535.00" fill="none" stroke="#000000" stroke-width="1.5"/>
+<text x="814" y="568" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">T<tspan baseline-shift="sub" font-size="70%">d</tspan></text>
+<g data-role="initiator" data-x="100.00" data-y="250.00" transform="translate(100.00 250.00) scale(1)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="118" y="265" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<g data-role="recipient" data-x="327.00" data-y="292.00" transform="translate(327.00 292.00) scale(1)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="345" y="307" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">n</tspan></text>
+</g>
+</svg>

@@ -74,6 +74,12 @@
 
 
 
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -162,7 +168,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -257,9 +263,9 @@
     <div class="post-body" itemprop="articleBody"><p>做图鉴和排行榜展示时，我需要把角色与手持模型放进一个固定大小的展示空间。不同服装、不同形状的手持物可以组成很多种组合，逐个配置缩放很难维护，所以我根据模型的包围盒自动限制整体尺寸。</p>
 <p>随后遇到了一个奇怪的问题：有的角色会被缩得非常小，看起来像是展示空间里只剩一个小点。缩放公式没有明显错误，真正出问题的是公式拿到的“模型尺寸”。</p>
 <span id="more"></span>
+
 <h2 id="先明确要测量什么"><a href="#先明确要测量什么" class="headerlink" title="先明确要测量什么"></a>先明确要测量什么</h2><p>展示功能需要的是<strong>当前参与展示的模型，在指定姿势下占据的空间</strong>。它与网格资产的原始尺寸、导入时覆盖多段动画的包围盒，都不一定相同。</p>
 <p>Unity 中几个容易混用的数据各有用途：</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -268,8 +274,7 @@
 <th>用于展示时需要注意什么</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td><code>Mesh.bounds</code></td>
 <td>网格局部空间</td>
 <td>蒙皮网格的原始顶点范围不代表当前动画姿势</td>
@@ -289,16 +294,16 @@
 <td>Renderer 的局部空间</td>
 <td>是当前蒙皮姿势的快照，仍需正确处理坐标变换</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>第一次排查时，画出来的包围盒远大于实际人物。尺寸限制逻辑把这个虚大的盒子当成真实模型，只能把角色继续缩小。</p>
-<p><img src="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/oversized-bounds.webp" alt="编辑器中的人物与明显偏大的包围盒" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<img src="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/oversized-bounds.webp" alt="编辑器中的人物与明显偏大的包围盒" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
 <p><em>裁取自当时的 Scene 视图，只保留人物与包围盒的大小关系。</em></p>
 <p>把相机拉远并不能修正这个问题。相机改变的是画面投影，错误的尺寸测量仍然会让缩放逻辑把角色压到不合适的大小。</p>
 <h2 id="第一次尝试使用-BakeMesh"><a href="#第一次尝试使用-BakeMesh" class="headerlink" title="第一次尝试使用 BakeMesh"></a>第一次尝试使用 BakeMesh</h2><p><code>SkinnedMeshRenderer.BakeMesh</code> 可以得到当前蒙皮姿势的网格快照。当静态包围盒过于保守时，它是一个有用的排查入口：比较烘焙网格与 Renderer 的范围，可以帮助判断差异来自资源包络还是当前姿势。</p>
 <p>不过，烘焙之后不能直接把 <code>mesh.bounds.size</code> 当成世界尺寸。对于一般层级，需要把局部包围盒的八个角转换到同一坐标空间，再合并求得新的 AABB。</p>
-<p><img src="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/bounds-spaces.svg" alt="局部网格包围盒转换为世界空间包围盒后，再参与统一缩放" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<img src="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/bounds-spaces.svg" alt="局部网格包围盒转换为世界空间包围盒后，再参与统一缩放" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
 <p>这里有两个常见误区：</p>
 <ul>
 <li>只把局部 <code>size</code> 乘以 <code>lossyScale</code>，忽略了旋转对世界 AABB 的影响。</li>
@@ -317,19 +322,23 @@
 </ol>
 <p>对这个专用展示角色，我在测量前把 Animator 评估到确定的 Idle 姿势。核心操作如下：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> previousMode = animator.cullingMode;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">    animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (animator.HasState(<span class="number">0</span>, idleStateHash))</span><br><span class="line">        animator.Play(idleStateHash, <span class="number">0</span>, <span class="number">0f</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 写回这一姿势，但不推进动画时间。</span></span><br><span class="line">    animator.Update(<span class="number">0f</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">finally</span></span><br><span class="line">&#123;</span><br><span class="line">    animator.cullingMode = previousMode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这段代码会改变当前动画姿势，所以适用于初始化中的展示角色，不应直接拿去重置正在游玩的角色。只量 Idle 也只能保证该姿势的尺寸，不能保证后续挥手、跳跃等所有动画始终装在同一个空间里。</p>
 <h2 id="离屏更新也是测量条件"><a href="#离屏更新也是测量条件" class="headerlink" title="离屏更新也是测量条件"></a>离屏更新也是测量条件</h2><p>展示模型常在画面外完成加载。即使资源已经存在，离屏剔除仍可能让动画或蒙皮没有按预期更新。</p>
 <p>在这次实现中，我为相关 <code>SkinnedMeshRenderer</code> 开启了 <code>updateWhenOffscreen</code>，结合确定的 Animator 姿势和后续帧的测量，取得项目中可用的世界空间包围盒。这样也避免了自行还原特殊蒙皮层级的世界盒。</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (renderer <span class="keyword">is</span> SkinnedMeshRenderer skinned)</span><br><span class="line">    skinned.updateWhenOffscreen = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">Bounds worldBounds = renderer.bounds;</span><br></pre></td></tr></table></figure>
+
 <p>这里不能理解为“开一个开关后，所有模型的 Bounds 都会立即变准确”。还要确认项目是否手动覆盖过 Bounds、骨架是否已经稳定，以及本帧的动画和蒙皮评估是否真的完成。</p>
 <p>持续开启离屏更新会增加开销。我们的用途是数量有限的展示对象，这个取舍可以接受；如果把方案推广到大量角色，则应当限定更新对象与时段，并在恢复剔除后检查结果。</p>
 <h2 id="只合并真正参与展示的对象"><a href="#只合并真正参与展示的对象" class="headerlink" title="只合并真正参与展示的对象"></a>只合并真正参与展示的对象</h2><p>角色下面不一定只有可见的服装。隐藏的旧部件、未激活的手持物和粒子特效，都可能把包围盒撑大。</p>
 <p>因此收集时需要先过滤：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!renderer.enabled || !renderer.gameObject.activeInHierarchy)</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (renderer <span class="keyword">is</span> ParticleSystemRenderer)</span><br><span class="line">    <span class="keyword">continue</span>;</span><br></pre></td></tr></table></figure>
+
 <p>剩余对象统一使用世界空间数据，通过 <code>Bounds.Encapsulate</code> 合并。第一个有效 Renderer 用来初始化合并结果，不能用世界原点上的零盒子起步，否则远离原点的模型会把无关空间也算进去。</p>
 <p>计算时我还记录每个轴的最小值和最大值分别来自哪个 Renderer。出现异常时，就能直接知道是某件服装撑大了 X 轴，还是某个骨骼关联部件把 Y 轴拉长，而不是只看到一个最终的巨大数字。</p>
 <h2 id="根据限制最紧的轴统一缩放"><a href="#根据限制最紧的轴统一缩放" class="headerlink" title="根据限制最紧的轴统一缩放"></a>根据限制最紧的轴统一缩放</h2><p>设当前模型尺寸为 <code>measuredSize</code>，允许展示的空间尺寸为 <code>targetSize</code>。如果只希望压小超出范围的模型，而不放大小模型，可以这样计算倍率：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">float</span> fit = Mathf.Min(</span><br><span class="line">    <span class="number">1f</span>,</span><br><span class="line">    targetSize.x / measuredSize.x,</span><br><span class="line">    targetSize.y / measuredSize.y,</span><br><span class="line">    targetSize.z / measuredSize.z);</span><br><span class="line"></span><br><span class="line">modelRoot.localScale = initialScale * fit;</span><br></pre></td></tr></table></figure>
+
 <p>实际计算前还要剔除空集合、零尺寸和非有限数值。测量是在什么初始缩放下完成的，也必须保持一致，不能在已经缩过一次的模型上不断重复乘倍率。</p>
 <p>统一缩放可以维持人物与手持物的相对比例，但形状较扁、较宽的物体往往会先触及水平限制。此时可以调整展示空间或按资源类别配置目标盒，不宜为了某一个模型直接放宽所有展示内容。</p>
 <p>另外，这里解决的是三维空间尺寸约束。若要求模型在透视相机的 UI 窗口中始终完整可见，还需要考虑视角、FOV 和屏幕投影，世界 AABB 本身不是“画面一定不裁切”的保证。</p>

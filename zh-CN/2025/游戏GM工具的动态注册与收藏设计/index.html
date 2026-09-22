@@ -73,6 +73,12 @@
 
 
 
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -161,7 +167,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -256,19 +262,23 @@
     <div class="post-body" itemprop="articleBody"><p>随着玩法增加，项目的 GM 面板里积累了越来越多按钮。最早把命令放在同一页还算方便，后来查一个不常用的操作要翻很久，添加命令也常常需要修改面板本身。</p>
 <p>我在 2024 年 8 月做了带分类的新版本，允许业务在运行时注册命令；到 2025 年 3 月，又增加了本地收藏。改动不复杂，但它解决的是开发和测试每天都会遇到的问题。</p>
 <span id="more"></span>
+
 <h2 id="把命令表示成数据"><a href="#把命令表示成数据" class="headerlink" title="把命令表示成数据"></a>把命令表示成数据</h2><p>先把命令管理从面板类里抽出来。一个命令至少需要名称、分类和执行函数；有些按钮的名称会随当前状态改变，因此名称也可以由函数提供。</p>
 <p>下面是经过简化的 Lua 结构：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">gm:register(&#123;</span><br><span class="line">    name = <span class="string">&quot;补充测试物品&quot;</span>,</span><br><span class="line">    class = <span class="string">&quot;Inventory&quot;</span>,</span><br><span class="line">    exec = <span class="function"><span class="keyword">function</span><span class="params">(input)</span></span></span><br><span class="line">        <span class="keyword">local</span> count = <span class="built_in">tonumber</span>(<span class="built_in">input</span>) <span class="keyword">or</span> <span class="number">1</span></span><br><span class="line">        debugInventory:addSampleItems(count)</span><br><span class="line">    <span class="keyword">end</span>,</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
 <p>业务负责注册它真正需要的命令，面板根据命令数据生成按钮。以后增加分类或操作时，就不必总往同一个 UI 文件里追加逻辑。</p>
 <p>管理器按分类保存列表，同时保留名称索引。注册时检查重复项，执行时统一捕获异常并记录结果，面板则负责参数输入、按钮显示和用户操作。</p>
 <h2 id="分类帮助找到操作，收藏帮助重复使用"><a href="#分类帮助找到操作，收藏帮助重复使用" class="headerlink" title="分类帮助找到操作，收藏帮助重复使用"></a>分类帮助找到操作，收藏帮助重复使用</h2><p>分类与收藏服务于两种不同场景。使用者不知道命令在哪里时，可以按业务分类查找；已经知道某个命令、每天都要反复用时，更需要一个固定入口。</p>
-<p><img src="/zh-CN/2025/%E6%B8%B8%E6%88%8FGM%E5%B7%A5%E5%85%B7%E7%9A%84%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%94%B6%E8%97%8F%E8%AE%BE%E8%AE%A1/gm-panel.svg" alt="分类与收藏在 GM 面板中分别帮助查找命令和执行常用操作" width="520" style="display:block;width:520px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<img src="/zh-CN/2025/%E6%B8%B8%E6%88%8FGM%E5%B7%A5%E5%85%B7%E7%9A%84%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%94%B6%E8%97%8F%E8%AE%BE%E8%AE%A1/gm-panel.svg" alt="分类与收藏在 GM 面板中分别帮助查找命令和执行常用操作" width="520" style="display:block;width:520px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
 <p><em>按原功能重新绘制的示意，命令名称均为通用示例。</em></p>
 <p>收藏保存到本地，重启游戏后再从已注册命令中恢复。这使测试同学不必每天重新找到相同的几个按钮。实现时还补了重复收藏检查和删除后的持久化清理，避免面板显示与下次启动恢复出的内容不一致。</p>
 <p>分类改善的是人的查找路径，不能简单把它描述为某种确定的算法复杂度下降。命令数量、分类方式和使用习惯，都会影响实际查找体验。</p>
 <h2 id="收藏引用的标识要足够稳定"><a href="#收藏引用的标识要足够稳定" class="headerlink" title="收藏引用的标识要足够稳定"></a>收藏引用的标识要足够稳定</h2><p>这版实现使用命令名称键查找收藏，接入很直接，但也有局限：如果名称由函数产生，状态改变之后名称可能变化；如果为了改善文案重命名按钮，旧收藏也可能找不到原命令。</p>
 <p>因此在继续设计类似工具时，我会把稳定 ID 与显示名称分开：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    id = <span class="string">&quot;debug.inventory.add_sample&quot;</span>,</span><br><span class="line">    name = <span class="string">&quot;补充测试物品&quot;</span>,</span><br><span class="line">    exec = addSampleItems,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这是对原实现的改进方向，不是这次版本已经具备的能力。收藏只保存 ID，名称可以变化；运行时命令被移除，也能通过 ID 判断收藏已经失效。</p>
 <p>另一个细节是恢复时机：需要等业务完成注册，再解析收藏。如果在注册之前就清掉所有“查不到”的项，暂时未加载的业务命令也会丢失。</p>
 <h2 id="异常处理集中到执行入口"><a href="#异常处理集中到执行入口" class="headerlink" title="异常处理集中到执行入口"></a>异常处理集中到执行入口</h2><p>面板没有必要为每个按钮都写一遍异常处理。Lua 管理器可以用 <code>xpcall</code> 包住命令执行，统一输出成功或失败信息，再刷新可能随状态变化的按钮名称。</p>

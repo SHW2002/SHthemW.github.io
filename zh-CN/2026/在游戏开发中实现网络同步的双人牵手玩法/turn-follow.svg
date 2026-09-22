@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="570" viewBox="0 0 1040 570" role="img" aria-labelledby="title desc">
+<title id="title">绕行目标逐帧追赶朝向</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。</desc>
+<defs>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+</defs>
+<rect width="1040" height="570" fill="#FFFFFF"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">0</tspan></text>
+<circle cx="276.00" cy="290.00" r="193.13207915827965" fill="none" stroke="#000000" stroke-width="2.5" stroke-dasharray="7 7"/>
+<path d="M276.00 290.00L276.00 65.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M276.00 290.00L486.00 290.00" fill="none" stroke="#FF0000" stroke-width="3" marker-end="url(#r)"/>
+<path d="M276.00 290.00L307.52 112.78" fill="none" stroke="#0000FF" stroke-width="3" marker-end="url(#b)"/>
+<text x="452" y="327" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">R<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="321.6261974346006" y="100.96751907122083" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">R<tspan baseline-shift="sub" font-size="70%">f</tspan></text>
+<path d="M276.00 290.00L86.52 327.39" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<path d="M276.00 290.00L206.00 110.00" fill="none" stroke="#FF0000" stroke-width="1.5" stroke-dasharray="7 7"/>
+<path d="M81.52 327.39L91.52 327.39" fill="none" stroke="#0000FF" stroke-width="2"/>
+<path d="M86.52 322.39L86.52 332.39" fill="none" stroke="#0000FF" stroke-width="2"/>
+<text x="68.52249798123805" y="309.393531910346" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">P<tspan baseline-shift="sub" font-size="70%">t</tspan></text>
+<path d="M201.00 110.00L211.00 110.00" fill="none" stroke="#FF0000" stroke-width="2"/>
+<path d="M206.00 105.00L206.00 115.00" fill="none" stroke="#FF0000" stroke-width="2"/>
+<text x="216.0" y="93.0" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">t,i</tspan></text>
+<path d="M286.86 228.96L288.98 229.37L291.09 229.86L293.17 230.43L295.24 231.06L297.28 231.77L299.30 232.54L301.29 233.39L303.25 234.31L305.17 235.29L307.06 236.34L308.91 237.46L310.72 238.64L312.49 239.88L314.22 241.18L315.90 242.54L317.53 243.96L319.11 245.44L320.63 246.97L322.11 248.55L323.52 250.18L324.88 251.86L326.18 253.59L327.42 255.36L328.60 257.18L329.71 259.03L330.76 260.92L331.74 262.85L332.65 264.81L333.50 266.80L334.27 268.82L334.97 270.86L335.60 272.93L336.16 275.02L336.65 277.12L337.06 279.25L337.40 281.38L337.66 283.53L337.85 285.68L337.96 287.84L338.00 290.00" fill="none" stroke="#000000" stroke-width="2"/>
+<text x="348" y="270" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="start">θ<tspan baseline-shift="sub" font-size="70%">lag</tspan></text>
+<g data-role="initiator" data-x="276.00" data-y="290.00" transform="translate(276.00 290.00) scale(1)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="294" y="305" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<g data-role="recipient" data-x="96.00" data-y="360.00" transform="translate(96.00 360.00) scale(1)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="114.0" y="375.0" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">d</tspan></text>
+<path d="M590.00 420.00L1003.00 420.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<path d="M590.00 420.00L590.00 60.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
+<text x="1015" y="430" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">t</text>
+<text x="563" y="56" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">ω</text>
+<text x="574" y="428.0" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="end">0</text>
+<text x="574" y="283.0" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="end">90</text>
+<path d="M590.00 275.00L982.00 275.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<text x="574" y="138.0" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="end">ω<tspan baseline-shift="sub" font-size="70%">max</tspan></text>
+<path d="M590.00 130.00L982.00 130.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M590.00 420.00L592.72 397.78L595.44 356.86L598.17 322.35L600.89 293.23L603.61 268.68L606.33 247.97L609.06 230.50L611.78 215.77L614.50 203.34L617.22 192.86L619.94 184.02L622.67 176.56L625.39 170.27L628.11 164.97L630.83 160.49L633.56 156.72L636.28 153.54L639.00 150.85L641.72 148.59L644.44 146.68L647.17 145.07L649.89 143.71L652.61 142.56L655.33 141.59L658.06 140.78L660.78 140.09L663.50 139.51L666.22 139.02L668.94 138.61L671.67 138.26L674.39 137.97L677.11 137.72L679.83 137.51L682.56 137.33L685.28 137.19L688.00 137.06L690.72 136.95L693.44 136.87L696.17 136.79L698.89 136.73L701.61 136.67L704.33 136.63L707.06 136.59L709.78 136.84L712.50 138.22L715.22 141.19L717.94 145.49L720.67 150.88L723.39 157.15L726.11 164.15L728.83 171.70L731.56 179.67L734.28 187.96L737.00 196.46L739.72 205.08L742.44 213.75L745.17 222.40L747.89 230.99L750.61 239.47L753.33 247.79L756.06 255.94L758.78 263.89L761.50 271.61L764.22 279.10L766.94 286.34L769.67 293.32L772.39 300.03L775.11 306.48L777.83 312.67L780.56 318.59L783.28 324.26L786.00 329.66L788.72 334.81L791.44 339.72L794.17 344.38L796.89 348.81L799.61 353.02L802.33 357.01L805.06 360.79L807.78 364.36L810.50 367.75L813.22 370.94L815.94 373.96L818.67 376.81L821.39 379.50L824.11 382.04L826.83 384.43L829.56 386.68L832.28 388.79L835.00 390.78L837.72 392.66L840.44 394.42L843.17 396.07L845.89 397.62L848.61 399.08L851.33 400.44L854.06 401.73L856.78 402.93L859.50 404.05L862.22 405.11L864.94 406.10L867.67 407.02L870.39 407.89L873.11 408.70L875.83 409.46L878.56 410.17L881.28 410.83L884.00 411.45L886.72 412.03L889.44 412.57L892.17 413.08L894.89 413.55L897.61 413.99L900.33 414.41L903.06 414.79L905.78 415.15L908.50 415.48L911.22 415.79L913.94 416.09L916.67 416.36L919.39 416.61L922.11 416.85L924.83 417.07L927.56 417.27L930.28 417.46L933.00 417.64L935.72 417.80L938.44 417.96L941.17 418.10L943.89 418.24L946.61 418.36L949.33 418.48L952.06 418.58L954.78 418.68L957.50 418.78L960.22 418.86L962.94 418.94L965.67 419.02L968.39 419.09L971.11 419.15L973.83 419.21L976.56 419.27L979.28 419.32L982.00 419.37" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M590.00 420.00L592.72 408.65L595.44 386.41L598.17 365.97L600.89 347.18L603.61 329.91L606.33 314.03L609.06 299.44L611.78 286.02L614.50 273.69L617.22 262.35L619.94 251.93L622.67 242.35L625.39 233.54L628.11 225.44L630.83 218.00L633.56 211.16L636.28 204.87L639.00 199.09L641.72 193.78L644.44 188.89L647.17 184.40L649.89 180.27L652.61 176.48L655.33 173.15L658.06 170.46L660.78 168.40L663.50 166.92L666.22 165.98L668.94 165.54L671.67 165.55L674.39 165.99L677.11 166.82L679.83 168.00L682.56 169.51L685.28 171.31L688.00 173.38L690.72 175.70L693.44 178.23L696.17 180.97L698.89 183.89L701.61 186.96L704.33 190.18L707.06 193.52L709.78 196.98L712.50 200.52L715.22 204.15L717.94 207.85L720.67 211.61L723.39 215.41L726.11 219.25L728.83 223.11L731.56 227.00L734.28 230.89L737.00 234.79L739.72 238.68L742.44 242.57L745.17 246.44L747.89 250.29L750.61 254.11L753.33 257.91L756.06 261.67L758.78 265.39L761.50 269.07L764.22 272.71L766.94 276.31L769.67 279.85L772.39 283.35L775.11 286.79L777.83 290.18L780.56 293.52L783.28 296.80L786.00 300.02L788.72 303.18L791.44 306.29L794.17 309.34L796.89 312.32L799.61 315.25L802.33 318.12L805.06 320.93L807.78 323.68L810.50 326.36L813.22 328.99L815.94 331.57L818.67 334.08L821.39 336.53L824.11 338.93L826.83 341.27L829.56 343.56L832.28 345.79L835.00 347.96L837.72 350.08L840.44 352.15L843.17 354.16L845.89 356.13L848.61 358.04L851.33 359.90L854.06 361.72L856.78 363.49L859.50 365.20L862.22 366.88L864.94 368.51L867.67 370.09L870.39 371.63L873.11 373.13L875.83 374.58L878.56 376.00L881.28 377.37L884.00 378.71L886.72 380.00L889.44 381.26L892.17 382.49L894.89 383.68L897.61 384.83L900.33 385.95L903.06 387.04L905.78 388.10L908.50 389.12L911.22 390.11L913.94 391.08L916.67 392.01L919.39 392.92L922.11 393.80L924.83 394.65L927.56 395.48L930.28 396.28L933.00 397.06L935.72 397.81L938.44 398.54L941.17 399.25L943.89 399.93L946.61 400.60L949.33 401.24L952.06 401.86L954.78 402.47L957.50 403.05L960.22 403.62L962.94 404.16L965.67 404.70L968.39 405.21L971.11 405.71L973.83 406.19L976.56 406.65L979.28 407.10L982.00 407.54" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M622.67 420.00L622.67 70.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<circle cx="622.67" cy="176.56" r="5" fill="#000000" stroke="#000000" stroke-width="2.5"/>
+<text x="622.6666666666666" y="455" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">0.10 s</text>
+<text x="802" y="202" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="start">τ = 0.2 s</text>
+<text x="842" y="319" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="start">τ = 0.4 s</text>
+</g>
+</svg>

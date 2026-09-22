@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="650" viewBox="0 0 1040 650" role="img" aria-labelledby="title desc">
+<title id="title">肘部改变而骨段长度保持不变</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。实线骨链包含双方各自的肩、肘、腕三个节点。</desc>
+<defs>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+</defs>
+<rect width="1040" height="650" fill="#FFFFFF"/>
+<g stroke-linecap="round" stroke-linejoin="round">
+<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">0</tspan></text>
+<circle cx="331.00" cy="270.00" r="240.0" fill="none" stroke="#FF0000" stroke-width="2.5" stroke-dasharray="7 7"/>
+<circle cx="709.00" cy="270.00" r="240.0" fill="none" stroke="#0000FF" stroke-width="2.5" stroke-dasharray="7 7"/>
+<path d="M331.00 270.00L158.20 103.44" fill="none" stroke="#FF0000" stroke-width="1.5"/>
+<path d="M709.00 270.00L881.80 103.44" fill="none" stroke="#0000FF" stroke-width="1.5"/>
+<text x="199.0" y="181.2" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">r<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="814.6" y="181.2" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">r<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<path d="M326.00 270.00L336.00 270.00" fill="none" stroke="#FF0000" stroke-width="2"/>
+<path d="M331.00 265.00L331.00 275.00" fill="none" stroke="#FF0000" stroke-width="2"/>
+<text x="342.0" y="235" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">O<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<path d="M704.00 270.00L714.00 270.00" fill="none" stroke="#0000FF" stroke-width="2"/>
+<path d="M709.00 265.00L709.00 275.00" fill="none" stroke="#0000FF" stroke-width="2"/>
+<text x="698.0" y="235" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">O<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<path d="M315.00 270.00L315.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M315.00 270.00L321.55 394.83L435.00 376.00" fill="none" stroke="#FF0000" stroke-width="3.5"/>
+<path d="M435.00 376.00L451.00 376.00" fill="none" stroke="#FF0000" stroke-width="2.2"/>
+<g data-bone-node="S_i">
+<circle cx="315.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="300" y="255" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">S<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<g data-bone-node="E_i">
+<circle cx="321.55" cy="394.83" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="306.5517753314821" y="417.82817887002034" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">E<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<g data-bone-node="W_i">
+<circle cx="435.00" cy="376.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="427.0" y="356.0" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">W<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<g data-role="initiator" data-x="315.00" data-y="565.00" transform="translate(315.00 565.00) scale(1.2)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+</g>
+<text x="333" y="580" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<path d="M725.00 270.00L725.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<path d="M725.00 270.00L718.45 394.83L605.00 376.00" fill="none" stroke="#0000FF" stroke-width="3.5"/>
+<path d="M605.00 376.00L589.00 376.00" fill="none" stroke="#0000FF" stroke-width="2.2"/>
+<g data-bone-node="S_r">
+<circle cx="725.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="740" y="255" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">S<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<g data-bone-node="E_r">
+<circle cx="718.45" cy="394.83" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="733.4482246685179" y="417.82817887002034" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">E<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<g data-bone-node="W_r">
+<circle cx="605.00" cy="376.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="613.0" y="356.0" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">W<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<g data-role="recipient" data-x="725.00" data-y="565.00" transform="translate(725.00 565.00) scale(1.2)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+</g>
+<text x="743" y="580" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<path d="M446.00 376.00L456.00 376.00" fill="none" stroke="#FF0000" stroke-width="2"/>
+<path d="M451.00 371.00L451.00 381.00" fill="none" stroke="#FF0000" stroke-width="2"/>
+<text x="440.0" y="411.0" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">C<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<path d="M584.00 376.00L594.00 376.00" fill="none" stroke="#0000FF" stroke-width="2"/>
+<path d="M589.00 371.00L589.00 381.00" fill="none" stroke="#0000FF" stroke-width="2"/>
+<text x="600.0" y="411.0" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">C<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<text x="290.27588766574104" y="332.41408943501017" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">a<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="378.27588766574104" y="419.41408943501017" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">b<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="749.724112334259" y="332.41408943501017" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">a<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<text x="661.724112334259" y="419.41408943501017" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">b<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+</g>
+</svg>

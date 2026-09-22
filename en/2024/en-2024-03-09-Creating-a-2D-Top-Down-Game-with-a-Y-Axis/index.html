@@ -48,7 +48,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/fly%20demo.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s9.jpg">
 <meta property="article:published_time" content="2024-03-09T04:31:57.000Z">
-<meta property="article:modified_time" content="2026-09-22T08:46:42.005Z">
+<meta property="article:modified_time" content="2026-09-22T04:52:42.096Z">
 <meta property="article:author" content="HanWen">
 <meta property="article:tag" content="Unity">
 <meta name="twitter:card" content="summary">
@@ -88,6 +88,12 @@
   <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
 
 
 
@@ -178,7 +184,7 @@
         <span class="site-state-item-name">categories</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -244,13 +250,6 @@
 
       <time title="Created: 2024-03-09 12:31:57" itemprop="dateCreated datePublished" datetime="2024-03-09T12:31:57+08:00">2024-03-09</time>
     </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-09-22 16:46:42" itemprop="dateModified" datetime="2026-09-22T16:46:42+08:00">2026-09-22</time>
-    </span>
 
   
     <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
@@ -273,37 +272,39 @@
 <p>Thanks to everyone who liked and favorited!</p>
 </blockquote>
 <p>Imagine a small bridge with an archway. The player first goes up the bridge from the left, then down from the right, and finally walks through the archway in the middle.</p>
-<p>This is a very simple and common scenario. However, implementing it in a 2D top-down game is more complex than it might seem — how can the collision box that prevents the player from jumping off the bridge not also block the player trying to pass through the archway?</p>
+<p>This is a very simple and common scenario. However, implementing it in a 2D top-down game is more complex than it might seem – how can the collision box that prevents the player from jumping off the bridge not also block the player trying to pass through the archway?</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s6.png" alt="好吧这两个数字可能被压的太扁了"></p>
 <span id="more"></span>
-<p><br></p>
+<br>
+
 <h2 id="You’ve-Actually-Been-Walking-in-a-Maze-All-Along"><a href="#You’ve-Actually-Been-Walking-in-a-Maze-All-Along" class="headerlink" title="You’ve Actually Been Walking in a Maze All Along"></a>You’ve Actually Been Walking in a Maze All Along</h2><p>Typical 2D top-down games usually omit the design of “ground height”. Most of the terrain players see is purely visual; it’s actually just a flat plane composed of textures and collision boxes. When players move between these “ground layers”, it’s more like navigating a 2D maze.</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref1.jpg" alt="参考图1"></p>
-<p>This approach is clearly a cost-effective compromise — in most cases, players don’t care about the specific implementation details of the game; as long as the terrain “looks like it has height”, it’s sufficient for most game needs.</p>
+<p>This approach is clearly a cost-effective compromise – in most cases, players don’t care about the specific implementation details of the game; as long as the terrain “looks like it has height”, it’s sufficient for most game needs.</p>
 <p>But what’s the cost, Gul’dan? Please look at the following scenario:</p>
-<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tit.png" alt></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tit.png"></p>
 <p>This is a common scene in games, and it doesn’t seem much different from Figure 1, except that the character has moved behind higher terrain. Now, please pay attention to point A in the image. If the player wants to move to this position, how should they do it?</p>
 <p>The answer is: You don’t know!</p>
 <h3 id="Dead-Zone-Defect"><a href="#Dead-Zone-Defect" class="headerlink" title="Dead Zone Defect"></a>Dead Zone Defect</h3><p>Why? Because it creates ambiguity in Y-coordinate mapping. Point A in the image appears to be a precise coordinate, but it’s not: a ray from the camera through point A actually penetrates two planes in this scene. This means that point A in the scene actually represents two <em>different</em> locations with the same X and Z coordinates but different Y coordinates, making it difficult to determine the destination.</p>
 <p>The following diagram can help you better understand the current situation:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s1.png" alt="示意图"></p>
 <ul>
-<li>In Situation 1, each plane is penetrated by a ray from the camera only once. At this point, every (x, z) coordinate in the scene corresponds to a unique y coordinate, so there are no issues. Figure 1 in this article represents this situation.</li>
+<li><p>In Situation 1, each plane is penetrated by a ray from the camera only once. At this point, every (x, z) coordinate in the scene corresponds to a unique y coordinate, so there are no issues. Figure 1 in this article represents this situation.</p>
+</li>
+<li><p>In Situation 2, some terrain obstructs other terrain (from the camera’s perspective). This causes some rays to pass through both the obstructed area and the obstructing area simultaneously. If a coordinate point is chosen within these areas (dead zones), it will result in one coordinate corresponding to multiple actual locations.</p>
+</li>
 </ul>
-<ul>
-<li>In Situation 2, some terrain obstructs other terrain (from the camera’s perspective). This causes some rays to pass through both the obstructed area and the obstructing area simultaneously. If a coordinate point is chosen within these areas (dead zones), it will result in one coordinate corresponding to multiple actual locations.</li>
-</ul>
-<h3 id="Compromise"><a href="#Compromise" class="headerlink" title="Compromise"></a>Compromise</h3><p>For most top-down 2D games, the solution to this problem is simpler and cruder than you might expect — either directly prohibit players from entering these areas, or make one of the conflicting areas unreachable, configuring collision boxes only for the other area.</p>
-<p>For example, in this sample game, the player character can only move downwards to the position shown in the figure below — clearly, the developer configured the collision area according to the top surface of the rock wall. It’s also clear that a part of the area that should have been reachable (behind the rock obstruction) has become unreachable due to this compromise.</p>
+<h3 id="Compromise"><a href="#Compromise" class="headerlink" title="Compromise"></a>Compromise</h3><p>For most top-down 2D games, the solution to this problem is simpler and cruder than you might expect – either directly prohibit players from entering these areas, or make one of the conflicting areas unreachable, configuring collision boxes only for the other area.</p>
+<p>For example, in this sample game, the player character can only move downwards to the position shown in the figure below – clearly, the developer configured the collision area according to the top surface of the rock wall. It’s also clear that a part of the area that should have been reachable (behind the rock obstruction) has become unreachable due to this compromise.</p>
 <p><img src="/en/2024/en-2024-03-09-Creating-a-2D-Top-Down-Game-with-a-Y-Axis/ref3.jpg" alt="已经过不去了!&gt;_&lt;"></p>
 <p>Another common solution is to directly use 3D models and then achieve a visual 2D effect through 3D-to-2D rendering. However, this situation actually falls under the category of 3D games and is outside the scope of this article, so it will not be discussed in detail here.</p>
-<p>This characteristic of 2D top-down games somewhat reduces the interactivity of the map. In fact, some early games of this type often designed in-game entities to be cartoonish and small, focusing more on gameplay elements like combat, special effects, or mechanics to leverage their strengths and mitigate weaknesses. Over time, players even stopped expecting terrain interaction when facing such games — they would think: “Oh, there’s a castle here, let’s go around it” rather than “Let’s sneak through the dog hole, say hi to the guy on the balcony, and then come out from the second floor.”</p>
+<p>This characteristic of 2D top-down games somewhat reduces the interactivity of the map. In fact, some early games of this type often designed in-game entities to be cartoonish and small, focusing more on gameplay elements like combat, special effects, or mechanics to leverage their strengths and mitigate weaknesses. Over time, players even stopped expecting terrain interaction when facing such games – they would think: “Oh, there’s a castle here, let’s go around it” rather than “Let’s sneak through the dog hole, say hi to the guy on the balcony, and then come out from the second floor.”</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref4.gif" alt="ref4"></p>
 <p>Of course, this can be a stylistic game feature. But interactivity in games is like Mount Everest to a climber; it’s a standard of pursuit that never ends. Furthermore, for many small studios, the cost of creating and rendering 3D models is often high. Is there any way to alleviate this dead zone defect in 2D top-down games?</p>
 <blockquote>
 <p>Note: This article only discusses technical feasibility. Dimensions such as necessity in game design or commercial popularity will not be extensively explored. You are also welcome to share your thoughts ;)</p>
 </blockquote>
-<p><br></p>
+<br>
+
 <h2 id="Correctly-Mapping-Height"><a href="#Correctly-Mapping-Height" class="headerlink" title="Correctly Mapping Height"></a>Correctly Mapping Height</h2><p>Top-down games are not entirely incapable of handling vertex information and collision boxes on the Y-axis. Simply put, if developers can manually set collision boxes for each height layer and switch them dynamically, they can achieve 3D-like collision effects.</p>
 <h3 id="Handling-X-Z-Plane-Collisions"><a href="#Handling-X-Z-Plane-Collisions" class="headerlink" title="Handling (X, Z) Plane Collisions"></a>Handling (X, Z) Plane Collisions</h3><p>More precisely, entities on the map should respond to different collision areas at different “height layers”. Using Figure 2 again, when the player stands on a lower platform, they should only interact with the lower collision box (blue outline in the figure below), and when standing on a higher platform, they should switch to using the higher platform’s collision box (purple outline in the figure).</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref6.jpg" alt="ref6"></p>
@@ -320,9 +321,9 @@
 </blockquote>
 <h3 id="Handling-Rendering-Order"><a href="#Handling-Rendering-Order" class="headerlink" title="Handling Rendering Order"></a>Handling Rendering Order</h3><p>After initially creating a multi-layered collision model, we also need to render different height models in the correct order. For the X-Z plane (the plane the player stands on) in a top-down perspective, planes that are “higher” are always closer to the camera and should be rendered first. In the scene shown below, plane C always obscures plane B, which is lower, and by the same principle, they also obscure ground plane A.</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s4.png" alt="s4"></p>
-<p>Now let’s consider the rendering of X-Y planes (i.e., walls facing the camera). Their logical height is actually between the lower and higher points connected by the “wall”. Similarly, entities within a height layer — such as the player character in the figure, located between height B and C, or the bushes on the ground, located between A and B — are always obscured by higher ground layers and always obscure the ground they are “standing” on. Objects within the same height layer follow “Z-coordinate priority sorting” — a rendering method commonly used in traditional top-down games.</p>
+<p>Now let’s consider the rendering of X-Y planes (i.e., walls facing the camera). Their logical height is actually between the lower and higher points connected by the “wall”. Similarly, entities within a height layer – such as the player character in the figure, located between height B and C, or the bushes on the ground, located between A and B – are always obscured by higher ground layers and always obscure the ground they are “standing” on. Objects within the same height layer follow “Z-coordinate priority sorting” – a rendering method commonly used in traditional top-down games.</p>
 <p>Based on these designs, we’ve built a prototype for Sorting Order as shown in the figure:</p>
-<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s4.png" alt></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s4.png"></p>
 <p>In the figure above, ‘grd’ represents the X-Z plane, and ‘upr’ represents the X-Y plane. The subsequent numerical subdivisions are used to arrange objects with different orders within the same layer (e.g., ground and grass growing on it). Readers can temporarily focus only on the prefixes in the naming.</p>
 <p>At this point, we can achieve the effect shown in the figure below:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/walk%20demo.gif" alt="walk demo"></p>
@@ -338,26 +339,30 @@
 <p>The logical stairs have two entrances, each equipped with a component that switches the entity’s functionality. When an entity enters the stair’s detection area, the stair script changes the <code>Height2D.height</code> property of the entity passing through it, achieving the effect of switching height. You can place these “logical stairs” in actual stair areas in the scene, or any area with similar height-switching functionality, to enable player movement up and down.</p>
 <p>The figure below shows the application of “logical stairs” in a demonstration scene:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s8-1.jpg" alt="s8-1"></p>
-<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s8-1.jpg" alt></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s8-1.jpg"></p>
 <p>It can be seen that “logical stairs” are not only applicable to traditional stairs but also to other height-switching devices common in game scenes, such as ladders.</p>
 <p>After completing the height switching logic, we can easily achieve the effect shown below:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/trans%20demo.gif" alt="trans demo"></p>
-<p>Please note that in the process shown in the figure above, the Player’s <code>height</code> property changes dynamically (0 =&gt; 1 =&gt; 2 =&gt; 1).</p>
+<p>Please note that in the process shown in the figure above, the Player’s <code>height</code> property changes dynamically (0 &#x3D;&gt; 1 &#x3D;&gt; 2 &#x3D;&gt; 1).</p>
 <p>Here is an example with a more pronounced effect:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/fly%20demo.gif" alt="fly demo"></p>
 <p>In this scene, the player glides from above the city wall (height 2) and lands on the ground (height 1). You can see that the collision boxes that previously surrounded the player on the wall immediately become invalid, allowing the player to pass through those areas and emerge from the city gate. This also answers the “bridge archway model” problem mentioned at the beginning of this article.</p>
-<p><br></p>
+<br>
+
 <h2 id="A-More-Scientific-Approach"><a href="#A-More-Scientific-Approach" class="headerlink" title="A More Scientific Approach"></a>A More Scientific Approach</h2><p>For small to medium-sized projects, the layered collision boxes and height field mentioned above are a feasible solution. However, fundamentally, each coordinate in a 2D top-down map only carries X and Z plane coordinate information and lacks Y coordinate information, which is the root cause of our difficulty in mapping height.</p>
 <p>From a more purely algorithmic and mathematical perspective, we can also consider the following design:</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">enum</span> SpaceType : <span class="built_in">int</span></span><br><span class="line">&#123;</span><br><span class="line">    None = <span class="number">0</span>,    <span class="comment">// 表示空间内什么都没有. 理论上该值不该被使用, 因为YSpace字典中只会定义非空空间.</span></span><br><span class="line">    Solid,       <span class="comment">// 表示空间内具有实心块</span></span><br><span class="line">    Transitional <span class="comment">// 表示空间内的块具有过渡功能</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> Coordinate</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> X &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Z &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> Dictionary&lt;<span class="built_in">int</span>, SpaceType&gt; YSpace &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>In the code above, we represent map coordinates with a new data structure. In addition to the traditional X-Z coordinates, we’ve added a <code>YSpace</code> dictionary to represent the Y-space at the current planar coordinates. The dictionary’s Key represents each non-empty Y coordinate, and the Value indicates the type of block present at that coordinate (solid/slope).</p>
+
+<p>In the code above, we represent map coordinates with a new data structure. In addition to the traditional X-Z coordinates, we’ve added a <code>YSpace</code> dictionary to represent the Y-space at the current planar coordinates. The dictionary’s Key represents each non-empty Y coordinate, and the Value indicates the type of block present at that coordinate (solid&#x2F;slope).</p>
 <p>This approach can more easily represent complex terrain, even terrain with hollow structures:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s9.jpg" alt="用MC搭了个模型"></p>
 <p>The structure shown in the figure above can be defined using the following pseudocode: (Assume the left gray vertex is the origin, and right-up is the positive direction)</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 四个高度为0的地块</span></span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">0</span>, Z = <span class="number">0</span>, YSpace = <span class="keyword">new</span>()&#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">1</span>, Z = <span class="number">0</span>, YSpace = <span class="keyword">new</span>()&#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">2</span>, Z = <span class="number">0</span>, YSpace = <span class="keyword">new</span>()&#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">2</span>, Z = <span class="number">1</span>, YSpace = <span class="keyword">new</span>()&#123;&#125; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Four terrain blocks at height 1</span></span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">1</span>, Z = <span class="number">1</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">1</span>, Z = <span class="number">2</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">2</span>, Z = <span class="number">2</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">2</span>, Z = <span class="number">3</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Three plots with a height of 2</span></span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">0</span>, Z = <span class="number">2</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid, <span class="number">2</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">0</span>, Z = <span class="number">3</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid, <span class="number">2</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">1</span>, Z = <span class="number">3</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid, <span class="number">2</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// A plot with a gap in the middle:</span></span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">0</span>, Z = <span class="number">1</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid, <span class="number">3</span> : SpaceType.Solid&#125; &#125;;</span><br></pre></td></tr></table></figure>
-<p>This data structure clearly establishes more rigorous rules on a mathematical level — it truly assigns a Y coordinate to each planar point.</p>
+
+<p>This data structure clearly establishes more rigorous rules on a mathematical level – it truly assigns a Y coordinate to each planar point.</p>
 <p>Theoretically, it is feasible to write <code>TerrainParser</code> for this model and achieve an effect similar to what was described above. However, considering the space and performance overhead of assigning a dictionary to store Y space for each sampling point, as well as the complexity of implementing pathfinding algorithms under this model, this approach may not effectively replace the first implementation mentioned in this article in engineering practice.</p>
-<p><br></p>
+<br>
+
 <h2 id="End"><a href="#End" class="headerlink" title="End"></a>End</h2><p>To access the example game in this article,</p>
 <p>Welcome to follow the author’s GitHub: <a href="https://github.com/SHW2002">SHW2002 (S.H.W) (github.com)</a></p>
 

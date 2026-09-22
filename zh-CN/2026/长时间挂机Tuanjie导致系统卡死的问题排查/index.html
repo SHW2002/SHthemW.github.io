@@ -72,6 +72,12 @@
 
 
 
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -160,7 +166,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -226,13 +232,6 @@
 
       <time title="创建时间：2026-07-21 17:04:50" itemprop="dateCreated datePublished" datetime="2026-07-21T17:04:50+08:00">2026-07-21</time>
     </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-08-25 00:00:00" itemprop="dateModified" datetime="2026-08-25T00:00:00+08:00">2026-08-25</time>
-    </span>
 
   
     <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
@@ -254,6 +253,7 @@
 <p>最后经过排查, 是Tuanjie内部自己的内存泄漏问题(Unity6主分支上目前也存在), 但通过一些特殊途径可能更高频的触发导致卡死, 在此记录一下排查的过程.</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png" alt="tuanjielogo"></p>
 <span id="more"></span>
+
 <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
 <li>操作系统：Windows 11</li>
 <li>编辑器：Tuanjie <code>2022.3.62t6</code></li>
@@ -265,7 +265,7 @@
 <p>这些事件的成因并不完全一样:</p>
 <ol>
 <li>有一次，Tuanjie 私有内存从约 35.18 GiB 涨到 39.25 GiB，嫌疑很大。</li>
-<li>另一次，系统提交量达到约 94.93/94.94 GiB。<ul>
+<li>另一次，系统提交量达到约 94.93&#x2F;94.94 GiB。<ul>
 <li><code>svchost</code> 涨到 50.74 GiB。</li>
 <li><code>DoSvc</code> 相关进程约 12.65 GiB。</li>
 <li>Tuanjie 约 9.08 GiB。</li>
@@ -274,12 +274,12 @@
 </ol>
 <p>下面是两条典型的 <code>Event ID 2004</code>，字节数我自己加了下分隔，方便复核。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[2026/7/16 11:30:59]</span><br><span class="line">Provider: Microsoft-Windows-Resource-Exhaustion-Detector</span><br><span class="line">Event ID: 2004</span><br><span class="line">Windows 成功诊断出虚拟内存不足的情况。以下程序使用了大部分虚拟内存：</span><br><span class="line">Tuanjie.exe (38948) 使用了 42,144,346,112 字节；</span><br><span class="line">svchost.exe (9560) 使用了 8,966,844,416 字节；</span><br><span class="line">svchost.exe (44892) 使用了 5,992,996,864 字节。</span><br><span class="line"></span><br><span class="line">[2026/7/20 09:04:22]</span><br><span class="line">Provider: Microsoft-Windows-Resource-Exhaustion-Detector</span><br><span class="line">Event ID: 2004</span><br><span class="line">Windows 成功诊断出虚拟内存不足的情况。以下程序使用了大部分虚拟内存：</span><br><span class="line">svchost.exe (3068) 使用了 54,483,042,304 字节；</span><br><span class="line">svchost.exe (5272) 使用了 13,587,877,888 字节；</span><br><span class="line">Tuanjie.exe (6952) 使用了 9,745,526,784 字节。</span><br></pre></td></tr></table></figure>
+
 <p>导出的系统日志里共有 83 条 <code>Event ID 2004</code>，向前筛七天是 60 条。</p>
 <p>第一条里，Tuanjie 确实是最大消费者。</p>
 <p>第二条很不一样，真正吃掉大头的是 <code>svchost</code>。</p>
 <p>这就有点麻烦了：Tuanjie 有嫌疑，但不是每次 OOM 的唯一答案, 可能最终的崩溃是由多个内存泄漏的Bug导致的. 我们这次的目标是先把影响最大的搞掉, 至少让编辑器不要挂机太久就崩溃</p>
 <h2 id="排查工具"><a href="#排查工具" class="headerlink" title="排查工具"></a>排查工具</h2><p>让AI搓了个<code>MemoryLeakTracker</code>, 大体功能是当系统内存在一段时间内异常增长时, 采集以下信息:</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -288,8 +288,7 @@
 <th>规则</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>系统内存和内核池</td>
 <td>性能计数器</td>
 <td>15 秒一次，循环保存</td>
@@ -301,7 +300,7 @@
 </tr>
 <tr>
 <td>句柄、堆和虚拟内存栈</td>
-<td>WPR/ETW</td>
+<td>WPR&#x2F;ETW</td>
 <td>保存约 10 分钟 ETL</td>
 </tr>
 <tr>
@@ -314,9 +313,7 @@
 <td>事件日志和系统快照</td>
 <td>事件前后各保存一份</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>满足以下条件之一就会触发这个采集器：</p>
 <ul>
 <li>Tuanjie 私有内存超过 6 GiB</li>
@@ -333,40 +330,37 @@
 <p>14:22:09，其中一个工作进程达到约 11,590 个句柄，自动采集被触发。</p>
 <p>自动生成的 <code>incident-20260720-142210.json</code> 中，关键字段如下：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;CapturedAt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-07-20T14:22:16.1321305+08:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;Reason&quot;</span><span class="punctuation">:</span> <span class="string">&quot;句柄达到 11590&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;System&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;CommitPercent&quot;</span><span class="punctuation">:</span> <span class="number">29.05</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;AvailablePhysicalMiB&quot;</span><span class="punctuation">:</span> <span class="number">36851.55</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;PoolPagedMiB&quot;</span><span class="punctuation">:</span> <span class="number">1304.77</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;PoolNonpagedMiB&quot;</span><span class="punctuation">:</span> <span class="number">1326.43</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;Targets&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;CreationTime&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-07-20T11:00:06.8128080+08:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">3.853</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">6060</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">292</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ProjectPath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;E:\\Unity\\wx_gardenagrown_1\\Unity&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">22848</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ParentProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">0.756</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">11590</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">155</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;WorkerName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AssetImportWorker0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">6884</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ParentProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">0.754</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">11589</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">155</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;WorkerName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AssetImportWorker1&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
 <p>当时系统提交率只有 29.05%，并不是正在发生的 OOM，而是追踪器提前抓到了异常行为。</p>
 <p>主进程的句柄变化非常典型, 基本就是一个上升-下降的锯齿状曲线, 然后毫不令人意外的是每次锯齿之后的量会比上次多一些：</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
 <th>时间</th>
-<th style="text-align:right">主进程句柄数</th>
+<th align="right">主进程句柄数</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>14:22:10</td>
-<td style="text-align:right">6,060</td>
+<td align="right">6,060</td>
 </tr>
 <tr>
 <td>14:24:18</td>
-<td style="text-align:right">35,684</td>
+<td align="right">35,684</td>
 </tr>
 <tr>
 <td>14:29:57</td>
-<td style="text-align:right">120,037</td>
+<td align="right">120,037</td>
 </tr>
 <tr>
 <td>14:30:29</td>
-<td style="text-align:right">8,846</td>
+<td align="right">8,846</td>
 </tr>
 <tr>
 <td>14:38:51</td>
-<td style="text-align:right">132,168</td>
+<td align="right">132,168</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>14:59:59 到 15:00:04，只有 5 秒，句柄却从 14,884 涨到 16,825，私有内存仍在约 4 GiB。</p>
 <p>这里已经基本可以确定排查方向, 泄露的不是堆内存而是句柄。</p>
 <h3 id="2-分析"><a href="#2-分析" class="headerlink" title="2. 分析"></a>2. 分析</h3><p>接着用 Sysinternals Handle 检查 <code>PID 27308</code> (刚才出问题的pid)。</p>
@@ -378,14 +372,17 @@
 </ul>
 <p>Handle 工具的关键输出摘录如下：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Handle type summary:</span><br><span class="line">  Event      :   908</span><br><span class="line">  Semaphore  :  3264</span><br><span class="line">  Thread     : 92490</span><br><span class="line">Total handles: 97998</span><br><span class="line"></span><br><span class="line">Get-Process PID 27308:</span><br><span class="line">  Live threads: 289</span><br><span class="line"></span><br><span class="line">Thread-handle target aggregation:</span><br><span class="line">  &gt;99% of thread handles -&gt; TID 30960</span><br></pre></td></tr></table></figure>
+
 <p>九万多个 <code>Thread</code> 句柄，鼠实有点吓人。</p>
 <p>再按目标线程聚合，超过 99% 的异常句柄都指向 <code>TID 30960</code>, 也就是说这一坨句柄其实都是这一个线程搞出来的, 实际上系统并没有开启那么多任务.</p>
 <p>高度怀疑是这个30960背后的服务被复制或重启了N次, 导致句柄数量一直在增长.</p>
 <h3 id="3-石锤"><a href="#3-石锤" class="headerlink" title="3. 石锤"></a>3. 石锤</h3><p>为了解析 ETL，安装了 Windows Performance Toolkit, WPAExporter 加载了微软符号和 Tuanjie 符号。</p>
 <p>只看 15 秒，同一条复制栈就出现了 219,368 次，这个数字已经离谱了。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Thread::RunThreadWrapper</span><br><span class="line">PreviewTextureManager::LoadingLoop</span><br><span class="line">PreviewTextureManager::GetMostImportantTextureToLoad</span><br><span class="line">ProtectedScopedThreadAttach::ProtectedScopedThreadAttach</span><br><span class="line">scripting_thread_attach</span><br><span class="line">mono_thread_internal_attach</span><br><span class="line">mono_thread_attach_internal</span><br><span class="line">mono_threads_open_native_thread_handle</span><br><span class="line">KernelBase!DuplicateHandle</span><br><span class="line">ntdll!NtDuplicateObject</span><br></pre></td></tr></table></figure>
+
 <p>WPA 导出结果的聚合摘要如下：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Trace range                         : 15 seconds</span><br><span class="line">Dominant creation method            : Duplicate</span><br><span class="line">Dominant stack events               : 219368</span><br><span class="line">Observed net handle growth           : 380-400 handles/second</span><br><span class="line">Creating process                     : Tuanjie.exe (27308)</span><br><span class="line">Handle type                          : Thread</span><br><span class="line">Dominant target thread               : TID 30960</span><br></pre></td></tr></table></figure>
+
 <p>到了这里，基本可以说是破案了：</p>
 <ol>
 <li><code>PreviewTextureManager</code> 的后台加载线程正在执行预览任务。</li>
@@ -400,6 +397,7 @@
 <h3 id="为什么这个项目特别容易触发"><a href="#为什么这个项目特别容易触发" class="headerlink" title="为什么这个项目特别容易触发"></a>为什么这个项目特别容易触发</h3><p>“谁在漏”已经找到了，但事情还没完。同一个引擎，为什么这个项目触发得这么频繁？</p>
 <p>编辑器日志显示，在异常开始前后，下面这个文件被反复检测、写入和导入：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br></pre></td></tr></table></figure>
+
 <p>顺着日志和代码排查，发现其实是ThunderFire UXTool的收藏夹功能引发的频繁写入：</p>
 <ol>
 <li><code>RecentSelectRecord</code> 订阅 <code>Selection.selectionChanged</code>。</li>
@@ -415,6 +413,7 @@
 </ol>
 <p>重启前的 <code>Editor-prev.log</code> 也对上了。下面只截一小段：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Starting new worker id: 0 with log in .../Logs/AssetImportWorker0.log</span><br><span class="line">Starting new worker id: 1 with log in .../Logs/AssetImportWorker1.log</span><br><span class="line">Detected change in .../Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Refreshing native plugins compatible for Editor in 39.09 ms, found 15 plugins.</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.182 seconds</span><br><span class="line">Detected change in .../FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.188 seconds</span><br><span class="line">Detected change in .../FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.208 seconds</span><br><span class="line"></span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br></pre></td></tr></table></figure>
+
 <p><code>prematurely finalized</code> 和句柄骤降能对上。终结器会回收一批对象，但同一条创建路径还在跑。</p>
 <p>关键源码位置包括：</p>
 <ul>
@@ -426,54 +425,53 @@
 </ul>
 <p>把关键代码放在一起，关系就很直观：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RecentSelectRecord.cs</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">RecentSelectRecord</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    Selection.selectionChanged += UpdateRecentFiles;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (recentList.Contains(guid))</span><br><span class="line">&#123;</span><br><span class="line">    recentSelected.Remove(guid);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (guid != <span class="string">&quot;&quot;</span> &amp;&amp; !recentList.Contains(guid))</span><br><span class="line">&#123;</span><br><span class="line">    recentSelected.Add(guid);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RecentFilesSetting.cs</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Add</span>(<span class="params"><span class="built_in">string</span> guid</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    List.Insert(<span class="number">0</span>, guid);</span><br><span class="line">    JsonAssetManager.SaveAssets(<span class="keyword">this</span>);</span><br><span class="line">    OnValueChanged();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Remove</span>(<span class="params"><span class="built_in">string</span> guid</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> index = List.FindIndex(i =&gt; i == guid);</span><br><span class="line">    <span class="keyword">if</span> (index &gt;= <span class="number">0</span>) List.RemoveAt(index);</span><br><span class="line">    JsonAssetManager.SaveAssets(<span class="keyword">this</span>);</span><br><span class="line">    OnValueChanged();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// JsonAssetManager.cs</span></span><br><span class="line"><span class="built_in">string</span> dataAsJson = JsonUtility.ToJson(obj);</span><br><span class="line">File.WriteAllText(path, dataAsJson);</span><br><span class="line"></span><br><span class="line"><span class="comment">// AssetItemMatFile.cs / AssetItemOthersFile.cs</span></span><br><span class="line">Texture2D preview = AssetPreview.GetAssetPreview(_assetObj);</span><br></pre></td></tr></table></figure>
+
 <p>注意, UXTool 只是触发器，它会频繁刷新和预览，但本质这个问题还是 Tuanjie 引擎的锅。</p>
 <h3 id="官方问题记录"><a href="#官方问题记录" class="headerlink" title="官方问题记录"></a>官方问题记录</h3><p>Unity 官方 Issue Tracker 里有一条类似的记录：<a href="https://issuetracker-mig.prd.it.unity3d.com/issues/crash-on-protectedscopedthreadattach-protectedscopedthreadattach-when-performing-various-unity-operations">UUM-141036</a>。</p>
 <p>它的原生调用链几乎一样：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PreviewTextureManager::LoadingLoop</span><br><span class="line">PreviewTextureManager::GetMostImportantTextureToLoad</span><br><span class="line">ProtectedScopedThreadAttach</span><br><span class="line">scripting_thread_attach</span><br><span class="line">mono_thread_internal_attach</span><br></pre></td></tr></table></figure>
+
 <p>不过，Tuanjie 是独立分支，Unity那边的事情很可能跟我们已经没有关系了. 目标版本有没有修好，还得看实际问题有没有解决。考虑到项目中途升级引擎版本风险很大, 恐怕这个问题要一直陪伴我们很长时间.</p>
 <h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>解决不了问题, 那只好解决提(chu)出(fa)问题的工具了. 直接把UXTool的“最近选中面板记录”关闭, 然后重启一下团结:</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/uxtool-settings.png" alt="uxtool-settings"></p>
 <h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>因为已经确认是句柄的问题, 所以重启之后重点排查句柄:</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
 <th>时间</th>
-<th style="text-align:right">句柄数</th>
-<th style="text-align:right">私有内存</th>
+<th align="right">句柄数</th>
+<th align="right">私有内存</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>15:45:42</td>
-<td style="text-align:right">5,513</td>
-<td style="text-align:right">3,629.7 MiB</td>
+<td align="right">5,513</td>
+<td align="right">3,629.7 MiB</td>
 </tr>
 <tr>
 <td>15:50:57</td>
-<td style="text-align:right">5,811</td>
-<td style="text-align:right">3,702.5 MiB</td>
+<td align="right">5,811</td>
+<td align="right">3,702.5 MiB</td>
 </tr>
 <tr>
 <td>15:55:57</td>
-<td style="text-align:right">6,100</td>
-<td style="text-align:right">3,711.8 MiB</td>
+<td align="right">6,100</td>
+<td align="right">3,711.8 MiB</td>
 </tr>
 <tr>
 <td>16:03:10</td>
-<td style="text-align:right">6,075</td>
-<td style="text-align:right">3,719.1 MiB</td>
+<td align="right">6,075</td>
+<td align="right">3,719.1 MiB</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>启动阶段，句柄最高到 7,564，很快又回落到 5,500～6,100</p>
 <p>39 秒采样里，句柄从 5,831 涨到 5,871，速度约为每秒 1.03 个</p>
 <p>过了约 7 分钟，句柄又从 6,100 回到 6,075</p>
 <p>旧进程会每秒涨几百个，还会冲到十几万，看来我们已经解决了引发问题的大头. 考虑到这是团结自己的问题, 残留有少许的上涨也不令人意外. 能把崩溃的频率降低就算成功.</p>
 <p>重启后的 Handle 摘要如下，总量已经回到正常范围。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Handle type summary:</span><br><span class="line">  Event      :  819</span><br><span class="line">  Semaphore  : 3225</span><br><span class="line">  Thread     :  557</span><br><span class="line">Total handles: 5871</span><br><span class="line"></span><br><span class="line">Process snapshot:</span><br><span class="line">  Threads    : 271</span><br><span class="line">  PrivateMiB : 3714.8</span><br></pre></td></tr></table></figure>
-<h2 id="2026-年-8-月后续：把正常重启做成工具"><a href="#2026-年-8-月后续：把正常重启做成工具" class="headerlink" title="2026 年 8 月后续：把正常重启做成工具"></a>2026 年 8 月后续：把正常重启做成工具</h2><p>排查之后，我又制作了 <a href="https://github.com/SHW2002/Unity-Restart-Tool">Unity-Restart-Tool</a>，用来管理 Windows 上多个 Unity / 团结编辑器实例，并提供手动批量重启和按项目设置的定时计划。</p>
+
+<h2 id="2026-年-8-月后续：把正常重启做成工具"><a href="#2026-年-8-月后续：把正常重启做成工具" class="headerlink" title="2026 年 8 月后续：把正常重启做成工具"></a>2026 年 8 月后续：把正常重启做成工具</h2><p>排查之后，我又制作了 <a href="https://github.com/SHW2002/Unity-Restart-Tool">Unity-Restart-Tool</a>，用来管理 Windows 上多个 Unity &#x2F; 团结编辑器实例，并提供手动批量重启和按项目设置的定时计划。</p>
 <p>工具会识别具有主窗口与有效项目路径的编辑器，排除 AssetImportWorker 等后台进程。项目内的 Editor companion 负责检查当前是否正在运行游戏、编译、导入或构建；不满足条件或无法完成检查时跳过实例，通过检查后才尝试正常退出并重新启动，不强制结束进程。</p>
 <p>另外还有一个短时间的 Console 安静检查，退出前会再次检查编辑器状态，减少检查完成到实际退出之间的状态变化问题。这个检查只是重启条件之一，不能证明编辑器或项目本身没有问题。</p>
 <p>这里有个使用前需要明确的边界：工具当前没有把场景与资源的 Dirty 标志作为重启门禁，未保存内容可能随编辑器退出而丢失，所以需要先保存工作，再使用手动或定时重启。</p>

@@ -74,6 +74,12 @@
 
 
 
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
 
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
@@ -162,7 +168,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -257,34 +263,44 @@
     <div class="post-body" itemprop="articleBody"><p>在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 <code>CS</code> 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。</p>
 <p>我在一个已有的开源生成器上做了一些修改，把项目中经常遇到的类型提示问题补起来。这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其中几个最有价值的处理。</p>
 <span id="more"></span>
+
 <h2 id="生成注解，并不改变运行时"><a href="#生成注解，并不改变运行时" class="headerlink" title="生成注解，并不改变运行时"></a>生成注解，并不改变运行时</h2><p>工具在 Unity 编辑器中通过反射读取 C# 程序集，再生成 Lua 语言服务能够理解的类型声明。注解文件提供给编辑器分析，不应该作为业务脚本被加载执行。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C# 程序集</span><br><span class="line">    ↓ 反射读取类型、成员和继承关系</span><br><span class="line">Lua 注解文件</span><br><span class="line">    ↓ 语言服务建立索引</span><br><span class="line">字段补全、参数提示与静态诊断</span><br></pre></td></tr></table></figure>
+
 <p>例如一个普通类型可以生成这样的声明：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@class Demo.InventoryService</span></span><br><span class="line"><span class="comment">---@field Capacity integer</span></span><br><span class="line"><span class="keyword">local</span> InventoryService = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">---@param itemId integer</span></span><br><span class="line"><span class="comment">---@return boolean</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">InventoryService:Contains</span><span class="params">(itemId)</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>这里的方法体是空的，因为它的作用是告诉语言服务“存在这个方法”，不是重新实现 C# 逻辑。真正的跨语言调用仍然由 xLua 等运行时桥接完成。</p>
-<p><img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp" alt="生成注解后，Lua 编辑器能够列出 Unity Transform 类型及成员" width="520" style="display:block;width:520px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy"></p>
+<img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp" alt="生成注解后，Lua 编辑器能够列出 Unity Transform 类型及成员" width="520" style="display:block;width:520px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
 <p><em>当时的补全效果，裁去业务代码，仅保留类型与成员提示。</em></p>
 <h2 id="泛型继承会把类型信息丢在哪"><a href="#泛型继承会把类型信息丢在哪" class="headerlink" title="泛型继承会把类型信息丢在哪"></a>泛型继承会把类型信息丢在哪</h2><p>最常见的情况是泛型单例：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Singleton</span>&lt;<span class="title">T</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> T Instance &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">InventoryService</span> : <span class="title">Singleton</span>&lt;<span class="title">InventoryService</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Capacity &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>如果生成器只看泛型定义，<code>Instance</code> 的类型只能写成 <code>T</code>。但对 <code>InventoryService</code> 来说，继承关系已经明确提供了实参，编辑器本来可以知道 <code>Instance</code> 就是 <code>InventoryService</code>。</p>
 <p>我补充的处理是：在生成具体派生类时检查父类的泛型信息，把能够确定的字段与属性类型落实到派生类的声明中。于是调用 <code>InventoryService.Instance.Capacity</code> 时，类型链可以继续下去。</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@class Demo.InventoryService : Demo.Singleton</span></span><br><span class="line"><span class="comment">---@field Instance Demo.InventoryService</span></span><br><span class="line"><span class="comment">---@field Capacity integer</span></span><br><span class="line"><span class="keyword">local</span> InventoryService = &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这不是一套完整的 C# 泛型推导系统。这个阶段的实现主要覆盖<strong>非泛型派生类、直接父类只有一个泛型参数、继承字段与属性</strong>的常见场景；多参数映射、复杂嵌套以及方法的泛型参数和返回值仍需另外处理。</p>
 <p>把边界说明清楚很有必要：类型提示在大部分调用链上改善，并不意味着所有泛型组合都能正确生成。</p>
 <h2 id="类型名与-CS-表的访问路径"><a href="#类型名与-CS-表的访问路径" class="headerlink" title="类型名与 CS 表的访问路径"></a>类型名与 CS 表的访问路径</h2><p>xLua 中常通过 <code>CS.UnityEngine.Vector3</code> 访问 C# 类型，但已有注解可能写成 <code>UnityEngine.Vector3</code>。如果把两种写法当成互不相干的类型，赋值与字段访问就会出现无意义的提示。</p>
 <p>工具默认生成正常的类型名，再提供可选的 <code>CS.</code> 前缀兼容声明。目标是让这两种注解写法描述同一个类型，同时让访问 <code>CS</code> 表时能够获得成员提示。</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@type UnityEngine.Vector3</span></span><br><span class="line"><span class="keyword">local</span> a = CS.UnityEngine.Vector3.zero</span><br><span class="line"></span><br><span class="line"><span class="comment">---@type CS.UnityEngine.Vector3</span></span><br><span class="line"><span class="keyword">local</span> b = CS.UnityEngine.Vector3.zero</span><br></pre></td></tr></table></figure>
+
 <p>这里要同时关心类型别名和表的字段声明。仅仅建立一个名称别名，并不自动保证语言服务在 <code>CS.UnityEngine</code> 这条访问路径上能够继续识别成员；这也是改造中实际修过的问题之一。</p>
 <p>项目需要保留哪种写法，最好在接入时明确下来，避免生成文件与手写注解形成两套相互不兼容的命名习惯。</p>
 <h2 id="C-委托与-Lua-function-的兼容"><a href="#C-委托与-Lua-function-的兼容" class="headerlink" title="C# 委托与 Lua function 的兼容"></a>C# 委托与 Lua function 的兼容</h2><p>运行时桥接通常允许把 Lua 函数传给某些 C# 委托，但语言服务未必知道这条转换规则。例如：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> onDone = <span class="function"><span class="keyword">function</span><span class="params">()</span></span> <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">---@type System.Action</span></span><br><span class="line"><span class="keyword">local</span> callback</span><br><span class="line">callback = onDone</span><br></pre></td></tr></table></figure>
+
 <p>没有额外信息时，这可能被诊断为 <code>function</code> 不能赋给 <code>System.Action</code>。</p>
 <p>我增加了可配置的兼容类型列表，在需要的声明位置将指定委托表达为联合类型：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@param callback System.Action | function</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">RunWhenReady</span><span class="params">(callback)</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>这样保留了原 C# 类型，同时允许 Lua 函数传入。这个处理也要覆盖方法重载，不能只修普通声明，否则同一套 API 会因为是否进入重载分支而产生不同提示。</p>
 <p>代价是 <code>function</code> 本身比较宽泛，它不能替代精确的参数与返回值检查。所以兼容列表只应包含运行时确实支持转换的类型。若某个回调需要严格签名，更合适的办法是进一步生成明确的 <code>fun(...)</code> 声明。</p>
 <h2 id="静态方法与实例方法不能混淆"><a href="#静态方法与实例方法不能混淆" class="headerlink" title="静态方法与实例方法不能混淆"></a>静态方法与实例方法不能混淆</h2><p>Lua 的点调用与冒号调用在参数上有区别，冒号会隐式传入 <code>self</code>。如果把 C# 静态方法生成为实例方法，编辑器看到的参数列表就会错位。</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 静态方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Demo.Utility.Create</span><span class="params">()</span></span> <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 实例方法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Demo.Service:Refresh</span><span class="params">()</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
 <p>生成器需要根据反射结果中的 <code>IsStatic</code> 决定声明方式。我也修复了静态函数仍然携带实例参数的情况，并整理了泛型名称后缀、匿名类型等不适合直接暴露的类型名称。</p>
 <p>这些问题看起来零碎，但它们决定了使用者能否信任提示。如果日常面对很多错误警告，人反而会习惯性忽略真正的问题。</p>
 <h2 id="让生成过程适合反复使用"><a href="#让生成过程适合反复使用" class="headerlink" title="让生成过程适合反复使用"></a>让生成过程适合反复使用</h2><p>除了类型映射，我还补了几项使用上的功能：</p>

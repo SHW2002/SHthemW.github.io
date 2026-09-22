@@ -1389,7 +1389,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #36216c;
+    background: #fff642;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -2587,6 +2587,13 @@ mark.search-keyword {
   color: #ff2a2a;
   font-weight: bold;
 }
+mjx-container[jax='CHTML'][display='true'],
+.has-jax {
+  overflow: auto hidden;
+}
+mjx-container[display='true'] + br {
+  display: none;
+}
 .use-motion .animated {
   animation-fill-mode: none;
   visibility: inherit;
@@ -2841,5 +2848,82 @@ header.header {
 @media (max-width: 767px) {
   .pagination {
     margin-bottom: 10px;
+  }
+}
+@media (min-width: 992px) {
+  .main:has(.holdhand-state-gallery) {
+    width: calc(100% - 32px);
+    max-width: 1800px;
+  }
+  .main-inner.post:has(.holdhand-state-gallery) {
+    padding: 40px 28px;
+  }
+  .post-body:has(.holdhand-state-gallery) > :not(.holdhand-state-gallery) {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+.post-body .holdhand-state-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 24px;
+  width: 75%;
+  max-width: 75%;
+  margin: 1.5em auto 2em;
+  align-items: start;
+}
+.post-body .holdhand-state-gallery > figure:not(.highlight) {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  float: none;
+  box-sizing: border-box;
+}
+.post-body .holdhand-state-gallery > figure:not(.highlight) > a {
+  display: block;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border-bottom: 0;
+  line-height: 0;
+  cursor: zoom-in;
+}
+.post-body .holdhand-state-gallery > figure:not(.highlight) img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.post-body .holdhand-state-gallery > figure:not(.highlight) > figcaption {
+  position: static;
+  float: none;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0;
+  font-size: 0.9em;
+  font-weight: normal;
+  line-height: 1.7;
+  color: inherit;
+  text-align: left;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+@media (max-width: 600px) {
+  .post-body .holdhand-state-gallery {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: 100%;
   }
 }
