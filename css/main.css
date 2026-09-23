@@ -1389,7 +1389,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #fff642;
+    background: #06a8cf;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -2850,26 +2850,12 @@ header.header {
     margin-bottom: 10px;
   }
 }
-@media (min-width: 992px) {
-  .main:has(.holdhand-state-gallery) {
-    width: calc(100% - 32px);
-    max-width: 1800px;
-  }
-  .main-inner.post:has(.holdhand-state-gallery) {
-    padding: 40px 28px;
-  }
-  .post-body:has(.holdhand-state-gallery) > :not(.holdhand-state-gallery) {
-    max-width: 960px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
 .post-body .holdhand-state-gallery {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 32px 24px;
-  width: 75%;
-  max-width: 75%;
+  width: 100%;
+  max-width: none;
   margin: 1.5em auto 2em;
   align-items: start;
 }
@@ -2887,7 +2873,9 @@ header.header {
 .post-body .holdhand-state-gallery > figure:not(.highlight) > a {
   display: block;
   flex: 0 0 auto;
-  width: 100%;
+  width: calc(75% - 3px);
+  max-width: 75%;
+  align-self: flex-end;
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -2920,10 +2908,18 @@ header.header {
   overflow-wrap: anywhere;
   box-sizing: border-box;
 }
+.post-body .holdhand-state-gallery > figure:not(.highlight):nth-child(even) > a {
+  align-self: flex-start;
+}
 @media (max-width: 600px) {
   .post-body .holdhand-state-gallery {
     grid-template-columns: minmax(0, 1fr);
     width: 100%;
     max-width: 100%;
+  }
+  .post-body .holdhand-state-gallery > figure:not(.highlight) > a {
+    width: 75%;
+    max-width: 75%;
+    align-self: center;
   }
 }
