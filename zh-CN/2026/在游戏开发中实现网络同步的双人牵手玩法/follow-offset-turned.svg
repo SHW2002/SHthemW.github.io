@@ -1,52 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="590" viewBox="0 0 1040 590" role="img" aria-labelledby="title desc">
 <title id="title">跟随偏移随朝向改变</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。</desc>
 <defs>
-<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
-<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
-<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000" /></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000" /></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF" /></marker>
 </defs>
-<rect width="1040" height="590" fill="#FFFFFF"/>
+<rect width="1040" height="590" fill="#FFFFFF" />
 <g stroke-linecap="round" stroke-linejoin="round">
-<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">1</tspan></text>
-<path d="M660.00 255.00L780.45 427.02" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
-<path d="M660.00 255.00L795.16 160.36" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
-<text x="793.8925102518259" y="444.93684156642223" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">x<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
-<text x="810.7133036619956" y="150.77127651126904" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">z<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
-<path d="M660.00 255.00L522.34 58.40" fill="none" stroke="#0000FF" stroke-width="2.5" marker-end="url(#b)"/>
-<path d="M522.34 58.40L448.62 110.03" fill="none" stroke="#0000FF" stroke-width="2.5" marker-end="url(#b)"/>
-<path d="M660.00 255.00L448.62 110.03" fill="none" stroke="#FF0000" stroke-width="2.5" marker-end="url(#r)"/>
-<path d="M660.00 255.00L455.21 398.39" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="7 7"/>
-<text x="591.1708276378745" y="156.70175468532096" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="middle">O<tspan baseline-shift="sub" font-size="70%">x</tspan></text>
-<text x="492.34165527574896" y="84.21444900643903" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="end">O<tspan baseline-shift="sub" font-size="70%">z</tspan></text>
-<text x="564.3089856448698" y="212.51269432111803" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">O<tspan baseline-shift="sub" font-size="70%">f</tspan></text>
-<text x="579.605994463876" y="326.69705454388077" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">O<tspan baseline-shift="sub" font-size="70%">p</tspan></text>
-<path d="M345.00 440.00L448.62 110.03" fill="none" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#b)"/>
-<path d="M443.62 110.03L453.62 110.03" fill="none" stroke="#FF0000" stroke-width="2"/>
-<path d="M448.62 105.03L448.62 115.03" fill="none" stroke="#FF0000" stroke-width="2"/>
-<text x="434.61797128973967" y="97.0253886422361" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">P<tspan baseline-shift="sub" font-size="70%">t</tspan></text>
-<path d="M450.21 398.39L460.21 398.39" fill="none" stroke="#000000" stroke-width="2"/>
-<path d="M455.21 393.39L455.21 403.39" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="469.21198892775203" y="386.39410908776154" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">p</tspan></text>
-<path d="M660.00 255.00L660.00 75.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M660.00 185.00L661.68 185.02L663.36 185.08L665.04 185.18L666.71 185.32L668.38 185.50L670.04 185.72L671.70 185.99L673.36 186.29L675.00 186.63L676.64 187.01L678.26 187.42L679.88 187.88L681.49 188.38L683.08 188.91L684.66 189.49L686.22 190.10L687.77 190.75L689.31 191.43L690.82 192.15L692.32 192.91L693.80 193.70L695.26 194.53L696.71 195.40L698.12 196.29L699.52 197.22L700.90 198.19L702.25 199.19L703.58 200.22L704.88 201.28L706.15 202.37L707.40 203.49L708.63 204.65L709.82 205.83L710.99 207.04L712.12 208.27L713.23 209.54L714.30 210.83L715.35 212.14L716.36 213.49L717.34 214.85" fill="none" stroke="#FF0000" stroke-width="2" marker-end="url(#r)"/>
-<text x="680" y="165" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">θ<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="923.00" y="42.40" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">状态二</text>
+<path d="M660.00 255.00L780.45 427.02" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)" />
+<path d="M660.00 255.00L795.16 160.36" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)" />
+<text x="793.89" y="444.94" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">角色右方</text>
+<text x="810.71" y="150.77" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">角色前方</text>
+<path d="M660.00 255.00L522.34 58.40" fill="none" stroke="#0000FF" stroke-width="2.5" marker-end="url(#b)" />
+<path d="M522.34 58.40L448.62 110.03" fill="none" stroke="#0000FF" stroke-width="2.5" marker-end="url(#b)" />
+<path d="M660.00 255.00L448.62 110.03" fill="none" stroke="#FF0000" stroke-width="2.5" marker-end="url(#r)" />
+<path d="M660.00 255.00L455.21 398.39" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="7 7" />
+<text x="535.17" y="48.70" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">左右偏移</text>
+<text x="356.34" y="84.21" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">前后偏移</text>
+<text x="516.31" y="260.51" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">跟随偏移</text>
+<text x="579.61" y="350.70" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">准备偏移</text>
+<path d="M345.00 440.00L448.62 110.03" fill="none" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#b)" />
+<path d="M443.62 110.03L453.62 110.03" fill="none" stroke="#FF0000" stroke-width="2" />
+<path d="M448.62 105.03L448.62 115.03" fill="none" stroke="#FF0000" stroke-width="2" />
+<text x="322.62" y="121.03" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">跟随目标</text>
+<path d="M450.21 398.39L460.21 398.39" fill="none" stroke="#000000" stroke-width="2" />
+<path d="M455.21 393.39L455.21 403.39" fill="none" stroke="#000000" stroke-width="2" />
+<text x="493.21" y="410.39" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">准备位置</text>
+<path d="M660.00 255.00L660.00 75.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M660.00 185.00L661.68 185.02L663.36 185.08L665.04 185.18L666.71 185.32L668.38 185.50L670.04 185.72L671.70 185.99L673.36 186.29L675.00 186.63L676.64 187.01L678.26 187.42L679.88 187.88L681.49 188.38L683.08 188.91L684.66 189.49L686.22 190.10L687.77 190.75L689.31 191.43L690.82 192.15L692.32 192.91L693.80 193.70L695.26 194.53L696.71 195.40L698.12 196.29L699.52 197.22L700.90 198.19L702.25 199.19L703.58 200.22L704.88 201.28L706.15 202.37L707.40 203.49L708.63 204.65L709.82 205.83L710.99 207.04L712.12 208.27L713.23 209.54L714.30 210.83L715.35 212.14L716.36 213.49L717.34 214.85" fill="none" stroke="#FF0000" stroke-width="2" marker-end="url(#r)" />
+<text x="680.00" y="141.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">转身角度</text>
 <g data-role="initiator" data-x="660.00" data-y="255.00" transform="translate(660.00 255.00) scale(1)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="678" y="270" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="702.00" y="270.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">发起方</text>
 <g data-role="recipient" data-x="345.00" data-y="440.00" transform="translate(345.00 440.00) scale(1)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="363" y="455" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">d</tspan></text>
-<path d="M75.00 525.00L210.00 525.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
-<path d="M75.00 525.00L75.00 395.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
-<text x="221" y="534" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">X</text>
-<text x="61" y="386" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">Z</text>
+<text x="363.00" y="455.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">接收方</text>
+<path d="M75.00 525.00L210.00 525.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)" />
+<path d="M75.00 525.00L75.00 395.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)" />
+<text x="221.00" y="534.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">世界左右</text>
+<text x="61.00" y="386.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">世界前后</text>
 </g>
 </svg>

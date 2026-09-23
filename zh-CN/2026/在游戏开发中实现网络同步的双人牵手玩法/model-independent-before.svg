@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="490" viewBox="0 0 900 490" role="img" aria-labelledby="title desc">
+<title id="title">没有跟随控制时两名角色独立移动</title><desc id="desc">红色三角身图标表示发起方，蓝色菱形身图标表示接收方，按正文逐步引入其余对象。</desc>
+<rect width="900" height="490" fill="#FFFFFF"/>
+<defs>
+<marker id="k" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5L0 10Z" fill="#000000"/></marker>
+<marker id="r" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5L0 10Z" fill="#FF0000"/></marker>
+<marker id="b" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5L0 10Z" fill="#0000FF"/></marker>
+</defs>
+<g stroke-linecap="round" stroke-linejoin="round">
+<text x="855" y="43" fill="#000000" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="end">起初</text>
+<g data-role="initiator" data-x="420.0000" data-y="235.0000" transform="translate(420.00 235.00)">
+<circle cx="0.00" cy="-51.00" r="8" fill="none" stroke="#FF0000" stroke-width="2"/>
+<path d="M0.00 -37.00L-18.00 -12.00L18.00 -12.00L0.00 -37.00" fill="none" stroke="#FF0000" stroke-width="3"/>
+<path d="M-7.00 -12.00L-13.00 0.00" fill="none" stroke="#FF0000" stroke-width="3"/>
+<path d="M7.00 -12.00L13.00 0.00" fill="none" stroke="#FF0000" stroke-width="3"/>
+</g>
+<text x="420" y="280" fill="#FF0000" font-size="32" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="middle">发起方</text>
+<g data-role="recipient" data-x="280.0000" data-y="340.0000" transform="translate(280.00 340.00)">
+<circle cx="0.00" cy="-51.00" r="8" fill="none" stroke="#0000FF" stroke-width="2"/>
+<path d="M0.00 -37.00L-18.00 -23.00L0.00 -9.00L18.00 -23.00L0.00 -37.00" fill="none" stroke="#0000FF" stroke-width="3"/>
+<path d="M-7.00 -12.00L-13.00 0.00" fill="none" stroke="#0000FF" stroke-width="3"/>
+<path d="M7.00 -12.00L13.00 0.00" fill="none" stroke="#0000FF" stroke-width="3"/>
+</g>
+<text x="280" y="385" fill="#0000FF" font-size="32" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="middle">接收方</text>
+</g>
+</svg>

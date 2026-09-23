@@ -1,68 +1,67 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="650" viewBox="0 0 1040 650" role="img" aria-labelledby="title desc">
 <title id="title">掌心旋转时反算手腕目标</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。实线骨链包含双方各自的肩、肘、腕三个节点。</desc>
 <defs>
-<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
-<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
-<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000" /></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000" /></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF" /></marker>
 </defs>
-<rect width="1040" height="650" fill="#FFFFFF"/>
+<rect width="1040" height="650" fill="#FFFFFF" />
 <g stroke-linecap="round" stroke-linejoin="round">
-<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">0</tspan></text>
-<path d="M315.00 270.00L315.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M315.00 270.00L374.03 380.18L485.00 350.00" fill="none" stroke="#FF0000" stroke-width="3.5"/>
-<path d="M485.00 350.00L520.00 350.00" fill="none" stroke="#FF0000" stroke-width="2.2"/>
+<text x="923.00" y="42.40" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">状态一</text>
+<path d="M315.00 270.00L315.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M315.00 270.00L374.03 380.18L485.00 350.00" fill="none" stroke="#FF0000" stroke-width="3.5" />
+<path d="M485.00 350.00L520.00 350.00" fill="none" stroke="#FF0000" stroke-width="2.2" />
 <g data-bone-node="S_i">
-<circle cx="315.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="315.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="300" y="255" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">S<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="270.00" y="255.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">肩</text>
 <g data-bone-node="E_i">
-<circle cx="374.03" cy="380.18" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="374.03" cy="380.18" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="359.0315721104363" y="403.1829092653228" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">E<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="329.03" y="403.18" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">肘</text>
 <g data-bone-node="W_i">
-<circle cx="485.00" cy="350.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="485.00" cy="350.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="477.0" y="330.0" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">W<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="447.00" y="330.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">腕</text>
 <g data-role="initiator" data-x="315.00" data-y="565.00" transform="translate(315.00 565.00) scale(1.2)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="333" y="580" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
-<path d="M725.00 270.00L725.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M725.00 270.00L665.97 380.18L555.00 350.00" fill="none" stroke="#0000FF" stroke-width="3.5"/>
-<path d="M555.00 350.00L520.00 350.00" fill="none" stroke="#0000FF" stroke-width="2.2"/>
+<text x="333.00" y="580.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">发起方</text>
+<path d="M725.00 270.00L725.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M725.00 270.00L665.97 380.18L555.00 350.00" fill="none" stroke="#0000FF" stroke-width="3.5" />
+<path d="M555.00 350.00L520.00 350.00" fill="none" stroke="#0000FF" stroke-width="2.2" />
 <g data-bone-node="S_r">
-<circle cx="725.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="725.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="740" y="255" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">S<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<text x="740.00" y="255.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">肩</text>
 <g data-bone-node="E_r">
-<circle cx="665.97" cy="380.18" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="665.97" cy="380.18" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="680.9684278895637" y="403.1829092653228" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">E<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<text x="680.97" y="403.18" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">肘</text>
 <g data-bone-node="W_r">
-<circle cx="555.00" cy="350.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="555.00" cy="350.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="563.0" y="330.0" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">W<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<text x="563.00" y="330.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">腕</text>
 <g data-role="recipient" data-x="725.00" data-y="565.00" transform="translate(725.00 565.00) scale(1.2)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="743" y="580" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
-<path d="M515.00 350.00L525.00 350.00" fill="none" stroke="#000000" stroke-width="2"/>
-<path d="M520.00 345.00L520.00 355.00" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="520.0" y="389.0" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">C</text>
-<path d="M485.00 350.00L545.00 350.00" fill="none" stroke="#FF0000" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#r)"/>
-<text x="443.0" y="375.0" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="end">o<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
-<path d="M523.94 334.27L524.09 334.64L524.24 335.02L524.38 335.39L524.52 335.77L524.65 336.15L524.78 336.53L524.91 336.92L525.03 337.30L525.15 337.69L525.27 338.07L525.38 338.46L525.49 338.85L525.60 339.24L525.70 339.63L525.80 340.02L525.89 340.41L525.98 340.80L526.07 341.20L526.15 341.59L526.23 341.99L526.30 342.38L526.37 342.78L526.44 343.18L526.51 343.57L526.57 343.97L526.62 344.37L526.67 344.77L526.72 345.17L526.77 345.57L526.81 345.97L526.84 346.38L526.88 346.78L526.91 347.18L526.93 347.58L526.95 347.98L526.97 348.39L526.98 348.79L526.99 349.19L527.00 349.60L527.00 350.00" fill="none" stroke="#FF0000" stroke-width="1.5"/>
-<path d="M555.00 350.00L495.00 350.00" fill="none" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#b)"/>
-<text x="597.0" y="375.0" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="start">o<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
-<path d="M516.06 365.73L515.91 365.36L515.76 364.98L515.62 364.61L515.48 364.23L515.35 363.85L515.22 363.47L515.09 363.08L514.97 362.70L514.85 362.31L514.73 361.93L514.62 361.54L514.51 361.15L514.40 360.76L514.30 360.37L514.20 359.98L514.11 359.59L514.02 359.20L513.93 358.80L513.85 358.41L513.77 358.01L513.70 357.62L513.63 357.22L513.56 356.82L513.49 356.43L513.43 356.03L513.38 355.63L513.33 355.23L513.28 354.83L513.23 354.43L513.19 354.03L513.16 353.62L513.12 353.22L513.09 352.82L513.07 352.42L513.05 352.02L513.03 351.61L513.02 351.21L513.01 350.81L513.00 350.40L513.00 350.00" fill="none" stroke="#0000FF" stroke-width="1.5"/>
-<path d="M515.00 350.00L525.00 350.00" fill="none" stroke="#000000" stroke-width="2"/>
-<path d="M520.00 345.00L520.00 355.00" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="520" y="413" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">T<tspan baseline-shift="sub" font-size="70%">c</tspan></text>
+<text x="743.00" y="580.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">接收方</text>
+<path d="M515.00 350.00L525.00 350.00" fill="none" stroke="#000000" stroke-width="2" />
+<path d="M520.00 345.00L520.00 355.00" fill="none" stroke="#000000" stroke-width="2" />
+<path d="M485.00 350.00L545.00 350.00" fill="none" stroke="#FF0000" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#r)" />
+<text x="331.00" y="453.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">掌心偏移</text>
+<path d="M523.94 334.27L524.09 334.64L524.24 335.02L524.38 335.39L524.52 335.77L524.65 336.15L524.78 336.53L524.91 336.92L525.03 337.30L525.15 337.69L525.27 338.07L525.38 338.46L525.49 338.85L525.60 339.24L525.70 339.63L525.80 340.02L525.89 340.41L525.98 340.80L526.07 341.20L526.15 341.59L526.23 341.99L526.30 342.38L526.37 342.78L526.44 343.18L526.51 343.57L526.57 343.97L526.62 344.37L526.67 344.77L526.72 345.17L526.77 345.57L526.81 345.97L526.84 346.38L526.88 346.78L526.91 347.18L526.93 347.58L526.95 347.98L526.97 348.39L526.98 348.79L526.99 349.19L527.00 349.60L527.00 350.00" fill="none" stroke="#FF0000" stroke-width="1.5" />
+<path d="M555.00 350.00L495.00 350.00" fill="none" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#b)" />
+<text x="597.00" y="453.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">掌心偏移</text>
+<path d="M516.06 365.73L515.91 365.36L515.76 364.98L515.62 364.61L515.48 364.23L515.35 363.85L515.22 363.47L515.09 363.08L514.97 362.70L514.85 362.31L514.73 361.93L514.62 361.54L514.51 361.15L514.40 360.76L514.30 360.37L514.20 359.98L514.11 359.59L514.02 359.20L513.93 358.80L513.85 358.41L513.77 358.01L513.70 357.62L513.63 357.22L513.56 356.82L513.49 356.43L513.43 356.03L513.38 355.63L513.33 355.23L513.28 354.83L513.23 354.43L513.19 354.03L513.16 353.62L513.12 353.22L513.09 352.82L513.07 352.42L513.05 352.02L513.03 351.61L513.02 351.21L513.01 350.81L513.00 350.40L513.00 350.00" fill="none" stroke="#0000FF" stroke-width="1.5" />
+<path d="M515.00 350.00L525.00 350.00" fill="none" stroke="#000000" stroke-width="2" />
+<path d="M520.00 345.00L520.00 355.00" fill="none" stroke="#000000" stroke-width="2" />
+<text x="464.00" y="461.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">掌心目标</text>
 </g>
 </svg>

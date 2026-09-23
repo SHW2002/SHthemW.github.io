@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="580" viewBox="0 0 900 580" role="img" aria-labelledby="title desc">
+<title id="title">身体朝向跟随发起方，位移仍逐帧追赶站位点</title><desc id="desc">红色三角身图标表示发起方，蓝色菱形身图标表示接收方，按正文逐步引入其余对象。</desc>
+<rect width="900" height="580" fill="#FFFFFF"/>
+<defs>
+<marker id="k" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5L0 10Z" fill="#000000"/></marker>
+<marker id="r" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5L0 10Z" fill="#FF0000"/></marker>
+<marker id="b" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5L0 10Z" fill="#0000FF"/></marker>
+</defs>
+<g stroke-linecap="round" stroke-linejoin="round">
+<text x="855" y="43" fill="#000000" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="end">继续绕行</text>
+<g data-role="initiator" data-x="600.0000" data-y="330.0000" transform="translate(600.00 330.00)">
+<circle cx="0.00" cy="-51.00" r="8" fill="none" stroke="#FF0000" stroke-width="2"/>
+<path d="M0.00 -37.00L-18.00 -12.00L18.00 -12.00L0.00 -37.00" fill="none" stroke="#FF0000" stroke-width="3"/>
+<path d="M-7.00 -12.00L-13.00 0.00" fill="none" stroke="#FF0000" stroke-width="3"/>
+<path d="M7.00 -12.00L13.00 0.00" fill="none" stroke="#FF0000" stroke-width="3"/>
+</g>
+<text x="600" y="375" fill="#FF0000" font-size="32" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="middle">发起方</text>
+<g data-role="recipient" data-x="412.2922" data-y="280.0977" transform="translate(412.29 280.10)">
+<circle cx="0.00" cy="-51.00" r="8" fill="none" stroke="#0000FF" stroke-width="2"/>
+<path d="M0.00 -37.00L-18.00 -23.00L0.00 -9.00L18.00 -23.00L0.00 -37.00" fill="none" stroke="#0000FF" stroke-width="3"/>
+<path d="M-7.00 -12.00L-13.00 0.00" fill="none" stroke="#0000FF" stroke-width="3"/>
+<path d="M7.00 -12.00L13.00 0.00" fill="none" stroke="#0000FF" stroke-width="3"/>
+</g>
+<text x="374.2921873932776" y="262.0977364835138" fill="#0000FF" font-size="29" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="end">接收方</text>
+<path d="M635.00 330.00L830.00 330.00" fill="none" stroke="#FF0000" stroke-width="3" marker-end="url(#r)"/>
+<text x="730" y="382" fill="#FF0000" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="start">身体朝向</text>
+<path d="M442.29 280.10L527.29 280.10" fill="none" stroke="#0000FF" stroke-width="3" marker-end="url(#b)"/>
+<text x="414.2921873932776" y="325.0977364835138" fill="#0000FF" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="start">身体朝向</text>
+<path d="M412.29 280.10L500.55 128.06" fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="9 9" marker-end="url(#k)"/>
+<path d="M491.55 128.06L509.55 128.06" fill="none" stroke="#000000" stroke-width="3"/>
+<path d="M500.55 119.06L500.55 137.06" fill="none" stroke="#000000" stroke-width="3"/>
+<text x="520.5453624119275" y="116.06254665806753" fill="#000000" font-size="29" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="start">站位点</text>
+</g>
+</svg>

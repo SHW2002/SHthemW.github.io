@@ -1,46 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="490" viewBox="0 0 1040 490" role="img" aria-labelledby="title desc">
 <title id="title">KCC 显示位姿与双人跟随的应用时序</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。</desc>
 <defs>
-<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
-<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
-<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000" /></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000" /></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF" /></marker>
 </defs>
-<rect width="1040" height="490" fill="#FFFFFF"/>
+<rect width="1040" height="490" fill="#FFFFFF" />
 <g stroke-linecap="round" stroke-linejoin="round">
-<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">0</tspan></text>
-<path d="M120.00 113.00L940.00 113.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
-<path d="M230.00 102.00L230.00 124.00" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="230" y="84" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">t<tspan baseline-shift="sub" font-size="70%">KCC</tspan></text>
-<path d="M560.00 102.00L560.00 124.00" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="560" y="84" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">t<tspan baseline-shift="sub" font-size="70%">pair</tspan></text>
-<path d="M875.00 102.00L875.00 124.00" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="875" y="84" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">t<tspan baseline-shift="sub" font-size="70%">camera</tspan></text>
-<circle cx="180.00" cy="113.00" r="5" fill="#000000" stroke="#000000" stroke-width="2.5"/>
-<path d="M180.00 131.00L180.00 172.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M130.00 358.00L941.00 358.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M640.00 293.00L710.00 293.00" fill="none" stroke="#FF0000" stroke-width="2" marker-end="url(#r)"/>
-<path d="M380.00 405.00L445.00 405.00" fill="none" stroke="#0000FF" stroke-width="2" marker-end="url(#b)"/>
+<text x="923.00" y="42.40" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">状态一</text>
+<path d="M120.00 113.00L940.00 113.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)" />
+<path d="M230.00 102.00L230.00 124.00" fill="none" stroke="#000000" stroke-width="2" />
+<text x="174.00" y="84.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">运动更新</text>
+<path d="M560.00 102.00L560.00 124.00" fill="none" stroke="#000000" stroke-width="2" />
+<text x="504.00" y="84.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">跟随更新</text>
+<path d="M875.00 102.00L875.00 124.00" fill="none" stroke="#000000" stroke-width="2" />
+<text x="819.00" y="84.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">相机采样</text>
+<circle cx="180.00" cy="113.00" r="5" fill="#000000" stroke="#000000" stroke-width="2.5" />
+<path d="M180.00 131.00L180.00 172.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M130.00 358.00L941.00 358.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M640.00 293.00L710.00 293.00" fill="none" stroke="#FF0000" stroke-width="2" marker-end="url(#r)" />
+<path d="M380.00 405.00L445.00 405.00" fill="none" stroke="#0000FF" stroke-width="2" marker-end="url(#b)" />
 <g data-role="initiator" data-x="640.00" data-y="328.00" transform="translate(640.00 328.00) scale(1)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="658" y="343" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="658.00" y="343.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">发起方</text>
 <g data-role="recipient" data-x="380.00" data-y="378.00" transform="translate(380.00 378.00) scale(1)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="398" y="393" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
-<path d="M380.00 454.00L640.00 454.00" fill="none" stroke="#000000" stroke-width="1.5"/>
-<path d="M380.00 449.00L380.00 459.00" fill="none" stroke="#000000" stroke-width="1.5"/>
-<path d="M640.00 449.00L640.00 459.00" fill="none" stroke="#000000" stroke-width="1.5"/>
-<text x="510.0" y="482" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">d</text>
-<path d="M635.00 214.00L645.00 214.00" fill="none" stroke="#000000" stroke-width="2"/>
-<path d="M640.00 209.00L640.00 219.00" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="654" y="202" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">C<tspan baseline-shift="sub" font-size="70%">camera</tspan></text>
-<path d="M640.00 214.00L640.00 280.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
+<text x="398.00" y="393.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">接收方</text>
+<path d="M380.00 454.00L640.00 454.00" fill="none" stroke="#000000" stroke-width="1.5" />
+<path d="M380.00 449.00L380.00 459.00" fill="none" stroke="#000000" stroke-width="1.5" />
+<path d="M640.00 449.00L640.00 459.00" fill="none" stroke="#000000" stroke-width="1.5" />
+<text x="454.00" y="434.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">双方距离</text>
+<path d="M635.00 214.00L645.00 214.00" fill="none" stroke="#000000" stroke-width="2" />
+<path d="M640.00 209.00L640.00 219.00" fill="none" stroke="#000000" stroke-width="2" />
+<text x="654.00" y="202.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">相机位置</text>
+<path d="M640.00 214.00L640.00 280.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
 </g>
 </svg>

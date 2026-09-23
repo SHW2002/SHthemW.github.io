@@ -1,49 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="570" viewBox="0 0 1040 570" role="img" aria-labelledby="title desc">
 <title id="title">旋转偏移的水平投影</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。</desc>
 <defs>
-<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
-<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
-<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000" /></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000" /></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF" /></marker>
 </defs>
-<rect width="1040" height="570" fill="#FFFFFF"/>
+<rect width="1040" height="570" fill="#FFFFFF" />
 <g stroke-linecap="round" stroke-linejoin="round">
-<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">1</tspan></text>
-<path d="M172.00 381.00L612.00 501.00L900.00 285.00L460.00 165.00L172.00 381.00" fill="none" stroke="#000000" stroke-width="1"/>
-<path d="M340.00 345.00L804.00 472.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
-<path d="M340.00 345.00L642.00 118.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
-<path d="M340.00 345.00L340.00 52.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)"/>
-<text x="818" y="486" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">X</text>
-<text x="650" y="113" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">Z</text>
-<text x="323" y="44" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">Y</text>
-<path d="M340.00 345.00L571.06 204.26" fill="none" stroke="#0000FF" stroke-width="3" marker-end="url(#b)"/>
-<path d="M340.00 345.00L571.06 351.70" fill="none" stroke="#FF0000" stroke-width="2" stroke-dasharray="7 7" marker-end="url(#r)"/>
-<path d="M571.06 204.26L571.06 351.70" fill="none" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="7 7"/>
-<path d="M566.06 204.26L576.06 204.26" fill="none" stroke="#0000FF" stroke-width="2"/>
-<path d="M571.06 199.26L571.06 209.26" fill="none" stroke="#0000FF" stroke-width="2"/>
-<text x="587.0633378897004" y="186.25512861070615" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">Q</text>
-<path d="M566.06 351.70L576.06 351.70" fill="none" stroke="#FF0000" stroke-width="2"/>
-<path d="M571.06 346.70L571.06 356.70" fill="none" stroke="#FF0000" stroke-width="2"/>
-<text x="587.0633378897004" y="382.7024965827247" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">t</tspan></text>
-<text x="455" y="250" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">O<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
-<text x="450" y="382" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">O<tspan baseline-shift="sub" font-size="70%">XZ</tspan></text>
-<text x="833" y="358" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="27" text-anchor="start">y<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
-<path d="M726.00 204.26L726.00 351.70" fill="none" stroke="#0000FF" stroke-width="1.5"/>
-<path d="M731.00 204.26L721.00 204.26" fill="none" stroke="#0000FF" stroke-width="1.5"/>
-<path d="M731.00 351.70L721.00 351.70" fill="none" stroke="#0000FF" stroke-width="1.5"/>
-<text x="757" y="327.7024965827247" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="middle">Δy</text>
+<text x="923.00" y="42.40" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">状态二</text>
+<path d="M172.00 381.00L612.00 501.00L900.00 285.00L460.00 165.00L172.00 381.00" fill="none" stroke="#000000" stroke-width="1" />
+<path d="M340.00 345.00L804.00 472.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)" />
+<path d="M340.00 345.00L642.00 118.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)" />
+<path d="M340.00 345.00L340.00 52.00" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#k)" />
+<text x="818.00" y="486.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">世界左右</text>
+<text x="650.00" y="113.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">世界前后</text>
+<text x="323.00" y="44.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">高度</text>
+<path d="M340.00 345.00L571.06 204.26" fill="none" stroke="#0000FF" stroke-width="3" marker-end="url(#b)" />
+<path d="M340.00 345.00L571.06 351.70" fill="none" stroke="#FF0000" stroke-width="2" stroke-dasharray="7 7" marker-end="url(#r)" />
+<path d="M571.06 204.26L571.06 351.70" fill="none" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="7 7" />
+<path d="M566.06 204.26L576.06 204.26" fill="none" stroke="#0000FF" stroke-width="2" />
+<path d="M571.06 199.26L571.06 209.26" fill="none" stroke="#0000FF" stroke-width="2" />
+<text x="587.06" y="186.26" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">投影前目标</text>
+<path d="M566.06 351.70L576.06 351.70" fill="none" stroke="#FF0000" stroke-width="2" />
+<path d="M571.06 346.70L571.06 356.70" fill="none" stroke="#FF0000" stroke-width="2" />
+<text x="587.06" y="382.70" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">跟随目标</text>
+<text x="431.00" y="328.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">旋转后偏移</text>
+<text x="426.00" y="430.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">水平偏移</text>
+<text x="857.00" y="358.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">主体高度</text>
+<path d="M726.00 204.26L726.00 351.70" fill="none" stroke="#0000FF" stroke-width="1.5" />
+<path d="M731.00 204.26L721.00 204.26" fill="none" stroke="#0000FF" stroke-width="1.5" />
+<path d="M731.00 351.70L721.00 351.70" fill="none" stroke="#0000FF" stroke-width="1.5" />
+<text x="739.00" y="327.70" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">高度差</text>
 <g data-role="initiator" data-x="340.00" data-y="345.00" transform="translate(340.00 345.00) scale(1)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="358" y="360" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="334.00" y="408.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">发起方</text>
 <g data-role="recipient" data-x="255.00" data-y="420.00" transform="translate(255.00 420.00) scale(1)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="273" y="435" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">d</tspan></text>
+<text x="249.00" y="459.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">接收方</text>
 </g>
 </svg>

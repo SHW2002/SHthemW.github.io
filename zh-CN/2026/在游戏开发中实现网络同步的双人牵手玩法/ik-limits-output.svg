@@ -1,88 +1,88 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="650" viewBox="0 0 1040 650" role="img" aria-labelledby="title desc">
 <title id="title">求解接触点与关节硬限制的应用顺序</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。实线骨链包含双方各自的肩、肘、腕三个节点。</desc>
 <defs>
-<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000"/></marker>
-<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000"/></marker>
-<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF"/></marker>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000" /></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000" /></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF" /></marker>
 </defs>
-<rect width="1040" height="650" fill="#FFFFFF"/>
+<rect width="1040" height="650" fill="#FFFFFF" />
 <g stroke-linecap="round" stroke-linejoin="round">
-<text x="1007" y="42" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="26" text-anchor="end">t<tspan baseline-shift="sub" font-size="70%">1</tspan></text>
-<path d="M315.00 270.00L315.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M315.00 270.00L417.39 341.70L511.60 275.74" fill="none" stroke="#FF0000" stroke-width="3.5"/>
-<path d="M511.60 275.74L520.77 288.84" fill="none" stroke="#FF0000" stroke-width="2.2"/>
+<text x="923.00" y="42.40" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">状态二</text>
+<path d="M315.00 270.00L315.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M315.00 270.00L417.39 341.70L511.60 275.74" fill="none" stroke="#FF0000" stroke-width="3.5" />
+<path d="M511.60 275.74L520.77 288.84" fill="none" stroke="#FF0000" stroke-width="2.2" />
 <g data-bone-node="S_i">
-<circle cx="315.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="315.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="300" y="255" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">S<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="270.00" y="255.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">肩</text>
 <g data-bone-node="E_i">
-<circle cx="417.39" cy="341.70" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="417.39" cy="341.70" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="402.394005536124" y="364.69705454388077" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">E<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="372.39" y="364.70" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">肘</text>
 <g data-bone-node="W_i">
-<circle cx="511.60" cy="275.74" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="511.60" cy="275.74" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="503.5964906293581" y="255.7357643635105" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="end">W<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
+<text x="473.60" y="255.74" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">腕</text>
 <g data-role="initiator" data-x="315.00" data-y="565.00" transform="translate(315.00 565.00) scale(1.2)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
 </g>
-<text x="333" y="580" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">i</tspan></text>
-<path d="M725.00 270.00L725.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M725.00 270.00L622.61 341.70L528.40 275.74" fill="none" stroke="#0000FF" stroke-width="3.5"/>
-<path d="M528.40 275.74L519.23 288.84" fill="none" stroke="#0000FF" stroke-width="2.2"/>
+<text x="333.00" y="580.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">发起方</text>
+<path d="M725.00 270.00L725.00 515.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M725.00 270.00L622.61 341.70L528.40 275.74" fill="none" stroke="#0000FF" stroke-width="3.5" />
+<path d="M528.40 275.74L519.23 288.84" fill="none" stroke="#0000FF" stroke-width="2.2" />
 <g data-bone-node="S_r">
-<circle cx="725.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="725.00" cy="270.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="740" y="255" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">S<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<text x="764.00" y="255.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">肩</text>
 <g data-bone-node="E_r">
-<circle cx="622.61" cy="341.70" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="622.61" cy="341.70" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="637.6059944638761" y="364.69705454388077" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">E<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<text x="661.61" y="364.70" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">肘</text>
 <g data-bone-node="W_r">
-<circle cx="528.40" cy="275.74" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="528.40" cy="275.74" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="536.403509370642" y="255.7357643635105" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="start">W<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
+<text x="536.40" y="255.74" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" text-anchor="start">腕</text>
 <g data-role="recipient" data-x="725.00" data-y="565.00" transform="translate(725.00 565.00) scale(1.2)">
-<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
-<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5"/>
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
 </g>
-<text x="743" y="580" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="25" text-anchor="start">P<tspan baseline-shift="sub" font-size="70%">r</tspan></text>
-<path d="M515.00 288.84L525.00 288.84" fill="none" stroke="#000000" stroke-width="2"/>
-<path d="M520.00 283.84L520.00 293.84" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="520.0" y="327.84219707213435" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">C</text>
-<path d="M315.00 270.00L390.66 170.50L504.00 190.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M725.00 270.00L649.34 170.50L536.00 190.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M515.00 190.00L525.00 190.00" fill="none" stroke="#000000" stroke-width="2"/>
-<path d="M520.00 185.00L520.00 195.00" fill="none" stroke="#000000" stroke-width="2"/>
-<text x="520" y="168" fill="#000000" font-family="Cambria Math, Times New Roman, serif" font-size="24" text-anchor="middle">C*</text>
-<path d="M334.92 258.50L335.27 259.13L335.60 259.77L335.91 260.43L336.20 261.09L336.47 261.76L336.72 262.44L336.95 263.12L337.15 263.81L337.34 264.51L337.50 265.22L337.64 265.93L337.75 266.64L337.85 267.36L337.92 268.08L337.97 268.80L337.99 269.52L338.00 270.24L337.98 270.96L337.94 271.68L337.87 272.40L337.79 273.12L337.68 273.84L337.55 274.55L337.39 275.25L337.22 275.95L337.02 276.65L336.80 277.34L336.56 278.02L336.30 278.69L336.01 279.35L335.71 280.01L335.38 280.66L335.04 281.29L334.67 281.91L334.29 282.53L333.89 283.13L333.46 283.71L333.02 284.29L332.57 284.85L332.09 285.39" fill="none" stroke="#FF0000" stroke-width="1.2"/>
-<path d="M315.00 270.00L346.00 270.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M315.00 270.00L315.00 239.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M437.31 330.20L437.66 330.83L438.00 331.47L438.31 332.12L438.60 332.78L438.87 333.45L439.11 334.13L439.34 334.82L439.55 335.51L439.73 336.21L439.89 336.92L440.03 337.62L440.15 338.34L440.24 339.05L440.31 339.77L440.36 340.49L440.39 341.22L440.39 341.94L440.37 342.66L440.33 343.38L440.27 344.10L440.18 344.82L440.07 345.53L439.94 346.24L439.79 346.95L439.61 347.65L439.41 348.34L439.19 349.03L438.95 349.71L438.69 350.39L438.41 351.05L438.10 351.71L437.78 352.35L437.43 352.99L437.07 353.61L436.68 354.22L436.28 354.82L435.86 355.41L435.42 355.98L434.96 356.54L434.49 357.09" fill="none" stroke="#FF0000" stroke-width="1.2"/>
-<path d="M417.39 341.70L448.39 341.70" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M417.39 341.70L417.39 310.70" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M531.52 264.24L531.87 264.87L532.20 265.51L532.51 266.16L532.80 266.82L533.07 267.49L533.32 268.17L533.54 268.86L533.75 269.55L533.93 270.25L534.09 270.95L534.23 271.66L534.35 272.38L534.44 273.09L534.52 273.81L534.56 274.53L534.59 275.25L534.60 275.98L534.58 276.70L534.53 277.42L534.47 278.14L534.38 278.86L534.27 279.57L534.14 280.28L533.99 280.99L533.81 281.69L533.61 282.38L533.40 283.07L533.15 283.75L532.89 284.43L532.61 285.09L532.30 285.75L531.98 286.39L531.63 287.03L531.27 287.65L530.89 288.26L530.48 288.86L530.06 289.45L529.62 290.02L529.16 290.58L528.69 291.13" fill="none" stroke="#FF0000" stroke-width="1.2"/>
-<path d="M511.60 275.74L542.60 275.74" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M511.60 275.74L511.60 244.74" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<text x="275" y="319" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">θ<tspan baseline-shift="sub" font-size="70%">S</tspan></text>
-<text x="392.394005536124" y="393.69705454388077" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">θ<tspan baseline-shift="sub" font-size="70%">E</tspan></text>
-<text x="476.5964906293581" y="338.7357643635105" fill="#FF0000" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">θ<tspan baseline-shift="sub" font-size="70%">W</tspan></text>
-<path d="M744.92 258.50L745.27 259.13L745.60 259.77L745.91 260.43L746.20 261.09L746.47 261.76L746.72 262.44L746.95 263.12L747.15 263.81L747.34 264.51L747.50 265.22L747.64 265.93L747.75 266.64L747.85 267.36L747.92 268.08L747.97 268.80L747.99 269.52L748.00 270.24L747.98 270.96L747.94 271.68L747.87 272.40L747.79 273.12L747.68 273.84L747.55 274.55L747.39 275.25L747.22 275.95L747.02 276.65L746.80 277.34L746.56 278.02L746.30 278.69L746.01 279.35L745.71 280.01L745.38 280.66L745.04 281.29L744.67 281.91L744.29 282.53L743.89 283.13L743.46 283.71L743.02 284.29L742.57 284.85L742.09 285.39" fill="none" stroke="#0000FF" stroke-width="1.2"/>
-<path d="M725.00 270.00L756.00 270.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M725.00 270.00L725.00 239.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M642.52 330.20L642.88 330.83L643.21 331.47L643.52 332.12L643.81 332.78L644.08 333.45L644.33 334.13L644.55 334.82L644.76 335.51L644.94 336.21L645.10 336.92L645.24 337.62L645.36 338.34L645.45 339.05L645.53 339.77L645.57 340.49L645.60 341.22L645.60 341.94L645.59 342.66L645.54 343.38L645.48 344.10L645.39 344.82L645.28 345.53L645.15 346.24L645.00 346.95L644.82 347.65L644.62 348.34L644.40 349.03L644.16 349.71L643.90 350.39L643.62 351.05L643.31 351.71L642.99 352.35L642.64 352.99L642.28 353.61L641.90 354.22L641.49 354.82L641.07 355.41L640.63 355.98L640.17 356.54L639.70 357.09" fill="none" stroke="#0000FF" stroke-width="1.2"/>
-<path d="M622.61 341.70L653.61 341.70" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M622.61 341.70L622.61 310.70" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M548.32 264.24L548.67 264.87L549.00 265.51L549.32 266.16L549.61 266.82L549.88 267.49L550.12 268.17L550.35 268.86L550.56 269.55L550.74 270.25L550.90 270.95L551.04 271.66L551.16 272.38L551.25 273.09L551.32 273.81L551.37 274.53L551.40 275.25L551.40 275.98L551.38 276.70L551.34 277.42L551.28 278.14L551.19 278.86L551.08 279.57L550.95 280.28L550.80 280.99L550.62 281.69L550.42 282.38L550.20 283.07L549.96 283.75L549.70 284.43L549.42 285.09L549.11 285.75L548.79 286.39L548.44 287.03L548.08 287.65L547.69 288.26L547.29 288.86L546.87 289.45L546.43 290.02L545.97 290.58L545.50 291.13" fill="none" stroke="#0000FF" stroke-width="1.2"/>
-<path d="M528.40 275.74L559.40 275.74" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<path d="M528.40 275.74L528.40 244.74" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7"/>
-<text x="765" y="319" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">θ<tspan baseline-shift="sub" font-size="70%">S</tspan></text>
-<text x="647.6059944638761" y="393.69705454388077" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">θ<tspan baseline-shift="sub" font-size="70%">E</tspan></text>
-<text x="563.403509370642" y="338.7357643635105" fill="#0000FF" font-family="Cambria Math, Times New Roman, serif" font-size="23" text-anchor="middle">θ<tspan baseline-shift="sub" font-size="70%">W</tspan></text>
+<text x="743.00" y="580.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">接收方</text>
+<path d="M515.00 288.84L525.00 288.84" fill="none" stroke="#000000" stroke-width="2" />
+<path d="M520.00 283.84L520.00 293.84" fill="none" stroke="#000000" stroke-width="2" />
+<text x="464.00" y="351.84" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">实际握点</text>
+<path d="M315.00 270.00L390.66 170.50L504.00 190.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M725.00 270.00L649.34 170.50L536.00 190.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M515.00 190.00L525.00 190.00" fill="none" stroke="#000000" stroke-width="2" />
+<path d="M520.00 185.00L520.00 195.00" fill="none" stroke="#000000" stroke-width="2" />
+<text x="464.00" y="168.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">目标握点</text>
+<path d="M334.92 258.50L335.27 259.13L335.60 259.77L335.91 260.43L336.20 261.09L336.47 261.76L336.72 262.44L336.95 263.12L337.15 263.81L337.34 264.51L337.50 265.22L337.64 265.93L337.75 266.64L337.85 267.36L337.92 268.08L337.97 268.80L337.99 269.52L338.00 270.24L337.98 270.96L337.94 271.68L337.87 272.40L337.79 273.12L337.68 273.84L337.55 274.55L337.39 275.25L337.22 275.95L337.02 276.65L336.80 277.34L336.56 278.02L336.30 278.69L336.01 279.35L335.71 280.01L335.38 280.66L335.04 281.29L334.67 281.91L334.29 282.53L333.89 283.13L333.46 283.71L333.02 284.29L332.57 284.85L332.09 285.39" fill="none" stroke="#FF0000" stroke-width="1.2" />
+<path d="M315.00 270.00L346.00 270.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M315.00 270.00L315.00 239.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M437.31 330.20L437.66 330.83L438.00 331.47L438.31 332.12L438.60 332.78L438.87 333.45L439.11 334.13L439.34 334.82L439.55 335.51L439.73 336.21L439.89 336.92L440.03 337.62L440.15 338.34L440.24 339.05L440.31 339.77L440.36 340.49L440.39 341.22L440.39 341.94L440.37 342.66L440.33 343.38L440.27 344.10L440.18 344.82L440.07 345.53L439.94 346.24L439.79 346.95L439.61 347.65L439.41 348.34L439.19 349.03L438.95 349.71L438.69 350.39L438.41 351.05L438.10 351.71L437.78 352.35L437.43 352.99L437.07 353.61L436.68 354.22L436.28 354.82L435.86 355.41L435.42 355.98L434.96 356.54L434.49 357.09" fill="none" stroke="#FF0000" stroke-width="1.2" />
+<path d="M417.39 341.70L448.39 341.70" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M417.39 341.70L417.39 310.70" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M531.52 264.24L531.87 264.87L532.20 265.51L532.51 266.16L532.80 266.82L533.07 267.49L533.32 268.17L533.54 268.86L533.75 269.55L533.93 270.25L534.09 270.95L534.23 271.66L534.35 272.38L534.44 273.09L534.52 273.81L534.56 274.53L534.59 275.25L534.60 275.98L534.58 276.70L534.53 277.42L534.47 278.14L534.38 278.86L534.27 279.57L534.14 280.28L533.99 280.99L533.81 281.69L533.61 282.38L533.40 283.07L533.15 283.75L532.89 284.43L532.61 285.09L532.30 285.75L531.98 286.39L531.63 287.03L531.27 287.65L530.89 288.26L530.48 288.86L530.06 289.45L529.62 290.02L529.16 290.58L528.69 291.13" fill="none" stroke="#FF0000" stroke-width="1.2" />
+<path d="M511.60 275.74L542.60 275.74" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M511.60 275.74L511.60 244.74" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<text x="195.00" y="319.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">肩部限角</text>
+<text x="336.39" y="417.70" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">肘部限角</text>
+<text x="468.60" y="416.74" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">腕部限角</text>
+<path d="M744.92 258.50L745.27 259.13L745.60 259.77L745.91 260.43L746.20 261.09L746.47 261.76L746.72 262.44L746.95 263.12L747.15 263.81L747.34 264.51L747.50 265.22L747.64 265.93L747.75 266.64L747.85 267.36L747.92 268.08L747.97 268.80L747.99 269.52L748.00 270.24L747.98 270.96L747.94 271.68L747.87 272.40L747.79 273.12L747.68 273.84L747.55 274.55L747.39 275.25L747.22 275.95L747.02 276.65L746.80 277.34L746.56 278.02L746.30 278.69L746.01 279.35L745.71 280.01L745.38 280.66L745.04 281.29L744.67 281.91L744.29 282.53L743.89 283.13L743.46 283.71L743.02 284.29L742.57 284.85L742.09 285.39" fill="none" stroke="#0000FF" stroke-width="1.2" />
+<path d="M725.00 270.00L756.00 270.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M725.00 270.00L725.00 239.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M642.52 330.20L642.88 330.83L643.21 331.47L643.52 332.12L643.81 332.78L644.08 333.45L644.33 334.13L644.55 334.82L644.76 335.51L644.94 336.21L645.10 336.92L645.24 337.62L645.36 338.34L645.45 339.05L645.53 339.77L645.57 340.49L645.60 341.22L645.60 341.94L645.59 342.66L645.54 343.38L645.48 344.10L645.39 344.82L645.28 345.53L645.15 346.24L645.00 346.95L644.82 347.65L644.62 348.34L644.40 349.03L644.16 349.71L643.90 350.39L643.62 351.05L643.31 351.71L642.99 352.35L642.64 352.99L642.28 353.61L641.90 354.22L641.49 354.82L641.07 355.41L640.63 355.98L640.17 356.54L639.70 357.09" fill="none" stroke="#0000FF" stroke-width="1.2" />
+<path d="M622.61 341.70L653.61 341.70" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M622.61 341.70L622.61 310.70" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M548.32 264.24L548.67 264.87L549.00 265.51L549.32 266.16L549.61 266.82L549.88 267.49L550.12 268.17L550.35 268.86L550.56 269.55L550.74 270.25L550.90 270.95L551.04 271.66L551.16 272.38L551.25 273.09L551.32 273.81L551.37 274.53L551.40 275.25L551.40 275.98L551.38 276.70L551.34 277.42L551.28 278.14L551.19 278.86L551.08 279.57L550.95 280.28L550.80 280.99L550.62 281.69L550.42 282.38L550.20 283.07L549.96 283.75L549.70 284.43L549.42 285.09L549.11 285.75L548.79 286.39L548.44 287.03L548.08 287.65L547.69 288.26L547.29 288.86L546.87 289.45L546.43 290.02L545.97 290.58L545.50 291.13" fill="none" stroke="#0000FF" stroke-width="1.2" />
+<path d="M528.40 275.74L559.40 275.74" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<path d="M528.40 275.74L528.40 244.74" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<text x="733.00" y="319.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">肩部限角</text>
+<text x="591.61" y="417.70" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">肘部限角</text>
+<text x="587.40" y="260.74" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">腕部限角</text>
 </g>
 </svg>

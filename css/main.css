@@ -1389,7 +1389,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #06a8cf;
+    background: #ff7dff;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -2896,7 +2896,9 @@ header.header {
   position: static;
   float: none;
   flex: 0 0 auto;
-  width: 100%;
+  width: calc(75% - 3px);
+  max-width: 75%;
+  align-self: flex-end;
   min-width: 0;
   margin: 0 !important;
   padding: 0;
@@ -2904,11 +2906,13 @@ header.header {
   font-weight: normal;
   line-height: 1.7;
   color: inherit;
-  text-align: left;
+  text-align: center;
+  white-space: normal;
   overflow-wrap: anywhere;
   box-sizing: border-box;
 }
-.post-body .holdhand-state-gallery > figure:not(.highlight):nth-child(even) > a {
+.post-body .holdhand-state-gallery > figure:not(.highlight):nth-child(even) > a,
+.post-body .holdhand-state-gallery > figure:not(.highlight):nth-child(even) > figcaption {
   align-self: flex-start;
 }
 @media (max-width: 600px) {
@@ -2917,7 +2921,8 @@ header.header {
     width: 100%;
     max-width: 100%;
   }
-  .post-body .holdhand-state-gallery > figure:not(.highlight) > a {
+  .post-body .holdhand-state-gallery > figure:not(.highlight):nth-child(n) > a,
+  .post-body .holdhand-state-gallery > figure:not(.highlight):nth-child(n) > figcaption {
     width: 75%;
     max-width: 75%;
     align-self: center;

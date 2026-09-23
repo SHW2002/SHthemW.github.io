@@ -28,16 +28,28 @@
 <meta property="og:description" content="公司的社交游戏有一套双人牵手玩法，由我负责 3C 方面的开发。发起方控制移动，接收方跟随；两名角色需要适应地形、保持手部接触，并与游戏中的个人动作和操作玩法配合。下面从能实现基本表现的跟随与握手设计讲起，结合调试过程和体验反馈，逐步说明旋转位移、手部姿态和网络同步的改进。  双人牵手联调画面，已裁去外围界面。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp">
-<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-offset.svg">
-<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-offset-turned.svg">
-<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/distance-follow.svg">
-<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/distance-follow-next.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-start.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-closer.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-small-gap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-large-gap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-target.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-chase.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-settled.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg">
-<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/stop-radius.svg">
-<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/stop-radius-inside.svg">
-<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/turn-follow.svg">
-<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/turn-follow-later.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-edge.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-inside.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-start.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-later.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-floating.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-projected.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg">
@@ -68,12 +80,16 @@
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-0.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-1.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-0.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-1.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg">
 <meta property="article:published_time" content="2026-09-01T03:07:19.000Z">
-<meta property="article:modified_time" content="2026-09-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-22T16:00:00.000Z">
 <meta property="article:author" content="HanWen">
 <meta property="article:tag" content="IK">
 <meta property="article:tag" content="Unity">
@@ -435,70 +451,99 @@ stateDiagram-v2
 <p>切房前先解除双人关系，取消失败时阻止继续切房；成功后先清理本地状态，再停止表现，避免下一帧重新进入牵手。伙伴离开本房间时，外层分发器同样停止本地运行时。同房间内的大距离传送则由位置跟随模块处理。</p>
 <h2 id="4-位置跟随与移动平滑"><a href="#4-位置跟随与移动平滑" class="headerlink" title="4. 位置跟随与移动平滑"></a>4. 位置跟随与移动平滑</h2><h3 id="4-1-设计目标"><a href="#4-1-设计目标" class="headerlink" title="4.1 设计目标"></a>4.1 设计目标</h3><p>接收方需要维持合适的双人站位，同时具备自然的追赶感。直线跑动应能跟上，原地转向时绕行速度应可控，斜坡和台阶上的高度应合理，传送时应及时到达新位置。</p>
 <p>这些目标分别涉及水平位移、绕行旋转、垂直高度和离散位置变化，需要独立计算和调参。网络缓冲负责远端播放，本节描述发起方如何生成每帧的权威位置。</p>
-<p>下文统一用<strong>红色圆头三角身图标表示发起方，蓝色圆头菱形身图标表示接收方</strong>，图标脚底中点表示角色根节点。十字或空心标记表示计算目标，不能与角色实际位置混淆。每组图保持相同场景和比例，用 <code>t₀</code>、<code>t₁</code> 等标记处理前后的状态；解释放在图外。</p>
+<p>下文统一用<strong>红色圆头三角身图标表示发起方，蓝色圆头菱形身图标表示接收方</strong>，图标脚底中点表示角色根节点。十字或空心标记表示计算目标，不能与角色实际位置混淆。每组图保持相同场景和比例，用“状态一”“状态二”等标记处理前后的状态；解释放在图外。</p>
 <h3 id="4-2-局部偏移与距离比例跟随"><a href="#4-2-局部偏移与距离比例跟随" class="headerlink" title="4.2 局部偏移与距离比例跟随"></a>4.2 局部偏移与距离比例跟随</h3><p>先从一个简单的设计入手：在发起方身边放置一个随朝向旋转的目标点，让接收方按距离追赶它。这样就能实现基本的双人站位与跟随，控制参数也集中在偏移和追赶速度上。</p>
-<h4 id="4-2-1-正式跟随目标"><a href="#4-2-1-正式跟随目标" class="headerlink" title="4.2.1 正式跟随目标"></a>4.2.1 正式跟随目标</h4><p>可以把目标想象成发起方身边的一个标记点：人向前走，标记点一起向前；人转身，标记点也绕着他转。接收方每帧向这个点靠近，就能维持双人的相对站位。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="4.2.1 正式跟随目标的连续状态图">
+<h4 id="4-2-1-正式跟随目标"><a href="#4-2-1-正式跟随目标" class="headerlink" title="4.2.1 正式跟随目标"></a>4.2.1 正式跟随目标</h4><p><strong>先只看两个人。</strong> 发起方是带着走的人，接收方是被带着走的人。图中红色三角身图标表示发起方，蓝色菱形身图标表示接收方，脚底中点是角色的位置。</p>
+<p>没有跟随控制时，发起方往前走，接收方仍留在原地：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="没有跟随控制时的两个人">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-offset.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-offset.svg" alt="转身前两名角色的位置、局部偏移与跟随目标" width="1040" height="590" loading="lazy"></a>
-    <figcaption>t₀：发起方朝向固定，接收方在蓝色图标处，正在追赶红色目标。准备点与跟随点均相对发起方计算。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-before.svg" alt="起初：两个人站在彼此身边。" width="900" height="490" loading="lazy"></a>
+    <figcaption>起初：两个人站在彼此身边。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-offset-turned.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-offset-turned.svg" alt="发起方转身后目标随局部坐标旋转而接收方保留原位置" width="1040" height="590" loading="lazy"></a>
-    <figcaption>t₁：发起方转身，目标与准备点随朝向改变；接收方此时仍在自己的驱动位置，接下来沿新的追赶方向移动。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-after.svg" alt="发起方向前移动，接收方仍留在原地，两个人逐渐拉开。" width="900" height="490" loading="lazy"></a>
+    <figcaption>发起方向前移动，接收方仍留在原地，两个人逐渐拉开。</figcaption>
   </figure>
 </div>
 
-<p><code>Pᵢ</code>、<code>P_d</code> 分别标记两名角色，<code>Pₜ</code> 是跟随目标，<code>Pₚ</code> 是准备点。蓝色 <code>Oₓ</code>、<code>O_z</code> 标出左右、前后偏移，红色 <code>O_f</code> 是合成偏移。两幅图中的偏移长度相同，只改变朝向；图中长度用于说明几何关系，具体配置值见正文。</p>
+<p>两个人会逐渐拉开，所以先要规定接收方应该站到哪里。</p>
+<p><strong>再增加一个站位点。</strong> 在发起方身边选一个位置，比如左侧略靠后，用十字表示这个希望接收方站到的位置。发起方前进时，站位点一起前进；每帧直接把接收方放到这里，就有了最基本的跟随：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="直接设置接收方位置">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-before.svg" alt="移动前：接收方与站位点重合，保持在发起方左后侧。" width="900" height="490" loading="lazy"></a>
+    <figcaption>移动前：接收方与站位点重合，保持在发起方左后侧。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-after.svg" alt="移动后：站位点随发起方前移，接收方也被直接放到新的位置。" width="900" height="490" loading="lazy"></a>
+    <figcaption>移动后：站位点随发起方前移，接收方也被直接放到新的位置。</figcaption>
+  </figure>
+</div>
+
+<p>这样能保持双人站位，但接收方像固定在发起方身上一样，缺少被带着走的追赶感。站位点突然变化时，它也会立即跳过去。下一小节保留这个站位点，只改变接收方到达它的方式。</p>
+<p><strong>把站位写成相对角色的偏移。</strong> 左右、前后两个距离共同决定站位点，它们随发起方的位置和朝向一起变化。代码中的 <code>FollowOffset</code> 就描述这份偏移；例如左侧约 0.82 米、后方约 0.17 米，可以形成略有前后错位的并排站位。无论发起方朝向如何，这份相对站位都能保持一致。</p>
+<p>进入互动时还会使用 <code>PreparationOffset</code> 做一次准备位置对齐；正式跟随后使用 <code>FollowOffset</code>。准备位置与持续追赶的站位点用途不同，对应关系如下：</p>
 <table>
 <thead>
 <tr>
-<th>几何标记</th>
+<th>对象与方向</th>
 <th>对应代码</th>
 <th>作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>Pᵢ</code></td>
+<td>“发起方”</td>
 <td><code>initiator.RootTransform.position</code></td>
 <td>提供整组站位在世界中的位置</td>
 </tr>
 <tr>
-<td><code>xᵢ</code>、<code>zᵢ</code>、<code>θᵢ</code></td>
+<td>角色右侧、前方及其朝向</td>
 <td><code>initiator.RootTransform.rotation</code></td>
 <td>确定角色的右侧、前方，以及局部偏移旋转到世界的方向</td>
 </tr>
 <tr>
-<td><code>Oₓ</code>、<code>O_z</code>、<code>O_f</code></td>
+<td>左右和前后的站位偏移</td>
 <td><code>FollowOffset</code></td>
 <td>决定接收方目标在角色左右、前后多远的位置；水平配置的两个分量对应局部 X&#x2F;Z</td>
 </tr>
 <tr>
-<td><code>Oₚ</code>、<code>Pₚ</code></td>
+<td>准备偏移与准备位置</td>
 <td><code>PreparationOffset</code>、准备位置</td>
-<td>在互动进入时做一次位置对齐；图中用正后方偏移示意</td>
+<td>在互动进入时做一次位置对齐</td>
 </tr>
 <tr>
-<td><code>Pₜ</code></td>
+<td>站位点</td>
 <td><code>targetPosition</code></td>
 <td>偏移变换到世界后，相对根节点得到的跟随目标</td>
 </tr>
 </tbody></table>
-<p>代码中的 <code>FollowOffset</code> 描述这个标记点相对发起方的位置。例如，把目标放在左侧约 0.82 米、后方约 0.17 米处，就能形成略有前后错位的并排站位。这样设计的好处是无论发起方朝向如何，接收方都保持相同的相对站位。</p>
-<h4 id="4-2-2-弹簧模型"><a href="#4-2-2-弹簧模型" class="headerlink" title="4.2.2 弹簧模型"></a>4.2.2 弹簧模型</h4><p>发起方保留接收方上一次算出的驱动位置，每帧先看它离目标还有多远，再决定这一帧往前走多少。距离越大，追赶速度越快，同时受最低和最高速度限制；进入停止半径后，直接贴到目标，完成最后一小段对齐。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="4.2.2 弹簧模型的连续状态图">
+<h4 id="4-2-2-弹簧模型"><a href="#4-2-2-弹簧模型" class="headerlink" title="4.2.2 弹簧模型"></a>4.2.2 弹簧模型</h4><p><strong>让接收方逐帧追赶。</strong> 不再每帧直接对齐站位点，而是从接收方自己的位置向它走一小段。离得越远，追得越快；离得越近，追得越慢。可以把它想象成两者之间连着一根弹簧：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="距离决定追赶力度">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/distance-follow.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/distance-follow.svg" alt="追赶开始时按当前距离限制速度并生成单帧移动预算" width="1040" height="670" loading="lazy"></a>
-    <figcaption>t₀：角色离目标较远，速度曲线上的采样点处于上限段；下方蓝色尺寸表示本帧允许前进的距离。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-start.svg" alt="站位点已经前移，接收方还在后面，剩余距离较大，本帧前进得较多。" width="900" height="490" loading="lazy"></a>
+    <figcaption>站位点已经前移，接收方还在后面，剩余距离较大，本帧前进得较多。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/distance-follow-next.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/distance-follow-next.svg" alt="推进后接收方到达新位置并用较小的剩余距离计算下一步" width="1040" height="670" loading="lazy"></a>
-    <figcaption>t₁：接收方到达推进结果，剩余距离缩短，下一次采样对应的速度和移动预算也减小。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-closer.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-closer.svg" alt="接收方逐渐追近，剩余距离缩小，本帧前进的距离也随之减小。" width="900" height="490" loading="lazy"></a>
+    <figcaption>接收方逐渐追近，剩余距离缩小，本帧前进的距离也随之减小。</figcaption>
   </figure>
 </div>
 
-<p>每张图上半部的横轴 <code>d</code> 是距离，纵轴 <code>v</code> 是速度。蓝色虚线的斜率由 <code>k</code> 决定，红线将速度限制在 <code>v_min</code> 与 <code>v_max</code> 之间。基础处理在 <code>r_stop</code> 内返回零速度，并由位置分支直接贴到目标。曲线及下方角色位置用于说明过程，不按资源数值等比例绘制。</p>
-<p>第一张图的 <code>P_d</code> 是起点，第二张图的 <code>Pₙ</code> 是推进结果；这份结果成为下一帧的驱动位置。蓝色尺寸受速度与帧时长 <code>Δt</code> 共同控制。预算足以到达目标时，<code>MoveTowards</code> 停在目标，避免越过。</p>
+<p>“弹簧系数”决定相同距离下的追赶力度。蓝色箭头表示本帧步长，它还取决于本帧经过的时间：同样的速度下，帧间隔越短，单步越小。每次推进的结果保留下来，作为下一帧的驱动位置。</p>
+<p>单纯按距离决定速度有两个边界：距离很大时可能追得过快，距离很小时又可能拖得太慢。</p>
+<p><strong>给速度加上最低值和最高值。</strong> 小距离也保持足够的跟随力度，大距离则不会让速度无限增加：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="给弹簧追赶增加速度范围">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-small-gap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-small-gap.svg" alt="距离较小时，最低速度让接收方仍能积极追赶。" width="900" height="490" loading="lazy"></a>
+    <figcaption>距离较小时，最低速度让接收方仍能积极追赶。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-large-gap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-large-gap.svg" alt="距离较大时，最高速度限制本帧位移，避免接收方突然高速冲过去。" width="900" height="490" loading="lazy"></a>
+    <figcaption>距离较大时，最高速度限制本帧位移，避免接收方突然高速冲过去。</figcaption>
+  </figure>
+</div>
+
+<p>上下限让追赶速度更容易配置，但很接近站位点时，最低速度仍可能带来过大的步长。基础处理可以在进入停止半径后直接贴到目标，完成最后一小段对齐；固定距离贴合带来的顿挫，放到 4.6.1 中继续处理。</p>
+<p><code>MoveTowards</code> 根据速度与帧时长推进；本帧预算足以到达时停在目标，避免越过。几何图用于说明距离和步长的关系，不按下面的示例参数等比例绘制。</p>
 <table>
 <thead>
 <tr>
@@ -508,23 +553,23 @@ stateDiagram-v2
 </tr>
 </thead>
 <tbody><tr>
-<td><code>P_d</code></td>
+<td>追赶开始时的接收方</td>
 <td><code>m_DrivenPosition</code> &#x2F; <code>drivenPosition</code></td>
 <td>使用发起方上一次算出的结果作为本帧起点</td>
 </tr>
 <tr>
-<td><code>d</code></td>
+<td>“剩余距离”</td>
 <td><code>Vector3.Distance(drivenPosition, targetPosition)</code></td>
 <td>决定当前要追赶多远，作为速度计算输入</td>
 </tr>
 <tr>
-<td><code>Pₙ</code></td>
+<td>推进后的接收方</td>
 <td><code>nextPosition</code></td>
 <td>保存本帧推进结果，作为下一帧的起点</td>
 </tr>
 <tr>
-<td><code>Δt</code></td>
-<td><code>elapseSeconds</code>，经非负保护后使用</td>
+<td>“本帧步长”</td>
+<td>速度与 <code>elapseSeconds</code>，帧时长经非负保护后使用</td>
 <td>同一速度下，帧间隔越短，本帧位移越小；不会反向推进</td>
 </tr>
 </tbody></table>
@@ -533,32 +578,32 @@ stateDiagram-v2
 <thead>
 <tr>
 <th>参数</th>
-<th>图中标记</th>
-<th align="right">值</th>
+<th>控制对象</th>
+<th align="right">示例值</th>
 <th>含义</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>SpringCoefficient</td>
-<td><code>k</code></td>
+<td>“弹簧系数”</td>
 <td align="right">16</td>
-<td>决定距离速度曲线的斜率</td>
+<td>决定相同距离下的追赶力度</td>
 </tr>
 <tr>
 <td>MinFollowSpeed</td>
-<td><code>v_min</code></td>
+<td>“最低速度”</td>
 <td align="right">12 m&#x2F;s</td>
 <td>离开停止半径后的最低跟随速度</td>
 </tr>
 <tr>
 <td>MaxFollowSpeed</td>
-<td><code>v_max</code></td>
+<td>“最高速度”</td>
 <td align="right">24 m&#x2F;s</td>
 <td>限制距离很大时的追赶速度</td>
 </tr>
 <tr>
 <td>StopRadius</td>
-<td><code>r_stop</code></td>
+<td>“停止半径”</td>
 <td align="right">0.02 m</td>
 <td>直接贴合目标的误差半径</td>
 </tr>
@@ -576,18 +621,55 @@ stateDiagram-v2
 <p>实际调参时，很难同时兼顾跑步和急转：把跟随速度调到能正常追上走路、跑步时，接收方在快速转向时又会绕得太快。调低速度后，转向时的表现确实缓和了，但继续降低，正常跑步又会跟不上。直线追赶和转身绕行共用一套速度约束，很难只靠调整同一个速度值兼顾两种表现，需要把它们分开处理。</p>
 <p>进一步体验还暴露了两个相关问题：固定的高度偏移会让接收方插进地面，原地转向时接收方又可能维持 Idle，看起来像站着滑过去。因此，绕行目标、地面高度和实际移动动画需要一起调整，才能让跟随表现自然起来。</p>
 <h3 id="4-4-分开计算水平跟随与绕行旋转"><a href="#4-4-分开计算水平跟随与绕行旋转" class="headerlink" title="4.4 分开计算水平跟随与绕行旋转"></a>4.4 分开计算水平跟随与绕行旋转</h3><p>为了保留追赶感，同时让转向速度可以单独调整，我将水平追赶、绕行旋转和地面高度拆开求解。距离比例跟随继续负责移动到目标，独立的旋转状态决定目标如何绕行，地面探测负责高度。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="4.4 分开计算水平跟随与绕行旋转的连续状态图">
+<p><strong>先看目标直接转动的情况。</strong> “站在左后方”是相对发起方的朝向而言的。如果发起方突然向右转，站位点立即采用这个朝向，就会一下换到另一侧：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="直接改变朝向对弹簧追赶的影响">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg" alt="偏移没有垂直分量时目标位于发起方所在水平面" width="1040" height="570" loading="lazy"></a>
-    <figcaption>t₀：旋转后的偏移仍在水平面内，原始端点 Q 与水平目标重合。两名角色的位置使用同一组图标标出。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-before.svg" alt="转身前：接收方就在左后方的站位点。" width="900" height="570" loading="lazy"></a>
+    <figcaption>转身前：接收方就在左后方的站位点。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg" alt="角色俯仰使旋转偏移产生高度后投影回根节点水平面" width="1040" height="570" loading="lazy"></a>
-    <figcaption>t₁：朝向带入俯仰，蓝色偏移产生垂直分量；代码去掉这部分高度，红色目标仍落在发起方所在水平面。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-after.svg" alt="发起方突然向右转，左后方的站位点立即换到另一侧；接收方尚未移动，追赶距离突然变大。" width="900" height="570" loading="lazy"></a>
+    <figcaption>发起方突然向右转，左后方的站位点立即换到另一侧；接收方尚未移动，追赶距离突然变大。</figcaption>
   </figure>
 </div>
 
-<p>蓝色 <code>O_r</code> 是局部偏移经过跟随旋转 <code>R_f</code> 变换后的结果。去掉 <code>Δy</code> 后得到红色 <code>O_XZ</code>，目标初始高度与发起方的 <code>yᵢ</code> 一致；后续高度由贴地或空中跟随处理。<code>R_f</code> 的旋转滞后与限速见 4.6.2。</p>
+<p>弹簧看到的是追赶距离突然变大，于是让接收方加速。只降低追赶速度虽然能缓和急转，却又容易影响正常跑步。</p>
+<p><strong>让站位点也逐帧绕行。</strong> 保留接收方的弹簧追赶，只改变站位点的运动方式：发起方转身后，站位点围绕它逐帧绕过去；每一帧先更新站位点，再让接收方从上一次的位置追向它。</p>
+<p>黑色虚线表示站位点已经走过的轨迹，蓝色实线表示接收方实际走过的轨迹。蓝色虚线箭头指向本帧尚未追到的站位点：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="从弹簧追赶叠加目标绕行得到完整模型">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-before.svg" alt="转身前：接收方与站位点重合，两者都还没有开始绕行。" width="900" height="580" loading="lazy"></a>
+    <figcaption>转身前：接收方与站位点重合，两者都还没有开始绕行。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-target.svg" alt="转身过程中，站位点先沿圆弧移动，接收方逐帧朝它追赶，此时还没有追上本帧的站位点。" width="900" height="580" loading="lazy"></a>
+    <figcaption>转身过程中，站位点先沿圆弧移动，接收方逐帧朝它追赶，此时还没有追上本帧的站位点。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-chase.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-chase.svg" alt="后续每帧先更新站位点，再让接收方从上一次的位置继续追赶。接收方走过的路线由这些短位移连接而成。" width="900" height="580" loading="lazy"></a>
+    <figcaption>后续每帧先更新站位点，再让接收方从上一次的位置继续追赶。接收方走过的路线由这些短位移连接而成。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-settled.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-settled.svg" alt="站位点逐渐到达转身后的左后方，接收方追完剩余距离，重新稳定在身边。" width="900" height="580" loading="lazy"></a>
+    <figcaption>站位点逐渐到达转身后的左后方，接收方追完剩余距离，重新稳定在身边。</figcaption>
+  </figure>
+</div>
+
+<p>到这里，模型从两个独立角色，逐步变成了“接收方用弹簧追赶，站位点平滑绕行”。接收方每帧仍做有限步长的直线推进，许多短位移连接起来才形成实际轨迹。</p>
+<p>为了分清两条轨迹，这组平地示意把追赶系数设为 8、速度范围设为 <code>0.2～0.6 m/s</code>；旋转平滑时间仍为 <code>0.2 s</code>，绕行角速度上限仍为 <code>180°/s</code>，停止区半径仍为 <code>0.05 m</code>。图按代码的更新顺序、以每秒 60 帧计算，未加入网络延迟和碰撞。实际资源配置追赶更紧，两条轨迹通常更接近。</p>
+<p><strong>再将高度单独交给地面处理。</strong> 前面的图只看平地。角色带有俯仰或侧倾时，旋转后的偏移可能包含高度，直接使用会把接收方带离地面。因此先保留水平方向的偏移，让跟随目标落在发起方所在高度；之后再处理贴地或空中跟随：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="4.4 分开计算水平跟随与绕行旋转的连续状态图">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg" alt="状态一：旋转后的偏移仍在水平面内，“投影前目标”与水平目标重合。两名角色的位置使用同一组图标标出。" width="1040" height="570" loading="lazy"></a>
+    <figcaption>状态一：旋转后的偏移仍在水平面内，“投影前目标”与水平目标重合。两名角色的位置使用同一组图标标出。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg" alt="状态二：朝向带入俯仰，蓝色偏移产生垂直分量；代码去掉这部分高度，红色目标仍落在发起方所在水平面。" width="1040" height="570" loading="lazy"></a>
+    <figcaption>状态二：朝向带入俯仰，蓝色偏移产生垂直分量；代码去掉这部分高度，红色目标仍落在发起方所在水平面。</figcaption>
+  </figure>
+</div>
+
+<p>图中的蓝色“旋转后偏移”是局部偏移按站位参考旋转变换后的结果，去掉垂直分量后得到红色“水平偏移”。这里的参考旋转专门用于计算站位点，它会平滑追赶发起方的转身；其实现和接收方身体朝向的区别见 4.6.2。</p>
 <p><code>PreparationOffset</code> 和 <code>FollowOffset</code> 使用水平面上的两个分量，分别描述左右和前后距离。准备时让接收方站到发起方后方一米；正式跟随时，目标位于左侧约 0.55 米、后方约 0.22 米。偏移方向先经过绕行平滑，再投影到水平面，高度交给贴地或空中跟随处理。接收方的身体朝向取发起方朝向。</p>
 <p>实际推进仍从发起方保存的驱动位置开始：先按距离选择受上下限约束的追赶速度，进入停止区域后再逐渐减速，结合本帧时长决定前进距离。到达目标时停止；停止半径配置为零时，省略这段额外的减速处理。</p>
 <p>这里还要区分距离的计算时机：<strong>允许贴地时，先临时把目标高度设为驱动位置的高度，按水平距离推进，再探测地面；没有开启贴地时，按包含高度差的三维距离追赶。</strong> 超距瞬移判断发生在这次高度处理之前，始终包含高度差。</p>
@@ -602,31 +684,31 @@ stateDiagram-v2
 </thead>
 <tbody><tr>
 <td><code>SpringCoefficient</code></td>
-<td><code>k</code></td>
+<td>“弹簧系数”</td>
 <td align="right">40</td>
 <td>决定未限幅时速度随距离增加的幅度</td>
 </tr>
 <tr>
 <td><code>MinFollowSpeed</code></td>
-<td><code>v_min</code></td>
+<td>“最低速度”</td>
 <td align="right">2.5 m&#x2F;s</td>
 <td>停止区减速前的速度下限</td>
 </tr>
 <tr>
 <td><code>MaxFollowSpeed</code></td>
-<td><code>v_max</code></td>
+<td>“最高速度”</td>
 <td align="right">8 m&#x2F;s</td>
 <td>跟随速度上限</td>
 </tr>
 <tr>
 <td><code>StopRadius</code></td>
-<td><code>r_stop</code></td>
+<td>“减速半径”</td>
 <td align="right">0.05 m</td>
 <td>限定连续减速作用的距离范围</td>
 </tr>
 <tr>
 <td><code>FollowTeleportDistance</code></td>
-<td><code>D</code></td>
+<td>“瞬移阈值”</td>
 <td align="right">8 m</td>
 <td>三维距离超过阈值时重建位置基线</td>
 </tr>
@@ -660,97 +742,119 @@ stateDiagram-v2
 <td>集中配置偏移、速度、高度和各类平滑参数</td>
 </tr>
 </tbody></table>
-<h3 id="4-6-移动与平滑优化"><a href="#4-6-移动与平滑优化" class="headerlink" title="4.6 移动与平滑优化"></a>4.6 移动与平滑优化</h3><h4 id="4-6-1-停止区连续减速"><a href="#4-6-1-停止区连续减速" class="headerlink" title="4.6.1 停止区连续减速"></a>4.6.1 停止区连续减速</h4><p>接近目标时，固定距离的直接贴合容易产生与帧间隔无关的跳变。这里让停止区内的速度随剩余距离连续下降，越接近目标，每一帧前进的距离就越小。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="4.6.1 停止区连续减速的连续状态图">
+<h3 id="4-6-移动与平滑优化"><a href="#4-6-移动与平滑优化" class="headerlink" title="4.6 移动与平滑优化"></a>4.6 移动与平滑优化</h3><h4 id="4-6-1-停止区连续减速"><a href="#4-6-1-停止区连续减速" class="headerlink" title="4.6.1 停止区连续减速"></a>4.6.1 停止区连续减速</h4><p>前面用最低速度保证追赶力度，但到了站位点附近仍可能迈出过大的步长。足够近时直接贴过去能够收尾，却会产生不随帧间隔缩小的跳变。</p>
+<p>于是只增加一个减速区：接收方进入站位点周围的这片区域后，剩余距离越小，追赶速度就越低，最后一小段也逐帧完成：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="让接近目标的过程连续减速">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/stop-radius.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/stop-radius.svg" alt="接收方尚在停止半径外按距离速度推进" width="1040" height="730" loading="lazy"></a>
-    <figcaption>t₀：蓝色角色位于虚线停止区域之外，速度按距离和上下限计算，本帧预算将把它带入减速区域。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-edge.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-edge.svg" alt="接收方接近减速区，仍按正常追赶速度前进。" width="900" height="490" loading="lazy"></a>
+    <figcaption>接收方接近减速区，仍按正常追赶速度前进。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/stop-radius-inside.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/stop-radius-inside.svg" alt="接收方进入停止半径后速度与下一帧步长连续减小" width="1040" height="730" loading="lazy"></a>
-    <figcaption>t₁：蓝色角色进入停止区域，速度采样点落到连续减速段，下一帧的移动预算随之缩小。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-inside.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-inside.svg" alt="接收方进入减速区后，下一步变小，逐渐收敛到站位点。" width="900" height="490" loading="lazy"></a>
+    <figcaption>接收方进入减速区后，下一步变小，逐渐收敛到站位点。</figcaption>
   </figure>
 </div>
 
-<p>上半部红色虚线表示直接贴合时的速度分支，蓝线表示连续减速。两幅图使用相同的当前参数，只改变接收方到目标的距离。区外两条曲线重合；区内蓝线逐渐降到零，红线归零时则由位置分支直接对齐目标。</p>
-<p>增大 <code>r_stop</code> 会让额外减速更早介入。<code>v_min</code> 只是减速前的下限，因此停止区内实际速度可以低于它；<code>k</code>、速度上下限和减速半径共同决定曲线形状。</p>
+<p>增大 <code>StopRadius</code> 会让额外减速更早介入。最低速度只是减速前的下限，因此停止区内实际速度可以低于它；弹簧系数、速度上下限和减速半径共同决定追赶与收尾的响应。停止半径为零时，省略这段额外减速。</p>
 <p><code>MoveTowards</code> 将速度与本帧时长一起用于位移计算。只有本帧步长足以到达时才落到目标，因而高帧率下的小距离运动也受时间步长约束。</p>
 <p>驱动位置只来自权威端自己的计算，不读取远端实体已经插值的位置，避免把网络抖动重新反馈进跟随过程。</p>
-<h4 id="4-6-2-绕行旋转滞后与限速"><a href="#4-6-2-绕行旋转滞后与限速" class="headerlink" title="4.6.2 绕行旋转滞后与限速"></a>4.6.2 绕行旋转滞后与限速</h4><p>直线追赶和绕行速度分开控制。发起方急转时，先记下朝向改变了多少，再让跟随目标沿着绕行方向逐帧靠近对应站位。每一帧允许转过的角度受到限制，因此接收方可以保留跑步需要的追赶速度，目标本身也不会一下绕到很远的位置。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="4.6.2 绕行旋转滞后与限速的连续状态图">
+<h4 id="4-6-2-绕行旋转滞后与限速"><a href="#4-6-2-绕行旋转滞后与限速" class="headerlink" title="4.6.2 绕行旋转滞后与限速"></a>4.6.2 绕行旋转滞后与限速</h4><p>4.4 已经把站位点的绕行与接收方的追赶分开。现在先补清一个容易混淆的关系：走向哪里和身体朝哪里是两件事。接收方的位置继续追赶站位点，身体朝向却直接跟随发起方，所以转身时二者可能不同：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="绕行时身体朝向与移动方向的区别">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/turn-follow.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/turn-follow.svg" alt="主体右转后偏移方向存在滞后且接收方开始追赶" width="1040" height="570" loading="lazy"></a>
-    <figcaption>t₀：主体已向右转，跟随方向仍在追赶；角色图标与十字目标分别表示接收方位置和本帧目标。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-start.svg" alt="发起方转身后，接收方身体也朝向右方，但本帧位移仍沿黑色虚线指向站位点。" width="900" height="580" loading="lazy"></a>
+    <figcaption>发起方转身后，接收方身体也朝向右方，但本帧位移仍沿黑色虚线指向站位点。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/turn-follow-later.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/turn-follow-later.svg" alt="经过后续帧目标绕行角度推进且旋转滞后缩小" width="1040" height="570" loading="lazy"></a>
-    <figcaption>t₁：跟随方向继续绕行，尚未消化的角度变小，接收方沿更新后的目标继续移动。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-later.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-later.svg" alt="站位点继续绕行，接收方的追赶方向随之变化；身体朝向仍与发起方一致。" width="900" height="580" loading="lazy"></a>
+    <figcaption>站位点继续绕行，接收方的追赶方向随之变化；身体朝向仍与发起方一致。</figcaption>
   </figure>
 </div>
 
-<p>左半部 <code>Rᵢ</code> 为主体朝向，<code>R_f</code> 为偏移朝向，<code>θ_lag</code> 标出两者的角度差；红色目标是主体当前朝向直接对应的站位，蓝色目标则经过旋转平滑。</p>
-<p>右半部曲线按代码的逐帧更新计算：主体瞬间右转 90°，角速度上限固定为 <code>180°/s</code>，红、蓝曲线分别使用 <code>0.2 s</code>、<code>0.4 s</code> 的平滑时间。两幅图的竖线标出经过的不同时间。左侧角色追赶位置是几何示意，不与曲线采样位置按长度等比对应。</p>
+<p>决定站位点绕到哪里的是 <code>followRotation</code>。它是计算站位时采用的参考旋转；发起方已经转过身，而这份参考还在追赶时，站位点便逐帧绕行。它不直接设置接收方的身体旋转。</p>
+<p>只有“逐帧转动”还不够，急转时依然需要控制响应。因此再加两项约束：旋转平滑控制追赶转向的过程，最大角速度限制一帧实际能转过多少。当前 <code>RotationFollowSmoothTime</code> 为 <code>0.2 s</code>，<code>MaxRotationFollowSpeed</code> 为 <code>180°/s</code>。</p>
+<p>每帧的处理顺序如下：</p>
+<ol>
+<li>读取发起方本帧偏航变化，累加尚未消化的转角。</li>
+<li>用 <code>SmoothDamp</code> 消化转角，再按本帧时长限制实际转过的角度，得到站位参考旋转。</li>
+<li>将 <code>FollowOffset</code> 按这个参考旋转变换，生成本帧站位点。</li>
+<li>从接收方保存的驱动位置计算到目标的距离，用距离比例速度、速度上下限和停止区减速确定步长，再执行 <code>MoveTowards</code>。</li>
+<li>按接地条件修正高度，写入接收方位置；身体旋转直接使用发起方的旋转。</li>
+</ol>
 <table>
 <thead>
 <tr>
-<th>几何标记</th>
+<th>对象</th>
 <th>对应代码</th>
 <th>作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>Rᵢ</code>、<code>θᵢ</code></td>
+<td>发起方身体朝向</td>
 <td><code>initiatorRotation</code> 及其偏航</td>
-<td>提供希望跟上的朝向；每帧与前一偏航比较，得到转向变化</td>
+<td>给出本帧希望跟上的方向</td>
 </tr>
 <tr>
-<td><code>R_f</code>、<code>θ_f</code></td>
-<td><code>HoldHandRotationFollowState.Update</code> 的结果</td>
-<td>决定跟随目标的偏移方向；保留发起方俯仰和侧倾，再由位置计算去掉偏移高度</td>
+<td>站位参考旋转</td>
+<td><code>HoldHandRotationFollowState.Update</code> 的结果，即 <code>followRotation</code></td>
+<td>决定站位点绕行到哪里</td>
 </tr>
 <tr>
-<td><code>θ_lag</code></td>
-<td><code>m_LagAngle</code></td>
-<td>累计尚未消化的转角，允许目标平滑追赶</td>
+<td>本帧站位点</td>
+<td><code>targetPosition</code></td>
+<td>由参考旋转与跟随偏移算出的追赶目标</td>
 </tr>
 <tr>
-<td><code>τ</code></td>
-<td><code>RotationFollowSmoothTime</code></td>
-<td>控制转角平滑的响应时间，当前为 <code>0.2 s</code></td>
+<td>接收方当前位置</td>
+<td><code>m_DrivenPosition</code></td>
+<td>本帧从这里继续推进</td>
 </tr>
 <tr>
-<td><code>ω_max</code></td>
-<td><code>MaxRotationFollowSpeed</code></td>
-<td>限制角速度和平滑过程中的单帧转角，当前为 <code>180°/s</code></td>
+<td>黑色站位点轨迹</td>
+<td>每帧的 <code>targetPosition</code></td>
+<td>受旋转平滑与角速度限制</td>
 </tr>
 <tr>
-<td><code>Δt</code>、<code>Δθ</code></td>
-<td><code>deltaTime</code>、<code>turn</code></td>
-<td>按本帧时长限制实际前进的角度，避免高帧率或掉帧改变限速含义</td>
+<td>蓝色接收方轨迹</td>
+<td>每帧的 <code>nextPosition</code></td>
+<td>逐帧追向站位点，受移动速度与停止区减速约束</td>
 </tr>
 </tbody></table>
-<p><code>m_AngularVelocity</code> 保留 <code>SmoothDamp</code> 的平滑速度状态，使相邻帧的转向连续；反向转身时会处理与当前目标相反的残留速度。平滑时间或最大绕行角速度配置为零时，关闭旋转滞后，直接使用发起方朝向。</p>
-<p><code>HoldHandRotationFollowState</code> 使用 <code>SmoothDamp</code> 消化旋转滞后，并限制每帧实际转角。旋转平滑时间为 <code>0.2 s</code>，最大绕行角速度为 <code>180°/s</code>。连续转动时保留绕行方向，但不累计需要补转的整圈；停止约 <code>0.05 s</code> 后就近归位，反向转身时限制旧角速度继续把目标推远。</p>
-<p>这个处理作用于站位偏移的旋转，因此可以减轻急转时的绕行速度，而不降低直线跑步需要的跟随速度。</p>
-<h4 id="4-6-3-贴地防抖与落点限高"><a href="#4-6-3-贴地防抖与落点限高" class="headerlink" title="4.6.3 贴地防抖与落点限高"></a>4.6.3 贴地防抖与落点限高</h4><p>发起方稳定接地、KCC 没有禁止吸附，并且双方高度差在限制内时，系统允许接收方贴地。先在水平面推进，再向下发射射线探测地面。</p>
+<p>作为对照，按当前资源配置、以每秒 60 帧计算同样的原地右转 90°，目标与接收方的距离差最大约为 <code>6 mm</code>。4.4 的教学图放慢了直线追赶，便于看清处理顺序；实际距离差取决于直线追赶与旋转限速两套约束。</p>
+<p><code>m_AngularVelocity</code> 保存旋转平滑的速度状态，<code>m_LagAngle</code> 保存尚未追完的角度。连续转动时保留绕行方向，但不累计需要补转的整圈；停转约 <code>0.05 s</code> 后就近归位，反向转身时也限制残留角速度继续把目标推远。平滑时间或最大绕行角速度为零时，直接使用发起方朝向。</p>
+<p>这一处理将直线追赶速度与目标绕行速度分开。跑步可以保持足够的追赶能力，转身时目标仍按受控的速度绕行；接收方是否产生明显滞后，取决于两套约束在当前动作中的相对大小。</p>
+<h4 id="4-6-3-贴地防抖与落点限高"><a href="#4-6-3-贴地防抖与落点限高" class="headerlink" title="4.6.3 贴地防抖与落点限高"></a>4.6.3 贴地防抖与落点限高</h4><p>先看最简单的高度处理：接收方沿用发起方高度。在坡面上，两人脚下的地面却可能不同，接收方就会悬空或陷入地面。</p>
+<p>因此从接收方上方向下发出射线，用命中的地面高度修正它的位置；水平方向继续沿用弹簧跟随：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="从固定高度到最基本的射线贴地">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-floating.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-floating.svg" alt="沿用发起方高度时，坡下的接收方可能悬空；反过来走到更高地面时，也可能陷入地面。" width="900" height="490" loading="lazy"></a>
+    <figcaption>沿用发起方高度时，坡下的接收方可能悬空；反过来走到更高地面时，也可能陷入地面。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-projected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-projected.svg" alt="向下探测地面后，将接收方放到落点的高度，水平方向继续由弹簧控制。" width="900" height="490" loading="lazy"></a>
+    <figcaption>向下探测地面后，将接收方放到落点的高度，水平方向继续由弹簧控制。</figcaption>
+  </figure>
+</div>
+
+<p>这能适应普通坡面，但地形边缘可能让接地状态反复变化，射线也可能打到高处或深处的平台。接下来分别加入状态防抖与落点限高。</p>
+<p>发起方稳定接地、KCC 没有禁止吸附，并且双方高度差在限制内时，系统允许接收方贴地。先在水平面推进，再向下发射射线探测地面。</p>
 <p>接地状态在台阶边缘可能交替变化，<code>HoldHandGroundSnapDebouncer</code> 要求候选状态持续一定时间才切换。当前资源的防抖时间为 <code>2 s</code>，最大高度差为 <code>0.5 m</code>；高度差超限会立即关闭贴地，不等待防抖计时。</p>
 <p>射线命中后还要检查落点与发起方的高度差。这个检查是硬限制，防止已开启的贴地状态把接收方吸到过高的平台或过深的地面。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="4.6.3 贴地防抖与落点限高的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg" alt="候选接地状态刚变化时保持原有贴地模式" width="1040" height="590" loading="lazy"></a>
-    <figcaption>t₀：候选接地状态变为真，但持续时间尚未达到防抖门槛；接收方保持原有高度，尚未开启本次地面投影。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg" alt="状态一：候选接地状态变为真，但持续时间尚未达到防抖门槛；接收方保持原有高度，尚未开启本次地面投影。" width="1040" height="590" loading="lazy"></a>
+    <figcaption>状态一：候选接地状态变为真，但持续时间尚未达到防抖门槛；接收方保持原有高度，尚未开启本次地面投影。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg" alt="接地持续足够时间后射线命中合法地面并修正角色高度" width="1040" height="590" loading="lazy"></a>
-    <figcaption>t₁：状态持续达到门槛，开启贴地；射线命中的 G 位于高度限制内，接收方沿垂直方向落到该地面。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg" alt="状态二：状态持续达到门槛，开启贴地；射线命中的“地面候选” 位于高度限制内，接收方沿垂直方向落到该地面。" width="1040" height="590" loading="lazy"></a>
+    <figcaption>状态二：状态持续达到门槛，开启贴地；射线命中的“地面候选” 位于高度限制内，接收方沿垂直方向落到该地面。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg" alt="后续地面落差超出限制时拒绝投影并保留角色高度" width="1040" height="590" loading="lazy"></a>
-    <figcaption>t₂：更低的地面进入探测位置，命中点超过高度边界；即使贴地模式仍开启，也拒绝此次落点，角色保留投影前高度。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg" alt="状态三：更低的地面进入探测位置，命中点超过高度边界；即使贴地模式仍开启，也拒绝此次落点，角色保留投影前高度。" width="1040" height="590" loading="lazy"></a>
+    <figcaption>状态三：更低的地面进入探测位置，命中点超过高度边界；即使贴地模式仍开启，也拒绝此次落点，角色保留投影前高度。</figcaption>
   </figure>
 </div>
 
-<p>左侧 <code>Pᵢ</code>、<code>Pₙ</code> 是双方位置，射线从接收方上方的 <code>S</code> 向下检测，<code>G</code> 是地面候选点，<code>Δh</code> 与蓝色高度边界共同决定是否接受落点。右侧红线 <code>g(t)</code> 是候选状态，蓝线 <code>s(t)</code> 是实际贴地模式，<code>T_d</code> 标出切换所需的持续时间。侧视几何不按米等比绘制。</p>
+<p>左侧 “发起方”、“接收方位置” 是双方位置，射线从接收方上方的 “射线起点” 向下检测，“地面候选” 是地面候选点，“落点高度差” 与蓝色高度边界共同决定是否接受落点。右侧红线 “接地候选” 是候选状态，蓝线 “贴地状态” 是实际贴地模式，“防抖时长” 标出切换所需的持续时间。侧视几何不按米等比绘制。</p>
 <table>
 <thead>
 <tr>
@@ -760,62 +864,64 @@ stateDiagram-v2
 </tr>
 </thead>
 <tbody><tr>
-<td><code>h_probe</code></td>
+<td>“起点抬高”</td>
 <td><code>RecipientGroundProbeHeight</code></td>
 <td>从待投影位置上方 <code>10 m</code> 发射射线</td>
 </tr>
 <tr>
-<td><code>L_probe</code></td>
+<td>“射线长度”</td>
 <td><code>RecipientGroundProbeDistance</code></td>
 <td>从射线起点向下最多检测 <code>100 m</code></td>
 </tr>
 <tr>
-<td><code>h_max</code>、<code>Δh</code></td>
+<td>“允许高度差”、“落点高度差”</td>
 <td><code>GroundSnapMaxHeightDifference</code>、实际高度差</td>
 <td>允许落点偏离发起方高度最多 <code>0.5 m</code>；命中射线并不自动通过限高</td>
 </tr>
 <tr>
-<td><code>T_d</code></td>
+<td>“防抖时长”</td>
 <td><code>GroundSnapDebounceDuration</code></td>
 <td>候选接地状态持续达到此时长才切换，当前资源值为 <code>2 s</code></td>
 </tr>
 <tr>
-<td><code>g(t)</code></td>
+<td>“接地候选”</td>
 <td>稳定接地且 <code>SnappingPrevented</code> 为假</td>
 <td>只有可吸附的稳定地面才能请求开启贴地</td>
 </tr>
 <tr>
-<td><code>s(t)</code></td>
+<td>“贴地状态”</td>
 <td><code>useGroundSnapping</code></td>
 <td>决定先水平推进再投影地面，还是按三维位置追赶</td>
 </tr>
 </tbody></table>
 <p>射线只检测接收方配置的稳定地面层，层配置无效时使用地图层，并忽略触发器。防抖保留的是接地模式；高度差一旦超限，模式立即关闭，射线落点也必须单独通过限高检查。</p>
-<h4 id="4-6-4-对齐-KCC-与相机的采样阶段"><a href="#4-6-4-对齐-KCC-与相机的采样阶段" class="headerlink" title="4.6.4 对齐 KCC 与相机的采样阶段"></a>4.6.4 对齐 KCC 与相机的采样阶段</h4><p>权威计算和接收方写回都放在 <code>OnKccUpdateDone</code>，使用 KCC 插值后的显示位置，并在相机位置采样前完成。这样身体、跟随目标和相机使用相同阶段的位置，避免固定步长的运动与渲染帧混用造成抖动。</p>
+<h4 id="4-6-4-对齐-KCC-与相机的采样阶段"><a href="#4-6-4-对齐-KCC-与相机的采样阶段" class="headerlink" title="4.6.4 对齐 KCC 与相机的采样阶段"></a>4.6.4 对齐 KCC 与相机的采样阶段</h4><p>如果跟随先读取物理位置，而相机随后读取插值后的显示位置，同一帧的身体与相机就可能使用不同阶段的数据。最直接的改进是统一采样顺序：先完成角色显示位置更新，再计算跟随，最后让相机读取结果。</p>
+<p>权威计算和接收方写回都放在 <code>OnKccUpdateDone</code>，使用 KCC 插值后的显示位置，并在相机位置采样前完成。这样身体、跟随目标和相机使用相同阶段的位置，避免固定步长的运动与渲染帧混用造成抖动。</p>
 <p>发起方本地的接收方实体直接应用逐帧计算结果，避免将本地跟随平滑与网络播放平滑叠加。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="4.6.4 对齐 KCC 与相机的采样阶段的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg" alt="本帧KCC更新前双方仍使用上帧显示位姿" width="1040" height="490" loading="lazy"></a>
-    <figcaption>t₀：本帧 KCC 显示更新尚未完成，双方与相机锚点仍对应之前的显示状态。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg" alt="状态一：本帧 KCC 显示更新尚未完成，双方与相机锚点仍对应之前的显示状态。" width="1040" height="490" loading="lazy"></a>
+    <figcaption>状态一：本帧 KCC 显示更新尚未完成，双方与相机锚点仍对应之前的显示状态。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg" alt="KCC与双人位姿更新完成后相机读取同阶段角色位置" width="1040" height="490" loading="lazy"></a>
-    <figcaption>t₁：先完成 KCC 显示更新，再应用双人位姿，随后才采样相机锚点；三个时间标记说明它们的先后关系。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg" alt="状态二：先完成 KCC 显示更新，再应用双人位姿，随后才采样相机锚点；三个时间标记说明它们的先后关系。" width="1040" height="490" loading="lazy"></a>
+    <figcaption>状态二：先完成 KCC 显示更新，再应用双人位姿，随后才采样相机锚点；三个时间标记说明它们的先后关系。</figcaption>
   </figure>
 </div>
 
-<h4 id="4-6-5-传送时重置平滑状态"><a href="#4-6-5-传送时重置平滑状态" class="headerlink" title="4.6.5 传送时重置平滑状态"></a>4.6.5 传送时重置平滑状态</h4><div class="holdhand-state-gallery" role="group" aria-label="4.6.5 传送时重置平滑状态的连续状态图">
+<h4 id="4-6-5-传送时重置平滑状态"><a href="#4-6-5-传送时重置平滑状态" class="headerlink" title="4.6.5 传送时重置平滑状态"></a>4.6.5 传送时重置平滑状态</h4><p>普通移动可以继续用弹簧追赶，但传送会让两个人突然相距很远，缓慢追过去就不合适了。因此增加一个距离阈值：超过阈值时直接对齐新的站位，并从这里重新开始跟随。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="4.6.5 传送时重置平滑状态的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg" alt="主体传送后接收方尚在原位置且新目标超过距离阈值" width="1040" height="595" loading="lazy"></a>
-    <figcaption>t₀：红色主体已经到达传送位置，蓝色接收方仍在原位置；新目标位于阈值球之外，高度差同样计入距离。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg" alt="状态一：红色主体已经到达传送位置，蓝色接收方仍在原位置；新目标位于阈值球之外，高度差同样计入距离。" width="1040" height="595" loading="lazy"></a>
+    <figcaption>状态一：红色主体已经到达传送位置，蓝色接收方仍在原位置；新目标位于阈值球之外，高度差同样计入距离。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg" alt="接收方直接对齐目标后以新位置重建跟随基线" width="1040" height="595" loading="lazy"></a>
-    <figcaption>t₁：接收方直接对齐重算后的站位，驱动位置和平滑状态从这里重新开始；虚线边界随新的驱动位置更新。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg" alt="状态二：接收方直接对齐重算后的站位，驱动位置和平滑状态从这里重新开始；虚线边界随新的驱动位置更新。" width="1040" height="595" loading="lazy"></a>
+    <figcaption>状态二：接收方直接对齐重算后的站位，驱动位置和平滑状态从这里重新开始；虚线边界随新的驱动位置更新。</figcaption>
   </figure>
 </div>
 
-<p>虚线圆是三维阈值球的截面，<code>D</code> 对应 <code>FollowTeleportDistance</code>，<code>d</code> 是驱动位置到目标的三维距离。图中的 <code>Δy</code> 强调垂直位移也参与判断；恰好到达阈值时仍使用普通跟随。</p>
+<p>虚线圆是三维阈值球的截面，“瞬移阈值” 对应 <code>FollowTeleportDistance</code>，“追赶距离” 是驱动位置到目标的三维距离。图中的 “高度差” 强调垂直位移也参与判断；恰好到达阈值时仍使用普通跟随。</p>
 <p>驱动位置到目标的距离超过 <code>8 m</code> 时，直接采用发起方当前朝向下的新站位，并重置绕行角、贴地防抖和接收方动画速度，立即广播带 <code>Teleported</code> 标记的结果。</p>
 <p>传送属于位置的不连续变化，清理平滑缓存可以避免角色沿旧方向漂移或跨越大段距离缓慢追赶。远端对应的缓冲重置见网络同步章节。</p>
 <h3 id="4-7-联调中的动作衔接"><a href="#4-7-联调中的动作衔接" class="headerlink" title="4.7 联调中的动作衔接"></a>4.7 联调中的动作衔接</h3><p>加入旋转解算后，通过演示和实际操作与策划确认绕行表现，再结合走路、跑步和原地转向继续检查。这一轮联调的重点，是确认目标移动更平稳后，角色的身体朝向与步态能否自然衔接。</p>
@@ -900,64 +1006,73 @@ stateDiagram-v2
 <p>进入受支持的个人动作时，运行时记录进入次数，暂停牵手 IK 和对应音乐，并按需恢复本地 Animator 控制器；最后一个个人动作结束后，恢复牵手控制器和持物表现。接收方操作占用右手时，该侧 IK 权重暂时归零，让手臂服从操作动画。</p>
 <h2 id="6-手部-IK"><a href="#6-手部-IK" class="headerlink" title="6. 手部 IK"></a>6. 手部 IK</h2><h3 id="6-1-设计目标"><a href="#6-1-设计目标" class="headerlink" title="6.1 设计目标"></a>6.1 设计目标</h3><p>手部 IK 需要让发起方左手与接收方右手尽量接触，同时维持自然的肩、肘、腕姿态。角色的臂长、挂点偏移和身体位置可能不同，因此共享目标必须考虑双方可达范围，骨骼结果还要满足关节限制。</p>
 <p>跑步、跳跃和转向时，接触点应稳定地随双人位置移动；滑翔或个人动作占用手臂时，应能平滑释放和恢复。IK 只调整手臂表现，角色根节点的位置由移动系统负责。</p>
-<p>IK 图沿用红色发起方、蓝色接收方图标，每一幅都画出两条参与牵手的骨链，共六个圆形节点。<code>Sᵢ → Eᵢ → Wᵢ</code> 是发起方的肩、肘、腕，<code>S_r → E_r → W_r</code> 是接收方的肩、肘、腕，分别对应 LimbIK 的 <code>bone1 → bone2 → bone3</code>。十字表示掌心挂点或逻辑目标，虚线骨链表示参考，不增加实际节点。</p>
+<p>IK 图沿用红色发起方、蓝色接收方图标，每一幅都画出两条参与牵手的骨链，共六个圆形节点。红色“肩 → 肘 → 腕”属于发起方，蓝色“肩 → 肘 → 腕”属于接收方，分别对应 LimbIK 的 <code>bone1 → bone2 → bone3</code>。十字表示“掌心”“目标握点”等逻辑点位，虚线骨链表示参考，不增加实际节点。</p>
 <p>这些图是二维几何说明，连续状态保持上臂、前臂长度一致，用来展示输入、目标和约束的变化；角色比例与姿态不作为实机参数标定。</p>
 <h3 id="6-2-共享接触点与可达范围"><a href="#6-2-共享接触点与可达范围" class="headerlink" title="6.2 共享接触点与可达范围"></a>6.2 共享接触点与可达范围</h3><p>实现基本握手可以先解决一个问题：让两条手臂追向同一个接触位置。由两只手的 Pose 得到偏好点，用双方的可达范围约束它，再交给 Final IK 的 LimbIK 求解，配合连接阈值和权重过渡，就能建立基本的牵手表现。</p>
-<h4 id="6-2-1-从两个接触-Pose-得到共享-Pose"><a href="#6-2-1-从两个接触-Pose-得到共享-Pose" class="headerlink" title="6.2.1 从两个接触 Pose 得到共享 Pose"></a>6.2.1 从两个接触 Pose 得到共享 Pose</h4><p>先读取发起方左手与接收方右手的接触位置和旋转，在两者之间取一个偏好接触 Pose。它表示两只手希望相遇的位置和朝向；各自的位置、旋转偏移再用于调整掌心的接触关系。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="6.2.1 从两个接触 Pose 得到共享 Pose的连续状态图">
+<h4 id="6-2-1-从两个接触-Pose-得到共享-Pose"><a href="#6-2-1-从两个接触-Pose-得到共享-Pose" class="headerlink" title="6.2.1 从两个接触 Pose 得到共享 Pose"></a>6.2.1 从两个接触 Pose 得到共享 Pose</h4><p>先只看两条手臂和一个共同握点。每条手臂由肩、肘、腕三个节点组成，暂时把手腕末端当作接触位置：固定肩的位置，只调整肘和腕，让双方末端靠向同一个目标。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="两条手臂向同一握点求解">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg" alt="六个骨骼节点与两侧尚未重合的接触点" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：两只手各有自己的接触点，黑色中点 C₀ 是共同目标的起点；手腕节点 W 与掌心点 C 分开标记。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg" alt="求解前：双方手臂各自摆动，肩、肘、腕组成两条骨链；黑色十字指定一个共同握点。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>求解前：双方手臂各自摆动，肩、肘、腕组成两条骨链；黑色十字指定一个共同握点。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg" alt="双方骨链朝共同接触位置求解后的六个节点" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：目标提供给两侧骨链，肩、肘、腕重新排列，掌心靠向共同位置；角色根节点保持不动。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg" alt="求解后：肩的位置不动，肘和腕围绕目标调整，骨长不变；红、蓝两个腕节点在握点处重合。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>求解后：肩的位置不动，肘和腕围绕目标调整，骨长不变；红、蓝两个腕节点在握点处重合。</figcaption>
   </figure>
 </div>
 
+<p>给定末端目标，再反向调整关节以到达它，就是逆向运动学，简称 IK。这个模型能建立基本接触，但还没有回答两条手臂是否都够得到，下一步需要补上可达范围。</p>
+<p>先读取发起方左手与接收方右手的接触位置和旋转，在两者之间取一个偏好接触 Pose。它表示两只手希望相遇的位置和朝向；各自的位置、旋转偏移再用于调整掌心的接触关系。</p>
 <p>这一步建立的是共同目标，LimbIK 实际接受的手腕目标还要根据掌心挂点反算，具体见 6.5.3。发起方左手与接收方右手的配置偏移用于修正接触位置和朝向，不改变根节点位置。</p>
-<h4 id="6-2-2-用可达球体近似两段手臂"><a href="#6-2-2-用可达球体近似两段手臂" class="headerlink" title="6.2.2 用可达球体近似两段手臂"></a>6.2.2 用可达球体近似两段手臂</h4><p>最直接的范围近似，是把上臂与前臂的长度相加，作为从肩部伸出的可达半径，并按接触挂点偏移修正球心。图中的两段长度分别记为 <code>a</code>、<code>b</code>；肘部弯曲时手会靠近身体，展开时手可以到达更远的位置，但骨长本身不变。</p>
+<h4 id="6-2-2-用可达球体近似两段手臂"><a href="#6-2-2-用可达球体近似两段手臂" class="headerlink" title="6.2.2 用可达球体近似两段手臂"></a>6.2.2 用可达球体近似两段手臂</h4><p>上一小节先让两条骨链追向共同位置。现在把目标往远处移动：肘部可以展开，手却不能无限伸长，因为上臂和前臂的长度固定。</p>
+<p>先只增加“两段骨长”这个约束，再用它们能覆盖的范围近似可达球体。图中画出球体截面，比较弯曲与展开两种状态：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="6.2.2 用可达球体近似两段手臂的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg" alt="双方手臂弯曲时六个节点与固定长度的可达圆" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：两条手臂弯曲，腕部位于可达范围内部。圆形节点仍是肩、肘、腕，圆心修正点 O 与肩节点 S 分开标记。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg" alt="状态一：两条手臂弯曲，腕部位于可达范围内部。圆形节点仍是肩、肘、腕，“球心”与“肩”节点 分开标记。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态一：两条手臂弯曲，腕部位于可达范围内部。圆形节点仍是肩、肘、腕，“球心”与“肩”节点 分开标记。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg" alt="接触目标变远后手臂展开而骨段长度与可达圆不变" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：接触目标向外移动，肘部展开；a、b 的长度与对应可达圆保持不变，变化的是骨骼夹角。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg" alt="状态二：接触目标向外移动，肘部展开；上臂、前臂的长度与对应可达圆保持不变，变化的是骨骼夹角。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态二：接触目标向外移动，肘部展开；上臂、前臂的长度与对应可达圆保持不变，变化的是骨骼夹角。</figcaption>
   </figure>
 </div>
 
+<p>最直接的近似是把上臂与前臂长度相加，作为可达半径；肘部弯曲时手靠近身体，展开时能到达更远的位置，但骨长与范围本身不变。掌心挂点相对手腕存在偏移时，还可以按挂点修正球心，图中因而把“球心”与“肩”分开标记；后面的 6.4.2 再说明另一种预留范围的处理。</p>
 <p>得到双方的可达球体后，<code>TryConstrainSharedContact</code> 负责把偏好点限制在共同区域。球体表达伸展范围，肘部应往哪边弯、关节能转多远仍需要另外处理。</p>
-<h4 id="6-2-3-球体交集约束算法"><a href="#6-2-3-球体交集约束算法" class="headerlink" title="6.2.3 球体交集约束算法"></a>6.2.3 球体交集约束算法</h4><p>两人相距较远时，可达范围可能分离；靠近后，范围才可能出现交集。处理顺序如下：</p>
+<h4 id="6-2-3-球体交集约束算法"><a href="#6-2-3-球体交集约束算法" class="headerlink" title="6.2.3 球体交集约束算法"></a>6.2.3 球体交集约束算法</h4><p>单侧可达范围确定了，还不能保证两只手碰到一起：两个人相距太远时，范围可能完全分离。先观察两人从远处靠近、范围逐渐相交的过程：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="球体交集约束算法的连续状态图">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg" alt="范围分离：两人相距较远，即使手臂伸直也有间隙；中间的目标只能作为折中位置，双方不能同时够到。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>范围分离：两人相距较远，即使手臂伸直也有间隙；中间的目标只能作为折中位置，双方不能同时够到。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg" alt="范围相交：双方靠近后出现共同区域，将范围外的原握点移到这里，两条骨链便能朝同一个位置求解。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>范围相交：双方靠近后出现共同区域，将范围外的原握点移到这里，两条骨链便能朝同一个位置求解。</figcaption>
+  </figure>
+</div>
+
+<p>红、蓝虚线圆是双方可达球的截面。出现交集后，如果原握点在共同范围外，就把它移回双方都能伸到的位置；没有交集时，只能保留折中目标，不能保证双方同时够到。</p>
+<p>实现中进一步按下面的候选顺序选择目标：</p>
 <ol>
 <li>偏好点已经位于两个球体内部，直接使用。</li>
 <li>两球分离时，沿球心连线按双方伸展能力选取折中点，并将 <code>HasSharedReach</code> 记为假。</li>
 <li>两球相交但偏好点在外部时，先检查投影到单侧球体的候选，选择同时满足双方范围、且离偏好点最近的一个。</li>
 <li>单侧投影都不满足时，利用两球的交圆确定共同区域，将偏好点投影并限制在其中。</li>
 </ol>
-<div class="holdhand-state-gallery" role="group" aria-label="6.2.3 球体交集约束算法的连续状态图">
-  <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg" alt="双方可达范围分离时骨链向折中点伸展仍存在间隙" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：两名角色相距较远，可达范围分离；C* 是折中目标，六个节点仍服从骨长，实际掌心不能同时到达它。</figcaption>
-  </figure>
-  <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg" alt="双方靠近后可达范围相交并将偏好点约束到交集" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：双方靠近后出现交集，范围外的偏好点 C₀ 被投影到 C*；六个节点围绕这个共同目标求解。</figcaption>
-  </figure>
-</div>
-
-<p>红、蓝虚线圆是双方可达球的截面，<code>rᵢ/r_r</code> 为半径，<code>D</code> 为球心距；交集存在时，<code>ρ</code> 标出交圆半径。两幅图中的几何范围用于说明约束分支，具体半径还取决于挂点预留方式。</p>
-<h4 id="6-2-4-平滑、连接滞回和权重"><a href="#6-2-4-平滑、连接滞回和权重" class="headerlink" title="6.2.4 平滑、连接滞回和权重"></a>6.2.4 平滑、连接滞回和权重</h4><p>共同目标经过 <code>Vector3.SmoothDamp</code> 平滑；这组基础配置使用 <code>ContactPositionSmoothTime = 0.08 s</code>。平滑后若双方范围有交集，再将结果限制回交集，避免过渡过程中越界。</p>
+<p>两球相交形成的交圆用于确定共同边界；具体半径还取决于挂点预留方式。这里先讲几何上能否到达，肘部应向哪边弯、关节能转多远仍需要另外限制。</p>
+<h4 id="6-2-4-平滑、连接滞回和权重"><a href="#6-2-4-平滑、连接滞回和权重" class="headerlink" title="6.2.4 平滑、连接滞回和权重"></a>6.2.4 平滑、连接滞回和权重</h4><p>两只手能够求向同一位置后，目标变化或连接切换仍可能显得突然。先给共享目标加上平滑，让它逐帧靠近计算结果；再处理连接边界和手臂的过渡程度。</p>
+<p>共同目标经过 <code>Vector3.SmoothDamp</code> 平滑；这组基础配置使用 <code>ContactPositionSmoothTime = 0.08 s</code>。平滑后若双方范围有交集，再将结果限制回交集，避免过渡过程中越界。</p>
+<p>如果连接和断开使用同一个距离，小幅移动就可能让状态反复切换。因此给“断开”和“重新连接”两个门槛留出间隔，这就是距离滞回：</p>
 <p>连接按根节点距离做滞回：首次进入与已连接时使用断开距离判断；断开后，要重新靠近到更小的重连距离才恢复。这里取 <code>ReconnectDistance = 1.1 m</code>、<code>DisconnectDistance = 1.51 m</code>，避免在同一个边界附近反复闪断。</p>
+<p>距离决定是否连接，权重则决定手臂有多大程度服从 IK。状态切换以后，权重逐帧变化，避免整条手臂立即跳到另一个姿态：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="6.2.4 平滑、连接滞回和权重的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg" alt="距离超过断开阈值并完成淡出后双方手臂回到动画姿态" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：距离超出断开阈值并完成淡出，手臂释放，共同目标仍可作为逻辑点保留；六个节点回到各自动画姿态。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg" alt="状态一：距离超出断开阈值并完成淡出，手臂释放，共同目标仍可作为逻辑点保留；六个节点回到各自动画姿态。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态一：距离超出断开阈值并完成淡出，手臂释放，共同目标仍可作为逻辑点保留；六个节点回到各自动画姿态。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg" alt="重新靠近到重连距离并完成淡入后双方手臂靠向目标" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：双方重新靠近到重连范围并完成淡入，肩、肘、腕再次朝共同目标排列。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg" alt="状态二：双方重新靠近到重连范围并完成淡入，肩、肘、腕再次朝共同目标排列。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态二：双方重新靠近到重连范围并完成淡入，肩、肘、腕再次朝共同目标排列。</figcaption>
   </figure>
 </div>
 
@@ -977,31 +1092,35 @@ stateDiagram-v2
 <p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-comparison.webp" alt="联调中的接触点异常与重新连接后的手部状态对比"></p>
 <p><em>参考姿态稳定性的问题复现：左侧为接触异常，右侧为重新建立连接后的姿态。</em></p>
 <h3 id="6-4-稳定参考与受约束的共享目标"><a href="#6-4-稳定参考与受约束的共享目标" class="headerlink" title="6.4 稳定参考与受约束的共享目标"></a>6.4 稳定参考与受约束的共享目标</h3><p>为了让基本的手部接触在跑步、跳跃和暂停恢复时也保持稳定，我保留共享接触点与球体约束，并将求解输入固定到稳定参考姿态。目标只随角色之间的相对关系变化，骨骼结果再经过独立的关节限制和平滑处理。</p>
-<h4 id="6-4-1-发起方计算共享接触目标"><a href="#6-4-1-发起方计算共享接触目标" class="headerlink" title="6.4.1 发起方计算共享接触目标"></a>6.4.1 发起方计算共享接触目标</h4><p>配对建立时，把两侧接触 Pose 分别保存到各自根节点的局部空间。之后每帧随当前根节点还原这两个参考，再形成共享目标；当前动画中的手部摆动不会重新定义基准。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="6.4.1 发起方计算共享接触目标的连续状态图">
+<h4 id="6-4-1-发起方计算共享接触目标"><a href="#6-4-1-发起方计算共享接触目标" class="headerlink" title="6.4.1 发起方计算共享接触目标"></a>6.4.1 发起方计算共享接触目标</h4><p>每帧从当前手部动画取接触点，容易把摆臂或一次异常姿态带进后续目标。于是先保存一份参考：牵手建立时，记录两只手相对各自角色的位置与旋转。</p>
+<p>这就是局部空间：参考记录的是“相对这个角色在哪里”，而不是地图上的绝对位置。角色整体移动时，参考点跟着移动；动画中的手腕可以摆动，却不重新定义参考：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="保存手部相对角色的参考点">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg" alt="建立配对时从六个骨骼节点确定并保存接触参考" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：从此时的骨骼姿态记录两侧参考接触点，Cᵢ⁰、Cᵣ⁰ 分别绑定到对应角色根节点。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg" alt="保存参考：记录此时手部相对角色的位置。红、蓝十字各自绑定到对应角色，虚线表示它们之间保存的相对关系。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>保存参考：记录此时手部相对角色的位置。红、蓝十字各自绑定到对应角色，虚线表示它们之间保存的相对关系。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg" alt="角色移动且动画摆臂改变后仍使用随根节点还原的参考点" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：角色移动，当前动画骨链也发生摆动；参考点随根节点移动，共享目标继续由参考点形成，而不跟着这一帧的手腕摆动重新取基准。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg" alt="角色移动后：参考点随角色整体移动，当前动画中的手腕却可以摆到别处；后续仍从保存的参考点形成握点。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>角色移动后：参考点随角色整体移动，当前动画中的手腕却可以摆到别处；后续仍从保存的参考点形成握点。</figcaption>
   </figure>
 </div>
 
+<p>配对建立时，把两侧接触 Pose 分别保存到各自根节点的局部空间。之后每帧随当前根节点还原这两个参考，再形成共享目标；当前动画中的手部摆动不会重新定义基准。</p>
 <p>这组图画的是读取参考阶段，实线骨链表示送入 IK 前的动画姿态。随后才施加共同可达约束、局部平滑和配置偏移，得到两侧使用的共享位置与各自旋转目标。完整计算由发起方执行，远端消费局部目标。</p>
-<h4 id="6-4-2-两侧可达球体的交集"><a href="#6-4-2-两侧可达球体的交集" class="headerlink" title="6.4.2 两侧可达球体的交集"></a>6.4.2 两侧可达球体的交集</h4><p>可达球心取肩部。半径从上臂、前臂的总长度中，预留掌心挂点偏移以及 <code>PalmContactDistance</code> 的绝对长度；这样手腕旋转和接触距离调整时仍有伸展余量。扣除后半径非正，就无法建立有效可达球。</p>
+<h4 id="6-4-2-两侧可达球体的交集"><a href="#6-4-2-两侧可达球体的交集" class="headerlink" title="6.4.2 两侧可达球体的交集"></a>6.4.2 两侧可达球体的交集</h4><p>前面按完整臂长近似可达范围，仍可能把手腕推到伸展极限。掌心挂点在手腕之外，握持朝向或接触距离改变时还需要一点余量。</p>
+<p>因此保持球心在肩部，从半径中预留掌心挂点的偏移；需要额外掌心间距时，再预留这段接触距离。图中每次只改变一项预留：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="6.4.2 两侧可达球体的交集的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg" alt="掌心挂点预留空间后双方骨骼节点与可达范围" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：骨长固定，半径先为掌心挂点 o 预留空间；共同目标位于双方都能接受的区域。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg" alt="状态一：骨长固定，半径先为“掌心偏移” 预留空间；共同目标位于双方都能接受的区域。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态一：骨长固定，半径先为“掌心偏移” 预留空间；共同目标位于双方都能接受的区域。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg" alt="接触距离改变后可达范围缩小并重新约束共同目标" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：接触距离 dₚ 增大，保守可达范围缩小，C₀ 重新约束到 C*；两侧还沿各自肩部到目标的方向调整掌心距离。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg" alt="状态二：“接触间距” 增大，保守可达范围缩小，“偏好握点”重新约束到“目标握点”；两侧还沿各自肩部到目标的方向调整掌心距离。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态二：“接触间距” 增大，保守可达范围缩小，“偏好握点”重新约束到“目标握点”；两侧还沿各自肩部到目标的方向调整掌心距离。</figcaption>
   </figure>
 </div>
 
+<p>可达球心取肩部。半径从上臂、前臂的总长度中，预留掌心挂点偏移以及 <code>PalmContactDistance</code> 的绝对长度；这样手腕旋转和接触距离调整时仍有伸展余量。扣除后半径非正，就无法建立有效可达球。</p>
 <p>图中接触距离的变化用于展示参数作用，当前资源的 <code>PalmContactDistance</code> 为零。球体交集沿用 6.2.3 的候选与投影处理；没有交集时保留折中目标继续尝试，最终手臂仍受关节限制保护。</p>
 <h4 id="6-4-3-配对有效性与连接状态"><a href="#6-4-3-配对有效性与连接状态" class="headerlink" title="6.4.3 配对有效性与连接状态"></a>6.4.3 配对有效性与连接状态</h4><p>IK 只处理状态互指、类型一致、Avatar 已下载且骨架就绪的配对。配对经过首次观察的准备帧，且没有暂停原因时进入连接。</p>
 <p>滑翔、个人动作等通过暂停原因集合控制连接；只有所有原因解除后才恢复。<code>HasSharedReach</code> 描述几何可达性，不直接决定互动关系或 IK 是否断开。骨架失效、天气变身和接收方右手操作分别有对应的释放或让位逻辑。</p>
@@ -1013,18 +1132,20 @@ stateDiagram-v2
 
 <p>关闭 LimbIK 组件的自动更新后，项目通过 <code>SetIKPosition</code>、<code>SetIKRotation</code> 设置目标，并在受控阶段手动调用 <code>limb.solver.Update()</code>。这样可以在动画完成后求解，并在求解之后施加关节限制，避免组件独立更新造成顺序冲突。</p>
 <p><code>fixTransforms = false</code> 让骨骼参考姿态的恢复由项目代码控制；<code>target = null</code> 表示直接写入目标 Pose，不依赖目标 Transform。任一挂点、骨链或 LimbIK 无效，角色就不进入有效 IK 注册。</p>
-<h4 id="6-5-3-把掌心目标转换为手腕目标"><a href="#6-5-3-把掌心目标转换为手腕目标" class="headerlink" title="6.5.3 把掌心目标转换为手腕目标"></a>6.5.3 把掌心目标转换为手腕目标</h4><p>玩法要求对齐掌心挂点，LimbIK 的末端却是手腕骨骼。因此要先抵消挂点相对手腕的局部旋转，得到手腕朝向；再把经过角色缩放的挂点位置偏移按这个朝向转到世界空间，从掌心目标向回退到手腕目标。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="6.5.3 把掌心目标转换为手腕目标的连续状态图">
+<h4 id="6-5-3-把掌心目标转换为手腕目标"><a href="#6-5-3-把掌心目标转换为手腕目标" class="headerlink" title="6.5.3 把掌心目标转换为手腕目标"></a>6.5.3 把掌心目标转换为手腕目标</h4><p>前面把末端接触简化为一个点；实际接入插件时，LimbIK 的末端是手腕，玩法希望对齐的却是掌心。直接把掌心目标当作手腕目标，会忽略两者之间的挂点偏移。</p>
+<p>先把掌心目标固定住，再观察握持朝向改变时的情况：偏移方向旋转后，手腕也必须换一个位置，掌心才能仍然停在目标上。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="把掌心目标转换为手腕目标的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg" alt="掌心目标与两侧手腕节点之间存在挂点偏移" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：掌心目标 T_c 固定，手腕 Wᵢ、W_r 通过各自挂点偏移 o 连接到它；六个骨骼节点围绕手腕目标求解。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg" alt="状态一：“掌心目标”固定，红、蓝两侧的“腕”节点通过各自“掌心偏移”连接到它；六个骨骼节点围绕手腕目标求解。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态一：“掌心目标”固定，红、蓝两侧的“腕”节点通过各自“掌心偏移”连接到它；六个骨骼节点围绕手腕目标求解。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg" alt="掌心朝向变化后反算新的手腕位置并保持六个节点的骨长" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：握持朝向改变，挂点偏移的世界方向随之旋转，手腕位置也必须改变，掌心目标才能保持不动。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg" alt="状态二：握持朝向改变，挂点偏移的世界方向随之旋转，手腕位置也必须改变，掌心目标才能保持不动。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态二：握持朝向改变，挂点偏移的世界方向随之旋转，手腕位置也必须改变，掌心目标才能保持不动。</figcaption>
   </figure>
 </div>
 
+<p>玩法要求对齐掌心挂点，LimbIK 的末端却是手腕骨骼。因此要先抵消挂点相对手腕的局部旋转，得到手腕朝向；再把经过角色缩放的挂点位置偏移按这个朝向转到世界空间，从掌心目标向回退到手腕目标。</p>
 <p>图中将挂点偏移放大以便观察。<code>ContactTargetToHandTarget</code> 处理这一转换，输入包括接触目标 Pose、<code>contact.localRotation</code>、<code>contact.localPosition</code> 和手腕的 <code>lossyScale</code>。反算后的手腕 Pose 才送入 LimbIK；<code>PalmContactDistance</code> 的调整发生在此之前。</p>
 <h4 id="6-5-4-项目模块与插件的边界"><a href="#6-5-4-项目模块与插件的边界" class="headerlink" title="6.5.4 项目模块与插件的边界"></a>6.5.4 项目模块与插件的边界</h4><table>
 <thead>
@@ -1064,33 +1185,37 @@ stateDiagram-v2
 </tbody></table>
 <h3 id="6-6-IK-稳定性与平滑优化"><a href="#6-6-IK-稳定性与平滑优化" class="headerlink" title="6.6 IK 稳定性与平滑优化"></a>6.6 IK 稳定性与平滑优化</h3><h4 id="6-6-1-固定参考姿态，隔离动画扰动"><a href="#6-6-1-固定参考姿态，隔离动画扰动" class="headerlink" title="6.6.1 固定参考姿态，隔离动画扰动"></a>6.6.1 固定参考姿态，隔离动画扰动</h4><p>跑步摆臂和跳跃会持续改变骨骼姿态。如果每帧从动画结果重新提取基准，目标点和限制参考也会随之变化，甚至把一次异常姿势留在下一次求解中。</p>
 <p>系统分别保存配对的局部接触 Pose，以及首次有效求解时的手臂骨骼参考旋转。接触点随角色根节点移动，骨链从稳定参考姿态开始求解。滑翔等临时暂停保留这些参考，配对重建或骨架失效时才按生命周期重置。</p>
-<h4 id="6-6-2-在角色局部空间平滑接触点"><a href="#6-6-2-在角色局部空间平滑接触点" class="headerlink" title="6.6.2 在角色局部空间平滑接触点"></a>6.6.2 在角色局部空间平滑接触点</h4><p>共享点在发起方根节点局部空间做 <code>SmoothDamp</code>，平滑时间为 <code>0.01 s</code>，然后变换回世界空间。这样平滑只作用于双方相对位置的变化，角色整体移动和跳跃可以直接带动目标，避免世界空间平滑造成目标落后。</p>
+<h4 id="6-6-2-在角色局部空间平滑接触点"><a href="#6-6-2-在角色局部空间平滑接触点" class="headerlink" title="6.6.2 在角色局部空间平滑接触点"></a>6.6.2 在角色局部空间平滑接触点</h4><p>固定参考减少了摆臂带来的扰动，但两人相对运动时，共享点仍可能轻微跳动。直接在世界空间平滑又会让角色整体前进、跳跃时的目标落后。</p>
+<p>因此只平滑目标相对发起方的变化：整体位移立即带动目标，相对变化再逐帧追近。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="在角色局部空间平滑接触点的连续状态图">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg" alt="相对位置稳定：平滑握点已经追上目标，两条手臂共同伸向这个位置。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>相对位置稳定：平滑握点已经追上目标，两条手臂共同伸向这个位置。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg" alt="相对位置变化：角色整体位移直接带动局部参考；两人之间的变化让目标稍有移动，平滑握点再逐帧追近它。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>相对位置变化：角色整体位移直接带动局部参考；两人之间的变化让目标稍有移动，平滑握点再逐帧追近它。</figcaption>
+  </figure>
+</div>
+
+<p>共享点在发起方根节点局部空间做 <code>SmoothDamp</code>，平滑时间为 <code>0.01 s</code>，然后变换回世界空间。这样平滑只作用于双方相对位置的变化，角色整体移动和跳跃可以直接带动目标，避免世界空间平滑造成目标落后。</p>
+<p>图中先只画局部目标与平滑握点。接入可达约束和配置偏移时，还需要下面两步：</p>
 <p>有共同可达区域时，平滑结果会再次投影回该区域。之后按发起方根节点旋转叠加 <code>ContactPositionOffset</code>，当前值为 <code>(-0.04, -0.31, -0.01)</code>；该偏移不回写平滑缓存，避免累加或被下一次平滑覆盖。偏移可能把目标推到可达区域外，需要与骨骼限制一起调试。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="6.6.2 在角色局部空间平滑接触点的连续状态图">
-  <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg" alt="共同目标完成局部平滑后叠加偏移并求解双方骨链" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：局部目标已经稳定，平滑点 C_s 之后叠加 O_c，得到本帧使用的接触目标。</figcaption>
-  </figure>
-  <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg" alt="角色移动且相对目标变化后局部平滑继续推进而配置偏移只叠加一次" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：根节点整体移动直接带动局部参考，相对变化才经过平滑；C_s 向 C* 靠近，O_c 在结果上只叠加一次。</figcaption>
-  </figure>
-</div>
-
 <p>远端收到的 IK 目标同样在发起方局部空间平滑，再用本地显示的根节点还原；网络目标的具体消费方式见第 7 节。</p>
-<h4 id="6-6-3-肩、肘、腕三轴限制与防反折"><a href="#6-6-3-肩、肘、腕三轴限制与防反折" class="headerlink" title="6.6.3 肩、肘、腕三轴限制与防反折"></a>6.6.3 肩、肘、腕三轴限制与防反折</h4><p><code>HoldHandArmRotationLimits</code> 为上臂、肘部、手腕分别提供偏航、俯仰和横滚范围。上臂相对角色建立参考系，肘部相对上臂，手腕相对前臂；骨骼轴在初始化时标定，运行时参考系跟随角色或父骨旋转。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="6.6.3 肩、肘、腕三轴限制与防反折的连续状态图">
+<h4 id="6-6-3-肩、肘、腕三轴限制与防反折"><a href="#6-6-3-肩、肘、腕三轴限制与防反折" class="headerlink" title="6.6.3 肩、肘、腕三轴限制与防反折"></a>6.6.3 肩、肘、腕三轴限制与防反折</h4><p>共享握点解决了“手到哪里”，可达范围解决了“够不够得到”，仍不能保证关节弯得自然。接下来只给肩、肘、腕增加各自的旋转范围，并防止肘部反折：先得到 IK 姿态，再让最终骨骼服从这些限制。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="肩、肘、腕三轴限制与防反折的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg" alt="尚未应用最终关节限制时的双方肩肘腕求解姿态" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：LimbIK 得到朝向共同目标的姿态，但各关节旋转还需要经过自身约束。六个圆点是本次骨链输出。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg" alt="状态一：LimbIK 得到朝向共同目标的姿态，但各关节旋转还需要经过自身约束。六个圆点是本次骨链输出。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态一：LimbIK 得到朝向共同目标的姿态，但各关节旋转还需要经过自身约束。六个圆点是本次骨链输出。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg" alt="对六个节点施加关节限制后实际接触位置允许偏离理想目标" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：肩、肘、腕经过旋转平滑与硬限制，骨长保持不变，实际接触位置可以偏离 C*；黑色虚线只对照前一个姿态。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg" alt="状态二：肩、肘、腕经过旋转平滑与硬限制，骨长保持不变，实际接触位置可以偏离“目标握点”；黑色虚线只对照前一个姿态。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态二：肩、肘、腕经过旋转平滑与硬限制，骨长保持不变，实际接触位置可以偏离“目标握点”；黑色虚线只对照前一个姿态。</figcaption>
   </figure>
 </div>
 
-<p>关节弧线 <code>θ_S</code>、<code>θ_E</code>、<code>θ_W</code> 标出旋转约束的位置，实际实现分别限制偏航、俯仰、横滚三个轴。图中用二维姿态说明处理顺序，不作为资源角度的实测结果。</p>
+<p><code>HoldHandArmRotationLimits</code> 为上臂、肘部、手腕分别提供偏航、俯仰和横滚范围。上臂相对角色建立参考系，肘部相对上臂，手腕相对前臂；骨骼轴在初始化时标定，运行时参考系跟随角色或父骨旋转。</p>
+<p>“肩部限角”“肘部限角”“腕部限角”弧线标出旋转约束的位置，实际实现分别限制偏航、俯仰、横滚三个轴。图中用二维姿态说明处理顺序，不作为资源角度的实测结果。</p>
 <p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/joint-limits.webp" alt="上臂、肘部、手腕分别配置三轴旋转范围的编辑器界面"></p>
 <p><em>三关节配置入口与参考系说明，实际使用值见下表。</em></p>
 <table>
@@ -1135,23 +1260,25 @@ stateDiagram-v2
 <li>对肩、肘、腕做旋转平滑、三轴硬限制和防反折，作为本帧骨骼输出。</li>
 </ol>
 <p>最后一步之后不能再次运行 IK 覆盖限位。因此在接触精度与关节范围冲突时，系统优先满足关节限制，允许掌心存在少量间隙。</p>
-<h4 id="6-6-5-权重过渡与操作让位"><a href="#6-6-5-权重过渡与操作让位" class="headerlink" title="6.6.5 权重过渡与操作让位"></a>6.6.5 权重过渡与操作让位</h4><p>连接状态通过 <code>MoveTowards</code> 推进权重，淡入、淡出时间均为 <code>0.3 s</code>，最大位置和旋转权重均为 1。求解结果与动画按权重混合，使进入、暂停和恢复过程具有连续过渡。</p>
-<p>暂停原因用集合管理，避免一种玩法解除暂停时覆盖另一种玩法的占用。接收方自己的操作使用右手时，该侧位置和旋转权重暂时归零，骨骼服从操作动画；天气变身、骨架缺失等状态则按各自路径释放 IK。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="6.6.5 权重过渡与操作让位的连续状态图">
+<h4 id="6-6-5-权重过渡与操作让位"><a href="#6-6-5-权重过渡与操作让位" class="headerlink" title="6.6.5 权重过渡与操作让位"></a>6.6.5 权重过渡与操作让位</h4><p>只有连接与断开还不足以处理个人动作。牵手关系仍在时，操作动画也可能临时占用一条手臂；如果两套逻辑同时写骨骼，就会互相覆盖。</p>
+<p>因此增加暂停与恢复：暂停期间让动画接管，保留这段牵手的参考；动作结束后，再朝同一套参考逐帧恢复权重。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="权重过渡与操作让位的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg" alt="临时操作前双方三节点骨链保持接触" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：双方正常牵手，六个节点围绕接触目标排列，参考点 C_ref 属于本次配对。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg" alt="状态一：双方正常牵手，六个节点围绕接触目标排列，参考握点属于本次配对。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态一：双方正常牵手，六个节点围绕接触目标排列，参考握点属于本次配对。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg" alt="暂停并完成淡出后释放骨链但保留同一参考点" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：个人动作等原因暂停 IK，完成淡出后由动画控制手臂；C_ref 保留，不把释放时姿态重新记为基准。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg" alt="状态二：个人动作等原因暂停 IK，完成淡出后由动画控制手臂；保留参考握点，不把释放时的姿态重新记为基准。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态二：个人动作等原因暂停 IK，完成淡出后由动画控制手臂；保留参考握点，不把释放时的姿态重新记为基准。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg" alt="全部暂停原因解除后向保留的参考目标恢复接触" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₂：暂停原因全部解除，权重逐帧恢复，骨链重新求向同一套参考目标。三幅图只画过渡端点，过程并非瞬间切换。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg" alt="状态三：暂停原因全部解除，权重逐帧恢复，骨链重新求向同一套参考目标。三幅图只画过渡端点，过程并非瞬间切换。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态三：暂停原因全部解除，权重逐帧恢复，骨链重新求向同一套参考目标。三幅图只画过渡端点，过程并非瞬间切换。</figcaption>
   </figure>
 </div>
 
+<p>连接状态通过 <code>MoveTowards</code> 推进权重，淡入、淡出时间均为 <code>0.3 s</code>，最大位置和旋转权重均为 1。求解结果与动画按权重混合，使进入、暂停和恢复过程具有连续过渡。</p>
+<p>暂停原因用集合管理，避免一种玩法解除暂停时覆盖另一种玩法的占用。接收方自己的操作使用右手时，该侧位置和旋转权重暂时归零，骨骼服从操作动画；天气变身、骨架缺失等状态则按各自路径释放 IK。</p>
 <h3 id="6-7-姿态调整与复测"><a href="#6-7-姿态调整与复测" class="headerlink" title="6.7 姿态调整与复测"></a>6.7 姿态调整与复测</h3><p>将求解参考固定到进入牵手时的骨骼姿态后，移动中的手部摆动有所改善。和策划复测时，重点继续放在小幅左右抖动、跳跃和碰撞后的恢复，避免只凭静止或直线移动时的效果判断整体表现。</p>
 <p>确认剩余问题后，手肘姿态与站着平移分别处理：肩、肘、腕的三轴限制和旋转平滑负责骨骼表现，实际移动速度驱动动画负责步态。这样每次调整都能对应到具体的体验问题。</p>
 <h3 id="6-8-两种手部求解方式的对比"><a href="#6-8-两种手部求解方式的对比" class="headerlink" title="6.8 两种手部求解方式的对比"></a>6.8 两种手部求解方式的对比</h3><p>两种做法都由发起方决定共享接触目标，并使用 LimbIK 完成本地骨链求解。进一步的处理主要围绕参考姿态、目标平滑和骨骼约束展开。</p>
@@ -1274,19 +1401,45 @@ stateDiagram-v2
 <td>校验 IK 序列，平滑和还原远端局部目标</td>
 </tr>
 </tbody></table>
-<h3 id="7-4-网络与平滑优化"><a href="#7-4-网络与平滑优化" class="headerlink" title="7.4 网络与平滑优化"></a>7.4 网络与平滑优化</h3><h4 id="7-4-1-双人共用采样时刻"><a href="#7-4-1-双人共用采样时刻" class="headerlink" title="7.4.1 双人共用采样时刻"></a>7.4.1 双人共用采样时刻</h4><p><code>HoldHandSnapshotBuffer</code> 最多保存 64 份成对快照。处于相邻样本之间时，位置做线性插值，旋转做球面插值；发起方和接收方始终采用同一个播放时刻，避免两条独立轨迹的误差叠加到手臂距离上。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="7.4.1 双人共用采样时刻的连续状态图">
+<h3 id="7-4-网络与平滑优化"><a href="#7-4-网络与平滑优化" class="headerlink" title="7.4 网络与平滑优化"></a>7.4 网络与平滑优化</h3><h4 id="7-4-1-双人共用采样时刻"><a href="#7-4-1-双人共用采样时刻" class="headerlink" title="7.4.1 双人共用采样时刻"></a>7.4.1 双人共用采样时刻</h4><p><strong>先看收到位置就直接显示。</strong> 发起方发来的位置是一份份离散消息；两次消息之间没有更新，画面会停一下，下一份消息到达后又跳过去：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="收到网络位置后直接显示的局限">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg" alt="在240毫秒播放时刻同时采样双方快照" width="1040" height="540" loading="lazy"></a>
-    <figcaption>t₀：播放指针位于 200 ms 与 300 ms 样本之间，双方都取 240 ms 对应的位姿。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-0.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-0.svg" alt="收到一份双人位置后，显示两名角色。" width="900" height="490" loading="lazy"></a>
+    <figcaption>收到一份双人位置后，显示两名角色。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg" alt="播放指针推进到280毫秒时双方仍共用同一采样时刻" width="1040" height="540" loading="lazy"></a>
-    <figcaption>t₁：指针推进到 280 ms，双方一起推进，不因各自的到包时刻分叉。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-1.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-1.svg" alt="下一份消息到达，角色直接跳到新位置，两次到包之间缺少连续运动。" width="900" height="490" loading="lazy"></a>
+    <figcaption>下一份消息到达，角色直接跳到新位置，两次到包之间缺少连续运动。</figcaption>
   </figure>
 </div>
 
-<p><code>t_s</code> 是发送端采样时间，<code>t_a</code> 表示不均匀的本地到包间隔，<code>t_p</code> 是缓冲中的播放时刻。底部图标表示双方的采样结果，不是地图站位；运动速度与插值进度由发送端时间计算。</p>
+<p><strong>在相邻位置之间补出中间状态。</strong> 保存前后两份位置，显示时逐帧取它们之间的中间值，这就是插值。为了知道下一份位置，需要稍微延后播放，代价是增加一点显示延迟：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="网络位置之间的连续播放">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-0.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-0.svg" alt="已经知道下一份位置，先显示较早的状态。十字是收到的位置，角色图标是当前显示位置。" width="900" height="490" loading="lazy"></a>
+    <figcaption>已经知道下一份位置，先显示较早的状态。十字是收到的位置，角色图标是当前显示位置。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-1.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-1.svg" alt="每帧向下一份位置推进一点，两名角色一起更新，画面不必等到下次收包才移动。" width="900" height="490" loading="lazy"></a>
+    <figcaption>每帧向下一份位置推进一点，两名角色一起更新，画面不必等到下次收包才移动。</figcaption>
+  </figure>
+</div>
+
+<p><strong>再让两个人共用播放时刻。</strong> 如果双方各自插值，进度差异仍可能拉伸两人之间的距离。于是把同一次计算中的双人位置放在同一份快照里，再从同一条时间轴一起取值。</p>
+<p>下图中，采样时间表示发起方何时记录位置，到包时间表示消息何时抵达，播放指针表示当前显示哪一刻；两个人共用最后这个指针：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="双人共用采样时刻的连续状态图">
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg" alt="状态一：播放指针位于 200 ms 与 300 ms 样本之间，双方都取 240 ms 对应的位姿。" width="1040" height="540" loading="lazy"></a>
+    <figcaption>状态一：播放指针位于 200 ms 与 300 ms 样本之间，双方都取 240 ms 对应的位姿。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg" alt="状态二：指针推进到 280 ms，双方一起推进，不因各自的到包时刻分叉。" width="1040" height="540" loading="lazy"></a>
+    <figcaption>状态二：指针推进到 280 ms，双方一起推进，不因各自的到包时刻分叉。</figcaption>
+  </figure>
+</div>
+
+<p><code>HoldHandSnapshotBuffer</code> 最多保存 64 份成对快照。处于相邻样本之间时，位置做线性插值，旋转做球面插值；发起方和接收方始终采用同一个播放时刻，避免两条独立轨迹的误差叠加到手臂距离上。</p>
+<p>三条时间轴分别表示发送端采样、本地到包和缓冲播放。到包间隔可以不均匀，但播放指针连续前进，双方始终取同一时刻的结果。底部图标表示双方的采样结果，不是地图站位；运动速度与插值进度由发送端时间计算。</p>
 <table>
 <thead>
 <tr>
@@ -1350,18 +1503,20 @@ stateDiagram-v2
 <h4 id="7-4-5-拒绝过期数据与防止重复驱动"><a href="#7-4-5-拒绝过期数据与防止重复驱动" class="headerlink" title="7.4.5 拒绝过期数据与防止重复驱动"></a>7.4.5 拒绝过期数据与防止重复驱动</h4><p>位姿接收器校验双方互指关系、互动类型、有效采样时间和 <code>InteractionRevision</code>；缓冲拒绝不递增的采样时间。IK 流通过带回绕处理的 <code>Sequence</code> 比较拒绝重复和乱序目标。</p>
 <p>普通玩家位姿包可以更新数据缓存，但有效牵手期间不能覆盖成对位姿控制。接收方统一应用双方采样结果，发起方本地直接驱动接收方实体，避免把额外的位置平滑再次叠加到同一条运动轨迹。</p>
 <p>没有采样时间的位姿使用目标平滑路径：接收方以 <code>SmoothDamp</code> 消费目标，伙伴使用相对锚点；旁观者分别平滑双方目标。包含有效 <code>SampleTime</code> 的成对位姿使用本节所述的时间轴缓冲。</p>
-<h4 id="7-4-6-IK-局部目标同步与重建"><a href="#7-4-6-IK-局部目标同步与重建" class="headerlink" title="7.4.6 IK 局部目标同步与重建"></a>7.4.6 IK 局部目标同步与重建</h4><p>发起方把 IK 目标描述成相对自身根节点的位置与旋转后发送。远端先在这个局部空间平滑，再按本地显示的根节点变换还原世界目标，交给双方 LimbIK。</p>
-<div class="holdhand-state-gallery" role="group" aria-label="7.4.6 IK 局部目标同步与重建的连续状态图">
+<h4 id="7-4-6-IK-局部目标同步与重建"><a href="#7-4-6-IK-局部目标同步与重建" class="headerlink" title="7.4.6 IK 局部目标同步与重建"></a>7.4.6 IK 局部目标同步与重建</h4><p>先设想直接发送地图上的握点位置：远端身体已经通过插值向前移动，手部目标却可能还停在上一次收到的位置。两种更新错开后，就会出现手落在身体后面的感觉。</p>
+<p>因此沿用局部空间，把目标记录为“相对发起方的位置与旋转”。远端先处理这份相对变化，再按自己当前显示的角色位置还原目标：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="IK 局部目标同步与重建的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg" alt="当前显示根节点下的局部IK目标与双方六个骨骼节点" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₀：目标相对发起方根节点记录为 T_local，双方骨链使用还原后的共同位置。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg" alt="状态一：目标相对发起方根节点记录为“局部目标”，双方骨链使用还原后的共同位置。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态一：目标相对发起方根节点记录为“局部目标”，双方骨链使用还原后的共同位置。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg" alt="显示根节点移动后由相同局部目标重建新的世界目标" width="1040" height="650" loading="lazy"></a>
-    <figcaption>t₁：本地显示的根节点移动，相同局部目标随之还原到新的世界位置；六个骨骼节点跟随更新，局部关系保持一致。</figcaption>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg" alt="状态二：本地显示的根节点移动，相同局部目标随之还原到新的世界位置；六个骨骼节点跟随更新，局部关系保持一致。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>状态二：本地显示的根节点移动，相同局部目标随之还原到新的世界位置；六个骨骼节点跟随更新，局部关系保持一致。</figcaption>
   </figure>
 </div>
 
+<p>发起方把 IK 目标描述成相对自身根节点的位置与旋转后发送。远端先在这个局部空间平滑，再按本地显示的根节点变换还原世界目标，交给双方 LimbIK。</p>
 <p>图中展示平移，旋转也通过同一根节点变换还原。远端目标与权重的平滑时间取 IK 同步间隔的一半，并保留 <code>0.01 s</code> 的下限，当前为 <code>0.1 s</code>。根节点整体运动直接传递给目标，相对姿态变化由滤波处理。</p>
 <p>远端执行自己的 LimbIK 与关节限制，不重复共享球体求解。首份 IK 包到达前释放手臂；配对有效但持续收不到 IK 包时，继续消费最后一份目标。当前没有独立的 IK 包超时，位姿外推上限不会替代这项保护。</p>
 <h3 id="7-5-第三方视角复测"><a href="#7-5-第三方视角复测" class="headerlink" title="7.5 第三方视角复测"></a>7.5 第三方视角复测</h3><p>第三方同步的卡顿优化完成后，与策划在此前出现问题的设备上重新体验，确认旁观视角下的移动连续性有所改善。</p>

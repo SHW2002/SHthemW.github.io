@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="780" viewBox="0 0 1040 780" role="img" aria-labelledby="title desc">
+<title id="title">发起方右转后目标点绕行与接收方追赶</title><desc id="desc">按配置中的旋转平滑和位移推进方法逐帧计算；红色虚线是目标历史轨迹，蓝色实线是接收方实际历史轨迹。</desc>
+<defs>
+<marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000" /></marker>
+<marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000" /></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#0000FF" /></marker>
+</defs>
+<rect width="1040" height="780" fill="#FFFFFF" />
+<g stroke-linecap="round" stroke-linejoin="round">
+<text x="825.00" y="44.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">转身后 1.20 秒</text>
+<path d="M397.00 481.20L395.27 476.77L393.62 472.31L392.05 467.82L390.56 463.31L389.14 458.76L387.81 454.20L386.55 449.61L385.38 445.00L384.28 440.38L383.27 435.73L382.34 431.07L381.49 426.39L380.72 421.69L380.03 416.99L379.43 412.27L378.91 407.54L378.47 402.81L378.11 398.07L377.84 393.32L377.65 388.57L377.54 383.81L377.51 379.06L377.57 374.30L377.71 369.55L377.94 364.80L378.24 360.05L378.63 355.31L379.10 350.58L379.66 345.85L380.30 341.14L381.01 336.44L381.82 331.75L382.70 327.08L383.66 322.42L384.71 317.78L385.83 313.16L387.04 308.56L388.33 303.98L389.69 299.43L391.14 294.90L392.67 290.39L394.27 285.92L395.95 281.47L397.71 277.05L399.54 272.66L401.45 268.31L403.44 263.99L405.50 259.70L407.64 255.45L409.85 251.24L412.13 247.07L414.49 242.94L416.92 238.85L419.42 234.80L421.99 230.80L424.63 226.84L427.33 222.93L430.11 219.07L432.95 215.26L435.86 211.50L438.83 207.78L441.87 204.12L444.97 200.52L448.13 196.97L451.36 193.47L454.64 190.03L457.99 186.65L461.39 183.33L464.85 180.07L468.37 176.87L471.94 173.73L475.57 170.66L479.25 167.64L482.98 164.70L486.77 161.81L490.60 159.00L494.48 156.25L498.41 153.57L502.38 150.96L506.40 148.42L510.47 145.95L514.57 143.55L518.72 141.22L522.91 138.96L527.13 136.78L531.40 134.68L535.70 132.64L540.03 130.69L544.40 128.80L548.80 127.00" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<text x="194.00" y="236.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">可绕行范围</text>
+<path d="M340.00 227.00L402.00 240.00" fill="none" stroke="#000000" stroke-width="1" />
+<path d="M650.00 380.00L910.00 380.00" fill="none" stroke="#FF0000" stroke-width="3.2" marker-end="url(#r)" />
+<path d="M650.00 380.00L840.00 379.85" fill="none" stroke="#000000" stroke-width="2.2" stroke-dasharray="7 7" marker-end="url(#k)" />
+<text x="714.00" y="298.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">目标偏移朝向</text>
+<path d="M742.00 309.00L840.00 379.85" fill="none" stroke="#000000" stroke-width="1" />
+<text x="690.00" y="455.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">发起方朝向</text>
+<path d="M650.00 380.00L548.60 127.08" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="7 7" />
+<circle cx="548.80" cy="127.00" r="7" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<text x="591.00" y="111.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">转身后的站位</text>
+<path d="M397.00 481.20L396.36 479.58L394.63 475.03L392.15 468.05L389.33 459.26L386.47 449.12L383.81 437.97L381.50 426.09L379.67 413.66L378.38 400.83L377.70 387.73L377.64 374.45L378.25 361.08L379.52 347.66L381.46 334.27L384.07 320.96L387.34 307.76L391.28 294.73L395.87 281.90L401.10 269.30L406.96 256.97L413.43 244.95L420.49 233.26L428.11 221.98L436.14 211.27L444.39 201.30L452.67 192.18L460.83 183.96L468.72 176.63L476.27 170.13L483.39 164.43L490.05 159.44L496.22 155.09L501.88 151.31L507.06 148.03L511.77 145.19L516.02 142.74L519.84 140.62L523.27 138.78L526.33 137.19L529.06 135.82L531.48 134.64L533.63 133.61L535.53 132.72L537.20 131.96L538.67 131.29L539.97 130.72L541.10 130.22L542.10 129.78L542.97 129.41L543.73 129.09L544.40 128.80L544.98 128.56L545.49 128.35L545.93 128.17L546.31 128.01L546.65 127.87L546.94 127.75L547.19 127.65L547.41 127.56L547.59 127.49L547.76 127.42L547.90 127.36L548.02 127.31L548.13 127.27L548.22 127.23L548.30 127.20L548.37 127.17L548.43 127.15L548.48 127.13L548.53 127.11L548.56 127.09L548.60 127.08" fill="none" stroke="#0000FF" stroke-width="3.2" />
+<path d="M397.00 481.20L396.23 479.26L394.28 474.11L391.66 466.66L388.76 457.50L385.90 447.09L383.27 435.74L381.04 423.71L379.30 411.17L378.12 398.27L377.56 385.11L377.63 371.80L378.37 358.40L379.77 344.98L381.84 331.60L384.59 318.30L388.00 305.13L392.07 292.12L396.79 279.33L402.15 266.78L408.13 254.51L414.72 242.54L421.91 230.93L429.63 219.73L437.75 209.12L446.04 199.31L454.33 190.36L462.46 182.32L470.30 175.16L477.78 168.84L484.82 163.29L491.38 158.44L497.45 154.22L503.02 150.55L508.10 147.37L512.71 144.62L516.87 142.25L520.61 140.19L523.96 138.41L526.95 136.88L529.61 135.55L531.97 134.40L534.06 133.41L535.91 132.55L537.53 131.80L538.97 131.16L540.23 130.60L541.33 130.12L542.30 129.70L543.15 129.34L543.89 129.02L544.53 128.75L545.10 128.51L545.59 128.31L546.02 128.13L546.39 127.98L546.71 127.85L546.99 127.73L547.24 127.63L547.45 127.54L547.63 127.47L547.79 127.41L547.93 127.35L548.05 127.30L548.15 127.26L548.24 127.22L548.32 127.19L548.38 127.17L548.44 127.14L548.49 127.12L548.53 127.11L548.57 127.09L548.60 127.08" fill="none" stroke="#FF0000" stroke-width="2.2" stroke-dasharray="7 7" />
+<path d="M508.10 147.37L516.87 142.25" fill="none" stroke="#FF0000" stroke-width="2" marker-end="url(#r)" />
+<path d="M507.06 148.03L516.02 142.74" fill="none" stroke="#0000FF" stroke-width="2" marker-end="url(#b)" />
+<circle cx="397.00" cy="481.20" r="4" fill="#FFFFFF" stroke="#000000" stroke-width="2.5" />
+<text x="331.00" y="526.20" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">起点</text>
+<path d="M541.60 127.08L555.60 127.08" fill="none" stroke="#FF0000" stroke-width="3" />
+<path d="M548.60 120.08L548.60 134.08" fill="none" stroke="#FF0000" stroke-width="3" />
+<g data-role="initiator" data-x="650.00" data-y="380.00" transform="translate(650.00 380.00)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M0 -27L-12 -9L12 -9Z" fill="#FFFFFF" stroke="#FF0000" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#FF0000" stroke-width="2.5" />
+</g>
+<text x="670.00" y="357.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">发起方</text>
+<g data-role="recipient" data-x="548.60" data-y="127.08" transform="translate(548.60 127.08)">
+<circle cx="0.00" cy="-36.00" r="6" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M0 -28L-12 -18L0 -8L12 -18Z" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M-5.00 -10.00L-10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
+<path d="M5.00 -10.00L10.00 0.00" fill="none" stroke="#0000FF" stroke-width="2.5" />
+</g>
+<path d="M548.60 147.08L623.60 147.08" fill="none" stroke="#0000FF" stroke-width="2.3" marker-end="url(#b)" />
+<text x="190.00" y="568.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">蓝实线：接收方轨迹</text>
+<text x="190.00" y="603.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">红虚线：目标轨迹</text>
+<path d="M580.00 545.00L996.00 545.00L996.00 748.00L580.00 748.00L580.00 545.00" fill="none" stroke="#000000" stroke-width="1" />
+<text x="603.00" y="577.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">当前位置局部放大</text>
+<path d="M712.00 655.00L712.13 654.95" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="7 7" marker-end="url(#k)" />
+<path d="M705.13 654.95L719.13 654.95" fill="none" stroke="#FF0000" stroke-width="3" />
+<path d="M712.13 647.95L712.13 661.95" fill="none" stroke="#FF0000" stroke-width="3" />
+<g transform="translate(712 655)">
+<circle cx="0.00" cy="-25.00" r="5" fill="#FFFFFF" stroke="#0000FF" stroke-width="2.5" />
+<path d="M0 -18L-9 -10L0 -2L9 -10Z" fill="none" stroke="#0000FF" stroke-width="2" />
+<path d="M-4.00 -3.00L-8.00 5.00" fill="none" stroke="#0000FF" stroke-width="2" />
+<path d="M4.00 -3.00L8.00 5.00" fill="none" stroke="#0000FF" stroke-width="2" />
+</g>
+<text x="605.00" y="741.00" fill="#0000FF" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="25" text-anchor="start">接收方当前位置</text>
+<path d="M698.00 695.00L712.00 655.00" fill="none" stroke="#0000FF" stroke-width="1" />
+<text x="818.00" y="614.00" fill="#FF0000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">当前目标</text>
+<path d="M817.00 622.00L712.13 654.95" fill="none" stroke="#FF0000" stroke-width="1" />
+</g>
+</svg>
