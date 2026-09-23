@@ -328,7 +328,7 @@
     <div class="post-body" itemprop="articleBody">
           <p>我把延时摄影中需要反复手动完成的操作，做成了一套以 <strong>TimelapseManager</strong> 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能让程序自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出有霞光的片段、给相册标记分数，并通过企业微信推送结果。</p>
 <p>这套工具已经能够运行单次、每日循环和持续分批任务。拍摄、HDR 合成与评分可以并行推进，关闭管理窗口后，后台任务仍然继续。本文重点介绍最终能得到什么，以及支撑这套自动化的任务模型、图像处理和异常恢复设计。</p>
-<img src="/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp" alt="Timelapse Manager 运行总览，集中显示任务状态、当前阶段和受控进程" style="width: 680px; max-width: 100%; height: auto; display: block; margin: 0 auto;">
+<img src="/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp" alt="Timelapse Manager 运行总览，集中显示任务状态、当前阶段和受控进程" style="width:680px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
 
 <p><em>运行总览将任务、状态、当前阶段和工作进程放在同一个界面中；图片来自仓库随附的界面演示，任务数据用于展示。</em></p>
           <!--noindex-->
@@ -504,6 +504,8 @@
     <div class="post-body" itemprop="articleBody">
           <p>2024 年底，我做了一个很小的 Unity 自动点击工具。原因也很简单：每次进游戏都要等待场景加载，再依次点几个连接、登录和进入游戏的按钮。这段流程大约持续半分钟，操作不复杂，却要一直盯着。</p>
 <p>最初我只想把这些点击交给预设。后来要自测的界面越来越多，工具又逐步增加了 UI 导航图、编辑器入口和外部调用接口。现在可以先准备好界面之间的路径，日常调试时直接选择目标，让程序完成中间的导航。</p>
+<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/autorun-cover.webp" alt="Unity Autorun Tool 的实际编辑器窗口，展示 MCP Bridge 运行状态与进程列表，进程 ID 已隐藏" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
+<p><em>裁取自 README 中的实际界面截图，保留窗口上部并隐藏进程 ID；点击图片可打开项目仓库。</em></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/#more" rel="contents">

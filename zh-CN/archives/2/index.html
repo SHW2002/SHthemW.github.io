@@ -494,6 +494,8 @@
     <div class="post-body" itemprop="articleBody">
           <p>在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 <code>CS</code> 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。</p>
 <p>我在一个已有的开源生成器上做了一些修改，把项目中经常遇到的类型提示问题补起来。这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其中几个最有价值的处理。</p>
+<p><a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator"><img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/github-cover.webp" alt="EmmyLua-Snippet-Generator 的 GitHub README，介绍工具用途、语言服务支持与原项目来源" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
+<p><em>工具的 GitHub README，点击图片可打开仓库。</em></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/#more" rel="contents">

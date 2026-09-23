@@ -27,6 +27,7 @@
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
 <meta property="og:description" content="在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 CS 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。 我在一个已有的开源生成器上做了一些修改，把项目中经常遇到的类型提示问题补起来。这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/github-cover.webp">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp">
 <meta property="article:published_time" content="2025-03-26T16:00:00.000Z">
 <meta property="article:modified_time" content="2025-03-26T16:00:00.000Z">
@@ -36,7 +37,7 @@
 <meta property="article:tag" content="Unity">
 <meta property="article:tag" content="开源">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/github-cover.webp">
 
 
 <link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/">
@@ -144,7 +145,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%B3%A8%E8%A7%A3%EF%BC%8C%E5%B9%B6%E4%B8%8D%E6%94%B9%E5%8F%98%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="nav-number">1.</span> <span class="nav-text">生成注解，并不改变运行时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E7%BB%A7%E6%89%BF%E4%BC%9A%E6%8A%8A%E7%B1%BB%E5%9E%8B%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%9C%A8%E5%93%AA"><span class="nav-number">2.</span> <span class="nav-text">泛型继承会把类型信息丢在哪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%90%8D%E4%B8%8E-CS-%E8%A1%A8%E7%9A%84%E8%AE%BF%E9%97%AE%E8%B7%AF%E5%BE%84"><span class="nav-number">3.</span> <span class="nav-text">类型名与 CS 表的访问路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E5%A7%94%E6%89%98%E4%B8%8E-Lua-function-%E7%9A%84%E5%85%BC%E5%AE%B9"><span class="nav-number">4.</span> <span class="nav-text">C# 委托与 Lua function 的兼容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E4%B8%8E%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E4%B8%8D%E8%83%BD%E6%B7%B7%E6%B7%86"><span class="nav-number">5.</span> <span class="nav-text">静态方法与实例方法不能混淆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A9%E7%94%9F%E6%88%90%E8%BF%87%E7%A8%8B%E9%80%82%E5%90%88%E5%8F%8D%E5%A4%8D%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">让生成过程适合反复使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E9%A1%B9%E7%9B%AE%E6%94%B9%E5%8A%A8%E5%88%B0%E4%B8%8A%E6%B8%B8%E5%90%88%E5%B9%B6"><span class="nav-number">7.</span> <span class="nav-text">从项目改动到上游合并</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%B3%A8%E8%A7%A3%EF%BC%8C%E5%B9%B6%E4%B8%8D%E6%94%B9%E5%8F%98%E8%BF%90%E8%A1%8C%E6%97%B6"><span class="nav-number">1.</span> <span class="nav-text">生成注解，并不改变运行时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E7%BB%A7%E6%89%BF%E4%BC%9A%E6%8A%8A%E7%B1%BB%E5%9E%8B%E4%BF%A1%E6%81%AF%E4%B8%A2%E5%9C%A8%E5%93%AA"><span class="nav-number">2.</span> <span class="nav-text">泛型继承会把类型信息丢在哪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%90%8D%E4%B8%8E-CS-%E8%A1%A8%E7%9A%84%E8%AE%BF%E9%97%AE%E8%B7%AF%E5%BE%84"><span class="nav-number">3.</span> <span class="nav-text">类型名与 CS 表的访问路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E5%A7%94%E6%89%98%E4%B8%8E-Lua-function-%E7%9A%84%E5%85%BC%E5%AE%B9"><span class="nav-number">4.</span> <span class="nav-text">C# 委托与 Lua function 的兼容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E4%B8%8E%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E4%B8%8D%E8%83%BD%E6%B7%B7%E6%B7%86"><span class="nav-number">5.</span> <span class="nav-text">静态方法与实例方法不能混淆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A9%E7%94%9F%E6%88%90%E8%BF%87%E7%A8%8B%E9%80%82%E5%90%88%E5%8F%8D%E5%A4%8D%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">让生成过程适合反复使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E9%A1%B9%E7%9B%AE%E4%B8%AD%E6%8E%A5%E5%85%A5"><span class="nav-number">7.</span> <span class="nav-text">在项目中接入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E9%A1%B9%E7%9B%AE%E6%94%B9%E5%8A%A8%E5%88%B0%E4%B8%8A%E6%B8%B8%E5%90%88%E5%B9%B6"><span class="nav-number">8.</span> <span class="nav-text">从项目改动到上游合并</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -262,6 +263,8 @@
     
     <div class="post-body" itemprop="articleBody"><p>在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 <code>CS</code> 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。</p>
 <p>我在一个已有的开源生成器上做了一些修改，把项目中经常遇到的类型提示问题补起来。这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其中几个最有价值的处理。</p>
+<p><a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator"><img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/github-cover.webp" alt="EmmyLua-Snippet-Generator 的 GitHub README，介绍工具用途、语言服务支持与原项目来源" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
+<p><em>工具的 GitHub README，点击图片可打开仓库。</em></p>
 <span id="more"></span>
 
 <h2 id="生成注解，并不改变运行时"><a href="#生成注解，并不改变运行时" class="headerlink" title="生成注解，并不改变运行时"></a>生成注解，并不改变运行时</h2><p>工具在 Unity 编辑器中通过反射读取 C# 程序集，再生成 Lua 语言服务能够理解的类型声明。注解文件提供给编辑器分析，不应该作为业务脚本被加载执行。</p>
@@ -271,7 +274,7 @@
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@class Demo.InventoryService</span></span><br><span class="line"><span class="comment">---@field Capacity integer</span></span><br><span class="line"><span class="keyword">local</span> InventoryService = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">---@param itemId integer</span></span><br><span class="line"><span class="comment">---@return boolean</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">InventoryService:Contains</span><span class="params">(itemId)</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 
 <p>这里的方法体是空的，因为它的作用是告诉语言服务“存在这个方法”，不是重新实现 C# 逻辑。真正的跨语言调用仍然由 xLua 等运行时桥接完成。</p>
-<img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp" alt="生成注解后，Lua 编辑器能够列出 Unity Transform 类型及成员" width="520" style="display:block;width:520px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp" alt="生成注解后，Lua 编辑器能够列出 Unity Transform 类型及成员" width="520" style="display:block;width:520px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p><em>当时的补全效果，裁去业务代码，仅保留类型与成员提示。</em></p>
 <h2 id="泛型继承会把类型信息丢在哪"><a href="#泛型继承会把类型信息丢在哪" class="headerlink" title="泛型继承会把类型信息丢在哪"></a>泛型继承会把类型信息丢在哪</h2><p>最常见的情况是泛型单例：</p>
@@ -289,6 +292,7 @@
 
 <p>这里要同时关心类型别名和表的字段声明。仅仅建立一个名称别名，并不自动保证语言服务在 <code>CS.UnityEngine</code> 这条访问路径上能够继续识别成员；这也是改造中实际修过的问题之一。</p>
 <p>项目需要保留哪种写法，最好在接入时明确下来，避免生成文件与手写注解形成两套相互不兼容的命名习惯。</p>
+<p>需要区分的是，类型别名只改变编辑器怎样理解注解，不会创建新的运行时全局变量。即使启用了兼容别名，xLua 代码真正访问类型时仍然需要 <code>CS.UnityEngine.Vector3</code>；直接写 <code>UnityEngine.Vector3.zero</code> 不会因为生成了注解就自动可用。</p>
 <h2 id="C-委托与-Lua-function-的兼容"><a href="#C-委托与-Lua-function-的兼容" class="headerlink" title="C# 委托与 Lua function 的兼容"></a>C# 委托与 Lua function 的兼容</h2><p>运行时桥接通常允许把 Lua 函数传给某些 C# 委托，但语言服务未必知道这条转换规则。例如：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> onDone = <span class="function"><span class="keyword">function</span><span class="params">()</span></span> <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">---@type System.Action</span></span><br><span class="line"><span class="keyword">local</span> callback</span><br><span class="line">callback = onDone</span><br></pre></td></tr></table></figure>
 
@@ -313,6 +317,40 @@
 <p>文件拆分是否改善分析速度，与语言服务和项目规模有关，我没有做跨编辑器的统一性能基准。更确定的收益是生成范围和输出组织都可以控制。</p>
 <p>使用 Lua Language Server 时，可以把生成目录加入 <code>workspace.library</code>。无论文件放在哪里，都应让语言服务只索引需要的声明，避免旧输出和新输出同时存在、重复定义同一类型。</p>
 <p>生成目录也应专用。这个工具会清理目标目录中的旧注解，因此不能把手写业务脚本和生成文件混放。</p>
+<h2 id="在项目中接入"><a href="#在项目中接入" class="headerlink" title="在项目中接入"></a>在项目中接入</h2><p>将仓库克隆到 Unity 项目中，等待编辑器编译后，从顶部的 <code>LuaType</code> 菜单先打开设置，再执行生成。README 中的几项配置可以按下面的顺序准备：</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>设置方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>配置文件目录</td>
+<td>指向一个可写目录；默认值来自 <code>AppDomain.CurrentDomain.BaseDirectory</code>，在 Unity 中可能落到引擎安装目录</td>
+</tr>
+<tr>
+<td>注解输出目录</td>
+<td>使用专用目录，按工具要求以路径分隔符结尾；不要存放业务文件</td>
+</tr>
+<tr>
+<td>C# 命名空间</td>
+<td>根据项目引用补充，用空格分隔，例如 <code>DG FairyGUI</code></td>
+</tr>
+<tr>
+<td>全局变量</td>
+<td>使用 <code>名称:类型</code>，例如 <code>UNITY_EDITOR:boolean DEBUG_LEVEL:number</code></td>
+</tr>
+<tr>
+<td>Lua 函数兼容类型</td>
+<td>填写完整类型名，例如 <code>System.Action FairyGUI.EventCallback0</code></td>
+</tr>
+</tbody></table>
+<p>使用 LuaLS 时，如果输出在工作区之外，把它加入语言服务的库目录即可。下面是 <code>.luarc.json</code> 的一个简化示例，路径需要替换成自己的注解目录：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;workspace.library&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;../LuaTypeHints&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>生成后先找一条真实调用链验证：能否识别 <code>CS</code> 下的类型、泛型单例后的成员，以及委托参数接受 Lua 函数时的提示。新增程序集、调整生成选项或 C# API 变化后，再重新生成对应的声明。</p>
+<p>不同语言服务对注解的兼容细节可能不同，README 所说的 EmmyLua 与 SumnekoLua &#x2F; LuaLS 支持，并不意味着任意版本组合都完全一致。接入时用项目实际使用的编辑器验证，比只确认生成了文件更可靠。</p>
 <h2 id="从项目改动到上游合并"><a href="#从项目改动到上游合并" class="headerlink" title="从项目改动到上游合并"></a>从项目改动到上游合并</h2><p>这次改造建立在原作者的生成逻辑上，我主要补充了项目实际需要的能力与问题修复。提交上游时，把新增选项、兼容范围和使用说明一起整理，比只提交一份能在自己工程里运行的脚本更容易让其他人理解。</p>
 <p><a href="https://github.com/ak47007tiger/EmmyLuaXLuaSnippetGenerator/pull/2">PR #2</a> 于 2025 年 3 月 27 日合并。工具仓库：<a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator">EmmyLua-Snippet-Generator</a>；原项目：<a href="https://github.com/ak47007tiger/EmmyLuaXLuaSnippetGenerator">EmmyLuaXLuaSnippetGenerator</a>。</p>
 <p>跨语言类型提示的价值，首先体现在日常写代码时少一点猜测。把运行时已经掌握的类型信息传给编辑器，就能让调用链、参数和字段更早暴露问题；但最终执行是否合法，仍然要由真实的运行时规则与测试确认。</p>

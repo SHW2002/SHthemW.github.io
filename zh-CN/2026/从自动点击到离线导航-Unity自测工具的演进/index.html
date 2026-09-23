@@ -20,15 +20,18 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="2024 年底，我做了一个很小的 Unity 自动点击工具。原因也很简单：每次进游戏都要等待场景加载，再依次点几个连接、登录和进入游戏的按钮。这段流程大约持续半分钟，操作不复杂，却要一直盯着。 最初我只想把这些点击交给预设。后来要自测的界面越来越多，工具又逐步增加了 UI 导航图、编辑器入口和外部调用接口。现在可以先准备好界面之间的路径，日常调试时直接选择目标，让程序完成中间的导航。">
+    <meta name="description" content="2024 年底，我做了一个很小的 Unity 自动点击工具。原因也很简单：每次进游戏都要等待场景加载，再依次点几个连接、登录和进入游戏的按钮。这段流程大约持续半分钟，操作不复杂，却要一直盯着。 最初我只想把这些点击交给预设。后来要自测的界面越来越多，工具又逐步增加了 UI 导航图、编辑器入口和外部调用接口。现在可以先准备好界面之间的路径，日常调试时直接选择目标，让程序完成中间的导航。  裁取自 R">
 <meta property="og:type" content="article">
 <meta property="og:title" content="自动测试工具Unity-Autorun-Tool的演进(2026)">
 <meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/index.html">
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
-<meta property="og:description" content="2024 年底，我做了一个很小的 Unity 自动点击工具。原因也很简单：每次进游戏都要等待场景加载，再依次点几个连接、登录和进入游戏的按钮。这段流程大约持续半分钟，操作不复杂，却要一直盯着。 最初我只想把这些点击交给预设。后来要自测的界面越来越多，工具又逐步增加了 UI 导航图、编辑器入口和外部调用接口。现在可以先准备好界面之间的路径，日常调试时直接选择目标，让程序完成中间的导航。">
+<meta property="og:description" content="2024 年底，我做了一个很小的 Unity 自动点击工具。原因也很简单：每次进游戏都要等待场景加载，再依次点几个连接、登录和进入游戏的按钮。这段流程大约持续半分钟，操作不复杂，却要一直盯着。 最初我只想把这些点击交给预设。后来要自测的界面越来越多，工具又逐步增加了 UI 导航图、编辑器入口和外部调用接口。现在可以先准备好界面之间的路径，日常调试时直接选择目标，让程序完成中间的导航。  裁取自 R">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/autorun-cover.webp">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/navigation-map.svg">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/prepare-and-run.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/readme-mcp-panel.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/readme-navigation-panel.webp">
 <meta property="article:published_time" content="2026-08-11T16:00:00.000Z">
 <meta property="article:modified_time" content="2026-08-11T16:00:00.000Z">
 <meta property="article:author" content="HanWen">
@@ -37,7 +40,7 @@
 <meta property="article:tag" content="编辑器工具">
 <meta property="article:tag" content="自动化">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/navigation-map.svg">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/autorun-cover.webp">
 
 
 <link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/">
@@ -145,7 +148,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%89%88%E5%8F%AA%E5%A4%84%E7%90%86%E5%9B%BA%E5%AE%9A%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.</span> <span class="nav-text">第一版只处理固定步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%93%8D%E4%BD%9C%E5%BA%8F%E5%88%97%E5%88%B0%E7%95%8C%E9%9D%A2%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">从操作序列到界面关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AI-%E5%8F%82%E4%B8%8E%E5%87%86%E5%A4%87%EF%BC%8C%E6%97%A5%E5%B8%B8%E5%AF%BC%E8%88%AA%E7%94%B1%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">AI 参与准备，日常导航由程序执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%B9%E5%87%BB%E5%AE%8C%E6%88%90%E4%B8%8E%E5%AF%BC%E8%88%AA%E5%AE%8C%E6%88%90%E6%98%AF%E4%B8%A4%E4%BB%B6%E4%BA%8B"><span class="nav-number">4.</span> <span class="nav-text">点击完成与导航完成是两件事</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E5%85%A5%E5%8F%A3%E4%B8%8E%E5%A4%96%E9%83%A8%E5%85%A5%E5%8F%A3%E5%85%B1%E7%94%A8%E6%89%A7%E8%A1%8C%E8%83%BD%E5%8A%9B"><span class="nav-number">5.</span> <span class="nav-text">编辑器入口与外部入口共用执行能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E8%88%AA%E5%B7%A5%E5%85%B7%E8%83%BD%E5%A4%9F%E8%AF%81%E6%98%8E%E4%BB%80%E4%B9%88"><span class="nav-number">6.</span> <span class="nav-text">导航工具能够证明什么</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%89%88%E5%8F%AA%E5%A4%84%E7%90%86%E5%9B%BA%E5%AE%9A%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.</span> <span class="nav-text">第一版只处理固定步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%93%8D%E4%BD%9C%E5%BA%8F%E5%88%97%E5%88%B0%E7%95%8C%E9%9D%A2%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">从操作序列到界面关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AI-%E5%8F%82%E4%B8%8E%E5%87%86%E5%A4%87%EF%BC%8C%E6%97%A5%E5%B8%B8%E5%AF%BC%E8%88%AA%E7%94%B1%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">AI 参与准备，日常导航由程序执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%B9%E5%87%BB%E5%AE%8C%E6%88%90%E4%B8%8E%E5%AF%BC%E8%88%AA%E5%AE%8C%E6%88%90%E6%98%AF%E4%B8%A4%E4%BB%B6%E4%BA%8B"><span class="nav-number">4.</span> <span class="nav-text">点击完成与导航完成是两件事</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E5%85%A5%E5%8F%A3%E4%B8%8E%E5%A4%96%E9%83%A8%E5%85%A5%E5%8F%A3%E5%85%B1%E7%94%A8%E6%89%A7%E8%A1%8C%E8%83%BD%E5%8A%9B"><span class="nav-number">5.</span> <span class="nav-text">编辑器入口与外部入口共用执行能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%85%A5%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">接入与使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%BC%96%E8%BE%91%E5%99%A8%E8%BF%9B%E5%85%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">6.1.</span> <span class="nav-text">从编辑器进入工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%A5%BD%E8%B7%AF%E5%BE%84%E5%90%8E%E9%80%89%E6%8B%A9%E7%9B%AE%E6%A0%87"><span class="nav-number">6.2.</span> <span class="nav-text">准备好路径后选择目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%B0%E8%BE%BE%E4%B9%8B%E5%90%8E%E6%A3%80%E6%9F%A5-UI-%E7%8A%B6%E6%80%81"><span class="nav-number">6.3.</span> <span class="nav-text">到达之后检查 UI 状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E8%88%AA%E4%B8%8E%E6%96%AD%E8%A8%80%E8%83%BD%E5%A4%9F%E8%AF%81%E6%98%8E%E4%BB%80%E4%B9%88"><span class="nav-number">7.</span> <span class="nav-text">导航与断言能够证明什么</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -263,6 +266,8 @@
     
     <div class="post-body" itemprop="articleBody"><p>2024 年底，我做了一个很小的 Unity 自动点击工具。原因也很简单：每次进游戏都要等待场景加载，再依次点几个连接、登录和进入游戏的按钮。这段流程大约持续半分钟，操作不复杂，却要一直盯着。</p>
 <p>最初我只想把这些点击交给预设。后来要自测的界面越来越多，工具又逐步增加了 UI 导航图、编辑器入口和外部调用接口。现在可以先准备好界面之间的路径，日常调试时直接选择目标，让程序完成中间的导航。</p>
+<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/autorun-cover.webp" alt="Unity Autorun Tool 的实际编辑器窗口，展示 MCP Bridge 运行状态与进程列表，进程 ID 已隐藏" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
+<p><em>裁取自 README 中的实际界面截图，保留窗口上部并隐藏进程 ID；点击图片可打开项目仓库。</em></p>
 <span id="more"></span>
 
 <h2 id="第一版只处理固定步骤"><a href="#第一版只处理固定步骤" class="headerlink" title="第一版只处理固定步骤"></a>第一版只处理固定步骤</h2><p>初版在 2024 年 11 月完成基本功能，随后补充退出前的动作和使用说明。一个预设保存一组顺序操作，每项主要包含：</p>
@@ -321,7 +326,7 @@
 <td>一条可复用的导航路径</td>
 </tr>
 </tbody></table>
-<img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/navigation-map.svg" alt="登录界面进入主界面后，可以分别导航到背包或设置" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/navigation-map.svg" alt="登录界面进入主界面后，可以分别导航到背包或设置" width="540" style="display:block;width:540px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p><em>简化示意，界面名称与具体项目无关。共享的登录流程只需要维护一次。</em></p>
 <p>图里的一条边也不能只写“主界面可以打开背包”。还要知道通过哪个控件执行、到达后用什么条件确认，以及在当前环境下是否具备执行前提。</p>
@@ -332,7 +337,7 @@
 <li>准备阶段理解代码与界面语义，生成或修订导航图。</li>
 <li>执行阶段读取已准备的图，运行确定的步骤，等待结果并报告状态。</li>
 </ul>
-<img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/prepare-and-run.svg" alt="AI 辅助准备导航图，编辑器和命令行复用同一份导航数据执行" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/prepare-and-run.svg" alt="AI 辅助准备导航图，编辑器和命令行复用同一份导航数据执行" width="540" style="display:block;width:540px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p>路径已经具备后，点击编辑器按钮或通过命令行运行，不需要再让模型为每一步重新做决定。这里说的“离线导航”是指执行过程不依赖 AI 推理，游戏本身仍然可能需要连接服务器。</p>
 <p>这也给维护划出了范围：界面结构或跳转逻辑改动时更新相应数据；没有变化的路径继续复用。导航图是一份需要随项目维护的工具数据，并不是生成一次就永远有效。</p>
@@ -346,11 +351,36 @@
 <p>这个边界也有实际意义：网络请求处理与 Unity 对象访问处在不同的执行环境，访问场景对象、UI 和编辑器状态的部分仍然需要回到 Unity 主线程。Bridge 负责把请求交给合适的执行位置，再把结果返回出去。</p>
 <p>进入 Play Mode 也不是一个瞬间完成的调用。执行任务需要跨过模式切换和初始化过程，所以外部调用更适合启动一个任务，再查询它的进度，而不是让一次同步请求无限等下去。</p>
 <p>普通开发者未必需要了解这些接口。日常使用时，在窗口里搜索目标界面并运行就够了；外部接口则给批量调试和进一步的自测留下入口。</p>
-<h2 id="导航工具能够证明什么"><a href="#导航工具能够证明什么" class="headerlink" title="导航工具能够证明什么"></a>导航工具能够证明什么</h2><p>这套工具在我日常工作中最常用的场景，仍然是快速进入游戏并到达待调试界面。它减少的是操作路径上的重复劳动。</p>
+<h2 id="接入与使用"><a href="#接入与使用" class="headerlink" title="接入与使用"></a>接入与使用</h2><p>工具提供 UPM 安装入口、编辑器内的 Bridge 与 MCP 管理，以及运行时 UI 状态读取，可以从编辑器面板完成接入，再执行导航和状态检查。</p>
+<h3 id="从编辑器进入工具"><a href="#从编辑器进入工具" class="headerlink" title="从编辑器进入工具"></a>从编辑器进入工具</h3><p>工具要求 Unity 2021.3 或更新版本，通过 Package Manager 的 <code>Add package from git URL...</code> 安装：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/SHW2002/Unity-Autorun-MCP.git</span><br></pre></td></tr></table></figure>
+
+<p>安装后打开 <code>Window &gt; Auto Run Window</code>。仅使用手动预设时，可以直接配置 Go 与 Stop 动作；接入 CLI 或 MCP 时，还需要 .NET 8 SDK。</p>
+<img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/readme-mcp-panel.webp" alt="README 中的 MCP 面板，展示 Bridge 状态、进程检查与安装入口，项目路径和进程 ID 已遮盖" width="500" style="display:block;width:500px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>README 中的 MCP 面板，安装路径与进程 ID 已隐藏。</em></p>
+<p><code>Publish MCP</code> 生成服务端程序，<code>Install MCP</code> 为所选客户端安装连接配置，<code>Install Skill</code> 安装配套工作流。Bridge 面板显示 <code>Running</code>，并能识别客户端进程后，再生成或更新导航图。</p>
+<p>Bridge 的端口可能因为占用而变化。外部入口读取当前 Unity 项目发布的端点，不应把示例里的 <code>17331</code> 当成所有工程永久固定的端口。</p>
+<h3 id="准备好路径后选择目标"><a href="#准备好路径后选择目标" class="headerlink" title="准备好路径后选择目标"></a>准备好路径后选择目标</h3><p>导航图保存为 <code>Gen/ui-nav-map.json</code>。使用配套 Skill 时，通过下面的命令生成或更新：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$unity-autorun gen-nav</span><br></pre></td></tr></table></figure>
+
+<p>准备完成后，在 <code>Navigation AutoRun</code> 中搜索并选择目标，再点击 <code>Go!</code>。如果 Unity 尚未进入 Play Mode，工具会先启动游戏，再继续执行导航。</p>
+<img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/readme-navigation-panel.webp" alt="README 中的 Navigation AutoRun 面板，包含目标搜索、选择与 Go 按钮，项目界面名称已遮盖" width="520" style="display:block;width:520px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>裁取自同一张 README 截图，项目专用界面名称已隐藏。</em></p>
+<p>外部客户端调用 <code>start_ui_navigation</code> 后会得到 <code>navigationId</code>，再用 <code>get_ui_navigation_status</code> 查询终态。这让启动、登录和中间等待留在工具内部执行，外部不必不停地重新列举按钮。</p>
+<p>README 还提供 <code>Preview Nav Map</code>：用随包附带的 Graphviz 渲染可交互的本地 HTML，支持搜索界面、查看相邻路径、缩放和平移。导航失败时，可以先检查目标是否可达，再检查那条边是否具备实际操作条件。</p>
+<h3 id="到达之后检查-UI-状态"><a href="#到达之后检查-UI-状态" class="headerlink" title="到达之后检查 UI 状态"></a>到达之后检查 UI 状态</h3><p><code>get_ui_state</code> 可以读取 UGUI 与 TextMeshPro 控件的文本、活动状态和交互属性，<code>wait_for_ui_state</code> 则持续检查条件直到满足或超时。支持 FairyGUI 的按钮点击，并不表示所有 FairyGUI 控件都具备相同的类型化状态读取能力，需要按工具支持范围使用。</p>
+<p>例如等待一个音乐开关打开，可以向 Bridge 提交如下请求：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;check-music&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wait_for_ui_state&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;MusicToggle&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;types&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Toggle&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;property&quot;</span><span class="punctuation">:</span> <span class="string">&quot;isOn&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;comparison&quot;</span><span class="punctuation">:</span> <span class="string">&quot;equals&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expected&quot;</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;timeoutMilliseconds&quot;</span><span class="punctuation">:</span> <span class="number">10000</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>与固定等待几秒不同，这个调用有具体的成功条件；超时时会返回最后观察到的值。查询时限定控件名称、范围与类型，也更容易定位到底检查了哪一个对象。</p>
+<h2 id="导航与断言能够证明什么"><a href="#导航与断言能够证明什么" class="headerlink" title="导航与断言能够证明什么"></a>导航与断言能够证明什么</h2><p>这套工具在我日常工作中最常用的场景，仍然是快速进入游戏并到达待调试界面。它减少的是操作路径上的重复劳动。</p>
 <p>到达界面之后，按钮状态、数据正确性、动效以及网络行为仍然需要各自的验证。导航成功不能直接等同于功能测试通过，也不能证明所有设备上的视觉表现都正确。</p>
-<p>如果要继续接自动化测试，我会让路由负责“到哪里”，让断言负责“到了之后检查什么”。这样页面入口变动时只修改导航，业务判断也可以独立维护。</p>
+<p>运行时断言把“到哪里”和“到了之后检查什么”分别交给路由与状态条件。这样页面入口变动时只修改导航，业务判断也可以独立维护；但控件文本与状态符合条件，仍然不能直接证明动效和所有设备上的视觉表现都正确。</p>
 <p>从第一版自动点击到后来的导航图，需求始终来自重复发生的小操作。先把最稳定的部分配置化，再随着使用范围扩大补充状态和外部接口，比一开始就规划完整测试平台更符合这次工具的演进过程。</p>
 <p>项目地址：<a href="https://github.com/SHW2002/Unity-Autorun-MCP">Unity-Autorun-MCP</a>。仓库持续更新，安装方式和接口名称以对应版本的 README 为准。</p>
+<p>工具界面配图来自仓库的 <a href="https://github.com/SHW2002/Unity-Autorun-MCP/blob/master/Documentation~/images/auto-run-window.png">README 原图</a>，本文按说明区域裁切并补充脱敏。</p>
 
     </div>
 
