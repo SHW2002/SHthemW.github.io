@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="650" viewBox="0 0 1040 650" role="img" aria-labelledby="title desc">
-<title id="title">距离滞回与权重过渡的两个端点</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。实线骨链包含双方各自的肩、肘、腕三个节点。</desc>
+<title id="title">连接状态与权重过渡的两个端点</title><desc id="desc">白底黑红蓝几何图；红色三角身图标为发起方，蓝色菱形身图标为接收方。连接建立后权重全开，双方骨链朝共同目标排列。</desc>
 <defs>
 <marker id="k" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#000000" /></marker>
 <marker id="r" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#FF0000" /></marker>
@@ -58,10 +58,6 @@
 <path d="M515.00 350.00L525.00 350.00" fill="none" stroke="#000000" stroke-width="2" />
 <path d="M520.00 345.00L520.00 355.00" fill="none" stroke="#000000" stroke-width="2" />
 <text x="538.00" y="280.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">目标握点</text>
-<path d="M315.00 610.00L725.00 610.00" fill="none" stroke="#000000" stroke-width="1.5" />
-<path d="M315.00 605.00L315.00 615.00" fill="none" stroke="#000000" stroke-width="1.5" />
-<path d="M725.00 605.00L725.00 615.00" fill="none" stroke="#000000" stroke-width="1.5" />
-<text x="464.00" y="592.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">双方距离</text>
 <text x="499.00" y="114.00" fill="#000000" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="28" text-anchor="start">权重全开</text>
 </g>
 </svg>
