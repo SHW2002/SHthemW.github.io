@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="我把延时摄影中需要反复手动完成的操作，做成了一套以 TimelapseManager 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能让程序自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出有霞光的片段、给相册标记分数，并通过企业微信推送结果。 这套工具已经能够运行单次、每日循环和持续分批任务。拍摄、HDR 合成与评分可以并行推进，关闭管理窗口">
+    <meta name="description" content="我把延时摄影中反复手动完成的操作，做成了一套以 TimelapseManager 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出霞光片段、给相册评分，并通过企业微信推送结果。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="挂机即可使用的延时摄影All-In-One工作流">
 <meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/index.html">
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
-<meta property="og:description" content="我把延时摄影中需要反复手动完成的操作，做成了一套以 TimelapseManager 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能让程序自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出有霞光的片段、给相册标记分数，并通过企业微信推送结果。 这套工具已经能够运行单次、每日循环和持续分批任务。拍摄、HDR 合成与评分可以并行推进，关闭管理窗口">
+<meta property="og:description" content="我把延时摄影中反复手动完成的操作，做成了一套以 TimelapseManager 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出霞光片段、给相册评分，并通过企业微信推送结果。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp">
 <meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/sunset-score-examples.webp">
@@ -137,11 +137,11 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/" selected>
+        <option value="zh-CN" data-href="/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/">
+        <option value="en" data-href="/en/">
           English
         </option>
       
@@ -181,7 +181,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -191,8 +191,9 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -283,13 +284,25 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>我把延时摄影中需要反复手动完成的操作，做成了一套以 <strong>TimelapseManager</strong> 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能让程序自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出有霞光的片段、给相册标记分数，并通过企业微信推送结果。</p>
-<p>这套工具已经能够运行单次、每日循环和持续分批任务。拍摄、HDR 合成与评分可以并行推进，关闭管理窗口后，后台任务仍然继续。本文重点介绍最终能得到什么，以及支撑这套自动化的任务模型、图像处理和异常恢复设计。</p>
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>我把延时摄影中反复手动完成的操作，做成了一套以 <strong>TimelapseManager</strong> 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出霞光片段、给相册评分，并通过企业微信推送结果。</p>
+</div>
+
+<div class="post-intro-media">
+
 <img src="/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp" alt="Timelapse Manager 运行总览，集中显示任务状态、当前阶段和受控进程" style="width:680px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
 
-<p><em>运行总览将任务、状态、当前阶段和工作进程放在同一个界面中；图片来自仓库随附的界面演示，任务数据用于展示。</em></p>
+</div>
+
+</div>
+
 <span id="more"></span>
 
+<p>这套工具已经能够运行单次、每日循环和持续分批任务。拍摄、HDR 合成与评分可以并行推进，关闭管理窗口后，后台任务仍然继续。本文重点介绍最终能得到什么，以及支撑这套自动化的任务模型、图像处理和异常恢复设计。</p>
+<p><em>运行总览将任务、状态、当前阶段和工作进程放在同一个界面中；图片来自仓库随附的界面演示，任务数据用于展示。</em></p>
 <h2 id="1-一次任务，得到成片和可筛选的素材"><a href="#1-一次任务，得到成片和可筛选的素材" class="headerlink" title="1. 一次任务，得到成片和可筛选的素材"></a>1. 一次任务，得到成片和可筛选的素材</h2><p>以固定机位拍摄黄昏为例，我希望在设置好时间后，程序完成以下工作：</p>
 <table>
 <thead>

@@ -169,7 +169,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -179,8 +179,9 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -264,13 +265,19 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p align="center">
-  <a href="https://www.shenhanwen.top/images/hanwen-wepie-legend/cover/hanwen-wepie-cover.jpg"><img src="https://www.shenhanwen.top/images/hanwen-wepie-legend/cover/hanwen-wepie-cover.jpg" alt="瀚文微派传记首图：梦幻岛、躲猫猫与小岛的项目画面" width="78%" style="max-width: 720px; height: auto;"></a>
-</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
 
 <p><strong>沈瀚文（ShenHanWen &#x2F; SHW2002）· 2024—2026 年工作与成长回顾</strong></p>
-<p><em>取材截至 2026 年 9 月 21 日。</em></p>
-<p>沈瀚文在微派的这段经历，可以从一个钓鱼玩法的UI界面讲起。那时需要弄清楚的，是标题应不应该固定、列表如何滚动。后来，同一个人的工作记录里出现了跨端迁移、动画同步、代码生成，以及两名玩家牵手时的关节约束。把这些记录连起来，会看到职责一点点变宽：先把手里的功能做完，再让它经得起完整流程，随后开始<strong>为下一次开发、为接手的同事准备可以复用的东西</strong>。</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><img src="/images/hanwen-wepie-legend/cover/hanwen-wepie-cover.jpg" alt="瀚文微派传记首图：梦幻岛、躲猫猫与小岛的项目画面"></p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/%E7%80%9A%E6%96%87%E5%BE%AE%E6%B4%BE%E4%BC%A0%E8%AE%B0/#more" rel="contents">
@@ -355,11 +362,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>我把延时摄影中需要反复手动完成的操作，做成了一套以 <strong>TimelapseManager</strong> 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能让程序自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出有霞光的片段、给相册标记分数，并通过企业微信推送结果。</p>
-<p>这套工具已经能够运行单次、每日循环和持续分批任务。拍摄、HDR 合成与评分可以并行推进，关闭管理窗口后，后台任务仍然继续。本文重点介绍最终能得到什么，以及支撑这套自动化的任务模型、图像处理和异常恢复设计。</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>我把延时摄影中反复手动完成的操作，做成了一套以 <strong>TimelapseManager</strong> 为入口的自动化工具流：配置好相机、依赖和拍摄时段后，创建任务就能自动拍摄包围曝光序列、下载照片、合成 HDR、去闪并导出视频。开启晚霞评分后，它还会找出霞光片段、给相册评分，并通过企业微信推送结果。</p>
+</div>
+
+<div class="post-intro-media">
+
 <img src="/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp" alt="Timelapse Manager 运行总览，集中显示任务状态、当前阶段和受控进程" style="width:680px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
 
-<p><em>运行总览将任务、状态、当前阶段和工作进程放在同一个界面中；图片来自仓库随附的界面演示，任务数据用于展示。</em></p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/#more" rel="contents">
@@ -444,9 +460,19 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>公司的社交游戏有一套双人牵手玩法，由我负责 3C 方面的开发。发起方控制移动，接收方跟随；两名角色需要适应地形、保持手部接触，并与游戏中的个人动作和操作玩法配合。下面从能实现基本表现的跟随与握手设计讲起，结合调试过程和体验反馈，逐步说明旋转位移、手部姿态和网络同步的改进。</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>公司的社交游戏有一套双人牵手玩法，由我负责 3C 方面的开发。发起方控制移动，接收方跟随；两名角色需要适应地形、保持手部接触，并与游戏中的个人动作和操作玩法配合。下面从能实现基本表现的跟随与握手设计讲起，结合调试过程和体验反馈，逐步说明旋转位移、手部姿态和网络同步的改进。</p>
+</div>
+
+<div class="post-intro-media">
+
 <p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp" alt="双人牵手联调画面，左侧为接收方，右侧为发起方"></p>
-<p><em>双人牵手联调画面，已裁去外围界面。</em></p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/#more" rel="contents">
@@ -531,10 +557,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>2024 年底，我做了一个很小的 Unity 自动点击工具。原因也很简单：每次进游戏都要等待场景加载，再依次点几个连接、登录和进入游戏的按钮。这段流程大约持续半分钟，操作不复杂，却要一直盯着。</p>
-<p>最初我只想把这些点击交给预设。后来要自测的界面越来越多，工具又逐步增加了 UI 导航图、编辑器入口和外部调用接口。现在可以先准备好界面之间的路径，日常调试时直接选择目标，让程序完成中间的导航。</p>
-<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/autorun-cover.webp" alt="Unity Autorun Tool 的实际编辑器窗口，展示 MCP Bridge 运行状态与进程列表，进程 ID 已隐藏" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
-<p><em>裁取自 README 中的实际界面截图，保留窗口上部并隐藏进程 ID；点击图片可打开项目仓库。</em></p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>2024 年底，我做了一个很小的 Unity 自动点击工具：之前每次进游戏都要等待场景加载，再依次点几个连接、登录和进入游戏的按钮。这段流程大约持续半分钟，操作不复杂，却要我一直盯着，并不是很方便。</p>
+<p>后来随着AI技术的发展，感觉这一套自动工具如果给AI做为脚手架会大有可为。因此逐步增加了 UI 导航、编辑器入口和命令行调用接口。正式以一个AI Agent MCP为目标交付。</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/images/post-covers/unity-autorun.webp" alt="Unity 自测工具的 MCP 面板与 UI 导航面板拼图"></a></p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/#more" rel="contents">
@@ -619,9 +655,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>这两天用Tuanjie开发项目, 挂机一段时间之后电脑总是莫名其妙的卡死(通常是第二天上班发现)，没蓝屏，也没有稳定的报错弹窗, 只偶尔会有几个应用程序报错提示OOM, 一旦出现基本只能长按电源键重启。</p>
-<p>最后经过排查, 是Tuanjie内部自己的内存泄漏问题(Unity6主分支上目前也存在), 但通过一些特殊途径可能更高频的触发导致卡死, 在此记录一下排查的过程.</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>这两天用Tuanjie开发项目, 挂机一段时间之后电脑总是莫名其妙的卡死(通常是第二天上班发现)，没蓝屏，也没有稳定的报错弹窗, 只偶尔会有几个应用程序报错提示OOM, 一旦出现基本只能长按电源键重启。</p>
+<p>最后排查出是 Tuanjie 内存泄漏，Unity 6 也存在。但通过一些特殊途径可能更高频地触发内存泄漏，导致卡死，在此记录一下排查的过程。</p>
+</div>
+
+<div class="post-intro-media">
+
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png" alt="tuanjielogo"></p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/#more" rel="contents">
@@ -706,8 +753,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>做图鉴和排行榜展示时，我需要把角色与手持模型放进一个固定大小的展示空间。不同服装、不同形状的手持物可以组成很多种组合，逐个配置缩放很难维护，所以我根据模型的包围盒自动限制整体尺寸。</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>做图鉴和排行榜展示时，我需要把角色与手持模型放进一个固定大小的展示空间。不同服装、不同形状的手持物可以组成很多种组合，逐个配置缩放很难维护，所以我根据模型的包围盒自动限制整体尺寸。</p>
 <p>随后遇到了一个奇怪的问题：有的角色会被缩得非常小，看起来像是展示空间里只剩一个小点。缩放公式没有明显错误，真正出问题的是公式拿到的“模型尺寸”。</p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/#more" rel="contents">
@@ -792,8 +846,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>项目里的 Timeline 越来越多之后，主场景也跟着引用了越来越多的动画和表现资源。美术制作时，把 Timeline 挂到场景中的 PlayableDirector 上很方便；但如果把这份引用关系一直保留到运行时，场景就会持续携带这些资源依赖。</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>项目里的 Timeline 越来越多之后，主场景也跟着引用了越来越多的动画和表现资源。美术制作时，把 Timeline 挂到场景中的 PlayableDirector 上很方便；但如果把这份引用关系一直保留到运行时，场景就会持续携带这些资源依赖。</p>
 <p>这次调整把 Timeline 资源与场景对象的绑定信息单独保存，需要播放时再加载并恢复绑定。美术仍然在场景中制作和预览，交付时多一个导出步骤，运行时则按实际需要装配。</p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/#more" rel="contents">
@@ -878,8 +939,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 —-它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.</p>
-<img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;">
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 —-它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.</p>
+</div>
+
+<div class="post-intro-media">
+
+<img src="/images/post-covers/mecanim-pass-through.webp" alt="Mecanim 透传状态图与过渡设置拼图">
+
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/#more" rel="contents">
@@ -964,8 +1037,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>配置表有了类型定义之后，业务代码里仍然可能散落着很多数字 ID。读代码时需要回到表格查含义，复制到另一处时也容易写错。手工维护一份常量文件能够改善可读性，但会增加一份需要同步的数据。</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>配置表有了类型定义之后，业务代码里仍然可能散落着很多数字 ID。读代码时需要回到表格查含义，复制到另一处时也容易写错。手工维护一份常量文件能够改善可读性，但会增加一份需要同步的数据。</p>
 <p>我从 2025 年 9 月开始扩展项目的导表流程，让道具 ID 随导表一起生成。到 2026 年初，实体、界面、音效等类型也有类似需求，于是又把重复的输出流程抽成公共生成器，并继续接入 NPC ID。</p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/#more" rel="contents">
@@ -1050,8 +1130,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>前两天发现一个邪门的事情, Unity引擎使用GameFramework框架的 <code>GameEntry.Resource.LoadAssetAsync&lt;T&gt;</code>API加载Sprite类型的资源, 在对应Sprite文件明明存在的情况下却给一个类型不匹配的报错:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception: GameFrameworkException: Load asset </span><br><span class="line">&#x27;Assets/Res/UI/UISprite/EnterGamePopup/Achievement/EGP_Achievement_Base_ChineseTraditional.png&#x27; </span><br><span class="line">failure load type is UnityEngine.Texture2D but asset type is UnityEngine.Sprite.</span><br></pre></td></tr></table></figure>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>前两天发现一个邪门的事情：GameFramework 的 <code>GameEntry.Resource.LoadAssetAsync&lt;T&gt;</code> 加载 Sprite 时，文件明明存在，却报了类型不匹配：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exception: GameFrameworkException: Load asset</span><br><span class="line">&#x27;Assets/Res/UI/UISprite/EnterGamePopup/Achievement/EGP_Achievement_Base_ChineseTraditional.png&#x27;</span><br><span class="line">failure load type is UnityEngine.Texture2D but asset type is UnityEngine.Sprite.</span><br></pre></td></tr></table></figure>
+
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2025/Unity%E4%BD%BF%E7%94%A8GameFramework%E6%A1%86%E6%9E%B6%E5%8A%A0%E8%BD%BDSprite-Texture2D%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B%E6%B7%B7%E6%B7%86%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/#more" rel="contents">

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="405" viewBox="0 0 700 405" role="img" aria-label="AI helps prepare navigation; the program executes defined steps">
+  <title>AI helps prepare navigation; the program executes defined steps</title>
+  <style>
+    text { font-family: Arial, sans-serif; fill: #26354a; }
+    .title { font-size: 23px; font-weight: 700; }
+    .label { font-size: 20px; }
+    .note { font-size: 16px; fill: #5d6c80; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#718298"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="698" height="403" rx="16" fill="#f7f9fc" stroke="#dbe3ed"/>
+  <text x="350" y="42" class="title" text-anchor="middle">Prepare paths once, run them repeatedly</text>
+  <rect x="60" y="83" width="240" height="84" rx="10" fill="#ffffff" stroke="#afc0d4"/>
+  <text x="180" y="118" class="label" text-anchor="middle">Code and UI relations</text>
+  <text x="180" y="146" class="label" text-anchor="middle">Prepared with AI</text>
+  <path d="M300 125 L390 125" fill="none" stroke="#718298" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="397" y="83" width="242" height="84" rx="10" fill="#e4edf9" stroke="#afc0d4"/>
+  <text x="518" y="132" class="label" text-anchor="middle">Reviewed nav graph</text>
+  <path d="M518 167 L518 237" fill="none" stroke="#718298" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="397" y="244" width="242" height="84" rx="10" fill="#ffffff" stroke="#afc0d4"/>
+  <text x="518" y="279" class="label" text-anchor="middle">Execute defined steps</text>
+  <text x="518" y="307" class="label" text-anchor="middle">Wait · Cancel · Result</text>
+  <rect x="60" y="244" width="240" height="84" rx="10" fill="#ffffff" stroke="#afc0d4"/>
+  <text x="180" y="293" class="label" text-anchor="middle">Editor / Command line</text>
+  <path d="M300 286 L390 286" fill="none" stroke="#718298" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="350" y="373" class="note" text-anchor="middle">Everyday navigation needs no AI inference for each step</text>
+</svg>

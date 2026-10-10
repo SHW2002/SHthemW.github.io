@@ -130,7 +130,7 @@
           简体中文
         </option>
       
-        <option value="en" data-href="/en/archives/2/index.html">
+        <option value="en" data-href="/en/archives/">
           English
         </option>
       
@@ -169,7 +169,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -179,8 +179,9 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -264,8 +265,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>最近整理了一次角色动画模块。原先本地玩家、网络同步玩家和 AI 共用一个动画组件，随着手持物、送礼等行为接入，业务层开始出现越来越多“如果是其他玩家，就额外处理一下”的代码。</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>最近整理了一次角色动画模块。原先本地玩家、网络同步玩家和 AI 共用一个动画组件，随着手持物、送礼等行为接入，业务层开始出现越来越多“如果是其他玩家，就额外处理一下”的代码。</p>
 <p>这次调整主要做了两件事：根据 Animator 的实际驱动方式拆分实现；让角色实体以普通 C# 对象的方式持有动画驱动器，负责它的创建与释放。下面保留这次重构时的思路，说明原先哪里不方便，以及新结构怎样消除这些特殊处理。</p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/#more" rel="contents">
@@ -350,7 +358,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>软件在真机上Crash后, 我们往往不能直接得到错误日志, 因此通常需要借助第三方工具来实现对日志的抓取和分析. 本文记录一次Unity游戏在安卓环境下频繁闪退的Debug过程, 使用Android Studio 2025.1.4.8进行日志抓取.</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>软件在真机上Crash后, 我们往往不能直接得到错误日志, 因此通常需要借助第三方工具来实现对日志的抓取和分析. 本文记录一次Unity游戏在安卓环境下频繁闪退的Debug过程, 使用Android Studio 2025.1.4.8进行日志抓取.</p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2025/%E4%BD%BF%E7%94%A8Android-Studio%E7%9C%9F%E6%9C%BA%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90%E9%97%AA%E9%80%80%E5%8E%9F%E5%9B%A0/#more" rel="contents">
@@ -435,8 +450,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>排查一个线上问题时，日志本应提供线索，但大量高频输出也会让问题更难看清。后来我专门做了一次统计：从进入游戏开始，采样到帧率稳定后的五秒，查看每条日志分别打印了多少次。</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>排查一个线上问题时，日志本应提供线索，但大量高频输出也会让问题更难看清。后来我专门做了一次统计：从进入游戏开始，采样到帧率稳定后的五秒，查看每条日志分别打印了多少次。</p>
 <p>结果排在第一的一条输出出现了 <strong>947 次</strong>，后面的几条则是几十次。删掉这条重复日志后，当时的主观流畅度已有明显改善。这让我开始系统整理日志频率、用途和开关。</p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/#more" rel="contents">
@@ -521,10 +543,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 <code>CS</code> 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。</p>
-<p>我在一个已有的开源生成器上做了一些修改，把项目中经常遇到的类型提示问题补起来。这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其中几个最有价值的处理。</p>
-<p><a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator"><img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/github-cover.webp" alt="EmmyLua-Snippet-Generator 的 GitHub README，介绍工具用途、语言服务支持与原项目来源" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
-<p><em>工具的 GitHub README，点击图片可打开仓库。</em></p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>在 Unity 的 Lua 业务中调用 C#，经常会遇到一种割裂感：代码运行没有问题，编辑器却不知道对象是什么类型，也无法继续补全后面的字段。尤其经过单例、委托和 <code>CS</code> 表之后，一条本来有完整类型信息的调用链，很容易变成一串未知字段。</p>
+<p>我在开源生成器上做了些修改，把这些类型提示补齐。</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator"><img src="/images/post-covers/lua-type-hints.webp" alt="Lua 类型注解生成器的项目介绍与 Unity 类型补全效果拼图"></a></p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/#more" rel="contents">
@@ -609,8 +641,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>随着玩法增加，项目的 GM 面板里积累了越来越多按钮。最早把命令放在同一页还算方便，后来查一个不常用的操作要翻很久，添加命令也常常需要修改面板本身。</p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>随着玩法增加，项目的 GM 面板里积累了越来越多按钮。最早把命令放在同一页还算方便，后来查一个不常用的操作要翻很久，添加命令也常常需要修改面板本身。</p>
 <p>我在 2024 年 8 月做了带分类的新版本，允许业务在运行时注册命令；到 2025 年 3 月，又增加了本地收藏。改动不复杂，但它解决的是开发和测试每天都会遇到的问题。</p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2025/%E6%B8%B8%E6%88%8FGM%E5%B7%A5%E5%85%B7%E7%9A%84%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%94%B6%E8%97%8F%E8%AE%BE%E8%AE%A1/#more" rel="contents">
@@ -695,14 +734,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>​    </p>
-<blockquote>
-<p>本文在知乎同步发布: <a href="https://zhuanlan.zhihu.com/p/686230441">打造具有”Y轴”的2D top-down游戏 - 知乎 (zhihu.com)</a></p>
-<p>感谢点赞收藏的朋友们!   </p>
-</blockquote>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
 <p>想象一座带有桥洞的小桥. 玩家先从左侧上桥, 再从右侧下桥, 最后从中间的桥洞走过去.</p>
 <p>这是一个很简单, 很常见的场景. 然而, 要在2D top-down视角的游戏中实现它却比想象中更复杂 –在桥上阻挡玩家跳下去的碰撞盒, 要如何才不会阻挡要穿过桥洞的玩家?</p>
+</div>
+
+<div class="post-intro-media">
+
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s6.png" alt="好吧这两个数字可能被压的太扁了"></p>
+</div>
+
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/zh-CN/2024/%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/#more" rel="contents">
@@ -778,9 +823,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="欢迎"><a href="#欢迎" class="headerlink" title="欢迎!"></a>欢迎!</h1><p>这是我在Blog的第一篇文章. 这里将会分享SHW的心得, 新学到的技术, 以及诸多奇思妙想; ) </p>
+          <div class="post-intro">
+
+<div class="post-intro-text">
+
+<h1 id="欢迎"><a href="#欢迎" class="headerlink" title="欢迎!"></a>欢迎!</h1><p>这是我在Blog的第一篇文章. 这里将会分享SHW的心得, 新学到的技术, 以及诸多奇思妙想; ) </p>
 <p>谢谢你的关注 ! 期待与你再会.</p>
+</div>
+
+<div class="post-intro-media">
+
 <p><img src="/zh-CN/2023/%E6%AC%A2%E8%BF%8E/view1.jpg" alt="view1"></p>
+</div>
+
+</div>
 
       
     </div>

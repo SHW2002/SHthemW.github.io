@@ -1388,7 +1388,7 @@ pre code {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #ffff0b;
+  background: #e27db6;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -2937,5 +2937,74 @@ header.header {
     display: block;
     width: max-content;
     margin: 8px 10px 0 auto;
+  }
+}
+.post-body .post-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.post-body .post-intro-text {
+  flex: 1;
+  min-width: 0;
+}
+.post-body .post-intro-text > :last-child {
+  margin-bottom: 0;
+}
+.post-body .post-intro-media {
+  flex: 0 0 280px;
+  width: 280px;
+  max-width: 100%;
+  line-height: 1.5;
+  text-align: center;
+}
+.post-body .post-intro-media > p {
+  margin: 0 0 12px;
+}
+.post-body .post-intro-media > a,
+.post-body .post-intro-media > p > a {
+  display: block;
+  border-bottom: 0;
+}
+.post-body .post-intro-media img {
+  display: block;
+  width: 100% !important;
+  max-width: 280px !important;
+  height: auto !important;
+  max-height: 260px !important;
+  object-fit: contain;
+  zoom: 1 !important;
+  margin: 0 !important;
+  padding: 0;
+  border: 0;
+}
+.post-body .post-intro-media > :last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 768px) {
+  .post-body .post-intro-media {
+    margin-top: 1em;
+  }
+  .post-body .post-intro:has(.post-intro-text > :is(h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6):first-child) .post-intro-media {
+    margin-top: 30px;
+  }
+}
+@media (max-width: 767px) {
+  .post-body .post-intro {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .post-body .post-intro-text {
+    width: 100%;
+  }
+  .post-body .post-intro-media {
+    flex: 0 0 auto;
+    align-self: center;
   }
 }

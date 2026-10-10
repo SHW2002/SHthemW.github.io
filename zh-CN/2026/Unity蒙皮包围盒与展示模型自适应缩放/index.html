@@ -134,11 +134,11 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/" selected>
+        <option value="zh-CN" data-href="/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/">
+        <option value="en" data-href="/en/">
           English
         </option>
       
@@ -178,7 +178,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -188,8 +188,9 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -280,8 +281,16 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>做图鉴和排行榜展示时，我需要把角色与手持模型放进一个固定大小的展示空间。不同服装、不同形状的手持物可以组成很多种组合，逐个配置缩放很难维护，所以我根据模型的包围盒自动限制整体尺寸。</p>
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>做图鉴和排行榜展示时，我需要把角色与手持模型放进一个固定大小的展示空间。不同服装、不同形状的手持物可以组成很多种组合，逐个配置缩放很难维护，所以我根据模型的包围盒自动限制整体尺寸。</p>
 <p>随后遇到了一个奇怪的问题：有的角色会被缩得非常小，看起来像是展示空间里只剩一个小点。缩放公式没有明显错误，真正出问题的是公式拿到的“模型尺寸”。</p>
+</div>
+
+</div>
+
 <span id="more"></span>
 
 <h2 id="先明确要测量什么"><a href="#先明确要测量什么" class="headerlink" title="先明确要测量什么"></a>先明确要测量什么</h2><p>展示功能需要的是<strong>当前参与展示的模型，在指定姿势下占据的空间</strong>。它与网格资产的原始尺寸、导入时覆盖多段动画的包围盒，都不一定相同。</p>
@@ -388,8 +397,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/" rel="next" title="Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions">
-                  Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions <i class="fa fa-angle-right"></i>
+                <a href="/zh-CN/2026/%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="next" title="团结引擎长时间挂机导致系统卡死的问题排查">
+                  团结引擎长时间挂机导致系统卡死的问题排查 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

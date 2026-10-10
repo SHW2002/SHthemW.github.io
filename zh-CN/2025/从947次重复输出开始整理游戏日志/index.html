@@ -134,11 +134,11 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/" selected>
+        <option value="zh-CN" data-href="/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/">
+        <option value="en" data-href="/en/">
           English
         </option>
       
@@ -178,7 +178,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -188,8 +188,9 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -280,8 +281,16 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>排查一个线上问题时，日志本应提供线索，但大量高频输出也会让问题更难看清。后来我专门做了一次统计：从进入游戏开始，采样到帧率稳定后的五秒，查看每条日志分别打印了多少次。</p>
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>排查一个线上问题时，日志本应提供线索，但大量高频输出也会让问题更难看清。后来我专门做了一次统计：从进入游戏开始，采样到帧率稳定后的五秒，查看每条日志分别打印了多少次。</p>
 <p>结果排在第一的一条输出出现了 <strong>947 次</strong>，后面的几条则是几十次。删掉这条重复日志后，当时的主观流畅度已有明显改善。这让我开始系统整理日志频率、用途和开关。</p>
+</div>
+
+</div>
+
 <span id="more"></span>
 
 <h2 id="先限定采样窗口"><a href="#先限定采样窗口" class="headerlink" title="先限定采样窗口"></a>先限定采样窗口</h2><p>这里的 947 次不是“每秒 947 次”，也不是“仅在稳定后的五秒里打印 947 次”。采样覆盖了整个进入过程，并在帧率稳定后继续了五秒。</p>
@@ -315,8 +324,8 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Lua/" rel="tag"># Lua</a>
               <a href="/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/tags/Lua/" rel="tag"># Lua</a>
               <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag"># 性能优化</a>
               <a href="/tags/%E6%97%A5%E5%BF%97/" rel="tag"># 日志</a>
           </div>
@@ -330,8 +339,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/en/2025/en-2025-10-20-Analyzing-Crash-Causes-with-Android-Studio-Debugging-on-Real-Devices/" rel="next" title="Analyzing Crash Causes with Android Studio Debugging on Real Devices">
-                  Analyzing Crash Causes with Android Studio Debugging on Real Devices <i class="fa fa-angle-right"></i>
+                <a href="/zh-CN/2025/%E4%BD%BF%E7%94%A8Android-Studio%E7%9C%9F%E6%9C%BA%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90%E9%97%AA%E9%80%80%E5%8E%9F%E5%9B%A0/" rel="next" title="使用Android Studio真机调试分析闪退原因">
+                  使用Android Studio真机调试分析闪退原因 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

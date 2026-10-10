@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="这两天用Tuanjie开发项目, 挂机一段时间之后电脑总是莫名其妙的卡死(通常是第二天上班发现)，没蓝屏，也没有稳定的报错弹窗, 只偶尔会有几个应用程序报错提示OOM, 一旦出现基本只能长按电源键重启。 最后经过排查, 是Tuanjie内部自己的内存泄漏问题(Unity6主分支上目前也存在), 但通过一些特殊途径可能更高频的触发导致卡死, 在此记录一下排查的过程.">
+    <meta name="description" content="这两天用Tuanjie开发项目, 挂机一段时间之后电脑总是莫名其妙的卡死(通常是第二天上班发现)，没蓝屏，也没有稳定的报错弹窗, 只偶尔会有几个应用程序报错提示OOM, 一旦出现基本只能长按电源键重启。 最后排查出是 Tuanjie 内存泄漏，Unity 6 也存在。但通过一些特殊途径可能更高频地触发内存泄漏，导致卡死，在此记录一下排查的过程。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="团结引擎长时间挂机导致系统卡死的问题排查">
 <meta property="og:url" content="https://www.shenhanwen.top/zh-CN/2026/%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/index.html">
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
-<meta property="og:description" content="这两天用Tuanjie开发项目, 挂机一段时间之后电脑总是莫名其妙的卡死(通常是第二天上班发现)，没蓝屏，也没有稳定的报错弹窗, 只偶尔会有几个应用程序报错提示OOM, 一旦出现基本只能长按电源键重启。 最后经过排查, 是Tuanjie内部自己的内存泄漏问题(Unity6主分支上目前也存在), 但通过一些特殊途径可能更高频的触发导致卡死, 在此记录一下排查的过程.">
+<meta property="og:description" content="这两天用Tuanjie开发项目, 挂机一段时间之后电脑总是莫名其妙的卡死(通常是第二天上班发现)，没蓝屏，也没有稳定的报错弹窗, 只偶尔会有几个应用程序报错提示OOM, 一旦出现基本只能长按电源键重启。 最后排查出是 Tuanjie 内存泄漏，Unity 6 也存在。但通过一些特殊途径可能更高频地触发内存泄漏，导致卡死，在此记录一下排查的过程。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/windows-log.png">
@@ -132,11 +132,11 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/2026/%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" selected>
+        <option value="zh-CN" data-href="/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/2026/%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
+        <option value="en" data-href="/en/">
           English
         </option>
       
@@ -176,7 +176,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -186,8 +186,9 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -278,10 +279,24 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>这两天用Tuanjie开发项目, 挂机一段时间之后电脑总是莫名其妙的卡死(通常是第二天上班发现)，没蓝屏，也没有稳定的报错弹窗, 只偶尔会有几个应用程序报错提示OOM, 一旦出现基本只能长按电源键重启。</p>
-<p>最后经过排查, 是Tuanjie内部自己的内存泄漏问题(Unity6主分支上目前也存在), 但通过一些特殊途径可能更高频的触发导致卡死, 在此记录一下排查的过程.</p>
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>这两天用Tuanjie开发项目, 挂机一段时间之后电脑总是莫名其妙的卡死(通常是第二天上班发现)，没蓝屏，也没有稳定的报错弹窗, 只偶尔会有几个应用程序报错提示OOM, 一旦出现基本只能长按电源键重启。</p>
+<p>最后排查出是 Tuanjie 内存泄漏，Unity 6 也存在。但通过一些特殊途径可能更高频地触发内存泄漏，导致卡死，在此记录一下排查的过程。</p>
+</div>
+
+<div class="post-intro-media">
+
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png" alt="tuanjielogo"></p>
+</div>
+
+</div>
+
 <span id="more"></span>
+
+
 
 <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
 <li>操作系统：Windows 11</li>
@@ -531,8 +546,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/" rel="prev" title="Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions">
-                  <i class="fa fa-angle-left"></i> Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions
+                <a href="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/" rel="prev" title="Unity 蒙皮包围盒与展示模型自适应缩放">
+                  <i class="fa fa-angle-left"></i> Unity 蒙皮包围盒与展示模型自适应缩放
                 </a>
             </div>
             <div class="post-nav-item">

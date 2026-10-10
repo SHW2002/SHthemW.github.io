@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/en/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="At the end of 2024, I built a small Unity auto-clicking tool. Every time I entered the game, I had to wait for the scene to load, then click through the connection, login, and entry buttons. This">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Evolution of Unity-Autorun-Tool (2026)">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2026/en-2026-08-12-The-Evolution-of-Unity-Autorun-Tool/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="At the end of 2024, I built a small Unity auto-clicking tool. Every time I entered the game, I had to wait for the scene to load, then click through the connection, login, and entry buttons. This">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.shenhanwen.top/images/post-covers/unity-autorun.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/images/posts/unity-autorun/autorun-cover.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/images/posts/unity-autorun/en/navigation-map.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/images/posts/unity-autorun/en/prepare-and-run.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/images/posts/unity-autorun/readme-mcp-panel.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/images/posts/unity-autorun/readme-navigation-panel.webp">
+<meta property="article:published_time" content="2026-08-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-11T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Automation">
+<meta property="article:tag" content="Editor tools">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Unity">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/images/post-covers/unity-autorun.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2026/en-2026-08-12-The-Evolution-of-Unity-Autorun-Tool/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2026/en-2026-08-12-The-Evolution-of-Unity-Autorun-Tool/","path":"en/2026/en-2026-08-12-The-Evolution-of-Unity-Autorun-Tool/","title":"The Evolution of Unity-Autorun-Tool (2026)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>The Evolution of Unity-Autorun-Tool (2026) | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/en/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/en/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/en/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/en/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-categories"><a href="/en/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-游戏开发"><a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>Game Development</a></li><li class="menu-item menu-item-摄影技术"><a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>Photography</a></li><li class="menu-item menu-item-ai技术"><a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI Technology</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>English</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-08-12-The-Evolution-of-Unity-Autorun-Tool/" selected>
+          English
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#The-first-version-handled-fixed-steps"><span class="nav-number">1.</span> <span class="nav-text">The first version handled fixed steps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#From-operation-sequences-to-interface-relationships"><span class="nav-number">2.</span> <span class="nav-text">From operation sequences to interface relationships</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AI-helps-prepare-the-graph-the-program-runs-everyday-navigation"><span class="nav-number">3.</span> <span class="nav-text">AI helps prepare the graph; the program runs everyday navigation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Completing-a-click-and-completing-navigation-are-different-events"><span class="nav-number">4.</span> <span class="nav-text">Completing a click and completing navigation are different events</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Editor-and-external-entry-points-share-the-same-execution-capabilities"><span class="nav-number">5.</span> <span class="nav-text">Editor and external entry points share the same execution capabilities</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Setup-and-use"><span class="nav-number">6.</span> <span class="nav-text">Setup and use</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Open-the-tool-from-the-editor"><span class="nav-number">6.1.</span> <span class="nav-text">Open the tool from the editor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Prepare-a-path-then-select-a-target"><span class="nav-number">6.2.</span> <span class="nav-text">Prepare a path, then select a target</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inspect-UI-state-after-arrival"><span class="nav-number">6.3.</span> <span class="nav-text">Inspect UI state after arrival</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-navigation-and-assertions-can-establish"><span class="nav-number">7.</span> <span class="nav-text">What navigation and assertions can establish</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/en/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/en/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/en/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2026/en-2026-08-12-The-Evolution-of-Unity-Autorun-Tool/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="The Evolution of Unity-Autorun-Tool (2026) | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          The Evolution of Unity-Autorun-Tool (2026)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-08-12 00:00:00" itemprop="dateCreated datePublished" datetime="2026-08-12T00:00:00+08:00">2026-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">AI技术</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>At the end of 2024, I built a small Unity auto-clicking tool. Every time I entered the game, I had to wait for the scene to load, then click through the connection, login, and entry buttons. This took about half a minute. It was simple, but having to watch the whole process was inconvenient.</p>
+<p>As AI technology developed, I felt this automation could provide useful scaffolding for AI agents. I gradually added UI navigation, an editor entry point, and a command-line interface, with the goal of delivering an MCP tool for AI agents.</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/images/post-covers/unity-autorun.webp" alt="A collage of the Unity automation tool's MCP and UI navigation panels"></a></p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<p>Initially, I only wanted presets to handle those clicks. As more interfaces needed testing, the tool grew to let me prepare paths between them, select a target during everyday debugging, and have the program handle the navigation in between.</p>
+<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/images/posts/unity-autorun/autorun-cover.webp" alt="The Unity Autorun Tool editor window, showing MCP Bridge status and a process list with process IDs hidden" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
+<p><em>Cropped from an actual interface screenshot in the README. The upper part of the window is retained, and process IDs are hidden. Click the image to open the project repository.</em></p>
+<h2 id="The-first-version-handled-fixed-steps"><a href="#The-first-version-handled-fixed-steps" class="headerlink" title="The first version handled fixed steps"></a>The first version handled fixed steps</h2><p>The first version’s basic features were completed in November 2024, followed by actions to run before exiting and usage instructions. Each preset stores a sequence of operations, with these main fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Button name</td>
+<td>Locate the object to operate on</td>
+</tr>
+<tr>
+<td>Button text</td>
+<td>Distinguish buttons with the same name when necessary</td>
+</tr>
+<tr>
+<td>Wait time</td>
+<td>Wait for a scene or interface to become ready</td>
+</tr>
+<tr>
+<td>UI framework</td>
+<td>Select the handling for UGUI or FairyGUI</td>
+</tr>
+</tbody></table>
+<p>Running the tool enters Play Mode and then executes the configured operations in order. The Stop actions added later run before stopping the game, such as leaving the current room before ending a debugging session.</p>
+<p>This version did not shorten the game’s loading time. It removed the need for me to perform several actions while waiting, so I could do something else during loading.</p>
+<p>The same mechanism was later used in several projects. Their login flows differed, but adjusting the presets avoided having to write another set of editor buttons for each project.</p>
+<h2 id="From-operation-sequences-to-interface-relationships"><a href="#From-operation-sequences-to-interface-relationships" class="headerlink" title="From operation sequences to interface relationships"></a>From operation sequences to interface relationships</h2><p>Sequential presets work well for fixed entry paths, but two problems emerge as the number of interfaces grows.</p>
+<p>First, multiple targets share the first part of a flow. Opening the inventory and opening settings both require reaching the main interface. Copying a complete sequence for each target means a change to the login flow must be propagated across many presets.</p>
+<p>Second, execution does not always start from the same place. The game may not yet be in Play Mode, it may already be at the main interface, or it may be displaying a popup. A list of button names alone struggles to express these differences.</p>
+<p>I therefore started describing the UI with a navigation graph, separating the information into views, controls, transitions, and routes:</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Information recorded</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>View</td>
+<td>An identifiable interface or panel</td>
+</tr>
+<tr>
+<td>Control</td>
+<td>A button or another control used for navigation</td>
+</tr>
+<tr>
+<td>Transition</td>
+<td>An operation that takes the UI from one view to another</td>
+</tr>
+<tr>
+<td>Route</td>
+<td>A reusable navigation path</td>
+</tr>
+</tbody></table>
+<img src="/images/posts/unity-autorun/en/navigation-map.svg" alt="After logging in and reaching the main interface, navigation can branch to the inventory or settings" width="540" style="display:block;width:540px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>A simplified illustration with interface names independent of any particular project. The shared login flow only needs to be maintained once.</em></p>
+<p>An edge in the graph cannot merely say that the inventory can be opened from the main interface. It must also identify the control to use, the condition that confirms arrival, and whether the prerequisites for execution are met in the current environment.</p>
+<p>Finding a call that opens an interface in the source code establishes a possible connection, but it does not mean the automation tool can immediately follow it. The entry may be restricted by level requirements, or an asynchronous operation may need to finish first. These gaps must remain visible rather than being treated as verified paths.</p>
+<h2 id="AI-helps-prepare-the-graph-the-program-runs-everyday-navigation"><a href="#AI-helps-prepare-the-graph-the-program-runs-everyday-navigation" class="headerlink" title="AI helps prepare the graph; the program runs everyday navigation"></a>AI helps prepare the graph; the program runs everyday navigation</h2><p>Projects contain many UI calls, and manually assembling a complete navigation graph takes effort. I use AI to help analyze interface relationships in the source code, organize candidates into navigation data, and then check them against what the tool can recognize and execute.</p>
+<p>The work is divided into two stages:</p>
+<ul>
+<li>Preparation: understand the code and interface semantics, then generate or revise the navigation graph.</li>
+<li>Execution: read the prepared graph, run defined steps, wait for results, and report status.</li>
+</ul>
+<img src="/images/posts/unity-autorun/en/prepare-and-run.svg" alt="AI helps prepare the navigation graph; the editor and command line execute using the same navigation data" width="540" style="display:block;width:540px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p>Once a path is ready, clicking an editor button or running a command does not require the model to make a fresh decision at every step. Here, “offline navigation” means that execution does not depend on AI inference; the game itself may still need a server connection.</p>
+<p>This also defines the maintenance work: update the relevant data when interface structures or transition logic change, and reuse paths that remain unchanged. The navigation graph is tool data that must be maintained alongside the project, rather than something generated once and valid forever.</p>
+<h2 id="Completing-a-click-and-completing-navigation-are-different-events"><a href="#Completing-a-click-and-completing-navigation-are-different-events" class="headerlink" title="Completing a click and completing navigation are different events"></a>Completing a click and completing navigation are different events</h2><p>Early sequential presets relied mainly on wait times, but fixed delays have clear limitations. As machine load, resource caching, and network responses change, the same two-second wait may be too short or unnecessarily long.</p>
+<p>Navigation execution is better organized around state:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Confirm the starting view</span><br><span class="line">    ↓</span><br><span class="line">Wait until the target control can be operated</span><br><span class="line">    ↓</span><br><span class="line">Perform the click</span><br><span class="line">    ↓</span><br><span class="line">Wait until the target view meets its arrival condition</span><br><span class="line">    ↓</span><br><span class="line">Continue to the next step, or stop and report the reason</span><br></pre></td></tr></table></figure>
+
+<p>Sending a click only means the operation was performed; it does not mean the target panel is open. Conversely, the existence of a GameObject does not necessarily mean its interface is visible or interactive. Arrival checks must match the UI’s actual lifecycle.</p>
+<p>Long flows also need cancellation and clear running, completed, and failed states. Otherwise, when execution gets stuck, the user can only guess whether it is waiting for resources, unable to find a button, or missing a prerequisite.</p>
+<h2 id="Editor-and-external-entry-points-share-the-same-execution-capabilities"><a href="#Editor-and-external-entry-points-share-the-same-execution-capabilities" class="headerlink" title="Editor and external entry points share the same execution capabilities"></a>Editor and external entry points share the same execution capabilities</h2><p>The tool later exposed operations inside Unity through a local HTTP Bridge, with a separate MCP Server connecting external clients. The editor panel and external entry points ultimately use the same operations, avoiding separate implementations of the click logic.</p>
+<p>This boundary has practical consequences: network request handling and Unity object access run in different execution contexts. Access to scene objects, UI, and editor state still needs to return to Unity’s main thread. The Bridge passes each request to the appropriate execution context and returns the result.</p>
+<p>Entering Play Mode is also not an instantaneous call. Tasks must survive the mode switch and initialization, so an external caller is better served by starting a task and querying its progress than by waiting indefinitely in a synchronous request.</p>
+<p>Most developers do not need to understand these interfaces. For everyday use, searching for a target interface in the window and running navigation is enough. The external interfaces provide entry points for batch debugging and further automated testing.</p>
+<h2 id="Setup-and-use"><a href="#Setup-and-use" class="headerlink" title="Setup and use"></a>Setup and use</h2><p>The tool provides installation through UPM, Bridge and MCP management inside the editor, and runtime UI state inspection. You can set it up from the editor panel, then run navigation and state checks.</p>
+<h3 id="Open-the-tool-from-the-editor"><a href="#Open-the-tool-from-the-editor" class="headerlink" title="Open the tool from the editor"></a>Open the tool from the editor</h3><p>The tool requires Unity 2021.3 or later. Install it through Package Manager using <code>Add package from git URL...</code>:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/SHW2002/Unity-Autorun-MCP.git</span><br></pre></td></tr></table></figure>
+
+<p>After installation, open <code>Window &gt; Auto Run Window</code>. If you only use manual presets, you can configure Go and Stop actions directly. CLI or MCP integration also requires the .NET 8 SDK.</p>
+<img src="/images/posts/unity-autorun/readme-mcp-panel.webp" alt="The MCP panel from the README, showing Bridge status, process checks, and installation controls; project paths and process IDs are hidden" width="500" style="display:block;width:500px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>The MCP panel from the README, with installation paths and process IDs hidden.</em></p>
+<p><code>Publish MCP</code> generates the server application, <code>Install MCP</code> installs connection settings for the selected client, and <code>Install Skill</code> installs the accompanying workflow. Once the Bridge panel shows <code>Running</code> and recognizes the client process, generate or update the navigation graph.</p>
+<p>The Bridge port may change if a port is occupied. External entry points read the endpoint published by the current Unity project; the example port <code>17331</code> should not be treated as a permanent fixed port for every project.</p>
+<h3 id="Prepare-a-path-then-select-a-target"><a href="#Prepare-a-path-then-select-a-target" class="headerlink" title="Prepare a path, then select a target"></a>Prepare a path, then select a target</h3><p>The navigation graph is saved as <code>Gen/ui-nav-map.json</code>. With the accompanying Skill, generate or update it using:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$unity-autorun gen-nav</span><br></pre></td></tr></table></figure>
+
+<p>Once preparation is complete, search for and select a target in <code>Navigation AutoRun</code>, then click <code>Go!</code>. If Unity has not yet entered Play Mode, the tool starts the game before continuing navigation.</p>
+<img src="/images/posts/unity-autorun/readme-navigation-panel.webp" alt="The Navigation AutoRun panel from the README, with target search, selection, and a Go button; project-specific interface names are hidden" width="520" style="display:block;width:520px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>Cropped from the same README screenshot, with project-specific interface names hidden.</em></p>
+<p>Calling <code>start_ui_navigation</code> from an external client returns a <code>navigationId</code>. Use <code>get_ui_navigation_status</code> to query the final state. This keeps startup, login, and intermediate waits inside the tool, so the external caller does not need to keep listing buttons again.</p>
+<p>The README also provides <code>Preview Nav Map</code>, which uses the bundled Graphviz to render an interactive local HTML page. It supports searching for views, inspecting adjacent paths, zooming, and panning. If navigation fails, first check whether the target is reachable, then whether the relevant edge has the conditions needed to execute its operation.</p>
+<h3 id="Inspect-UI-state-after-arrival"><a href="#Inspect-UI-state-after-arrival" class="headerlink" title="Inspect UI state after arrival"></a>Inspect UI state after arrival</h3><p><code>get_ui_state</code> reads text, active state, and interaction properties from UGUI and TextMeshPro controls. <code>wait_for_ui_state</code> checks a condition until it is met or the request times out. Support for clicking FairyGUI buttons does not imply that every FairyGUI control supports the same typed state inspection; use the capabilities the tool actually provides.</p>
+<p>For example, to wait for a music toggle to turn on, send the following request to the Bridge:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;check-music&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wait_for_ui_state&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;MusicToggle&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;types&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Toggle&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;property&quot;</span><span class="punctuation">:</span> <span class="string">&quot;isOn&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;comparison&quot;</span><span class="punctuation">:</span> <span class="string">&quot;equals&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expected&quot;</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;timeoutMilliseconds&quot;</span><span class="punctuation">:</span> <span class="number">10000</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>Unlike waiting for a fixed number of seconds, this call has a specific success condition. On timeout, it returns the last observed value. Restricting queries by control name, scope, and type also makes it easier to identify which object was checked.</p>
+<h2 id="What-navigation-and-assertions-can-establish"><a href="#What-navigation-and-assertions-can-establish" class="headerlink" title="What navigation and assertions can establish"></a>What navigation and assertions can establish</h2><p>The most common use of this tool in my everyday work is still entering the game quickly and reaching the interface I need to debug. It reduces repetitive work along that path.</p>
+<p>After arrival, button states, data correctness, animations, and network behavior still need their own verification. Successful navigation cannot be equated with a passing functional test, nor does it prove that the visuals are correct on every device.</p>
+<p>Runtime assertions assign “where to go” to routes and “what to check after arrival” to state conditions. When an entry point changes, only the navigation needs updating, while business checks can be maintained independently. Even when control text and state satisfy their conditions, they still cannot directly establish that animations and visuals are correct on every device.</p>
+<p>From the first auto-clicking version to the later navigation graph, the requirements always came from small, recurring operations. Configuring the most stable parts first, then adding state checks and external interfaces as usage expanded, better matched this tool’s evolution than planning a complete testing platform from the start.</p>
+<p>Project: <a href="https://github.com/SHW2002/Unity-Autorun-MCP">Unity-Autorun-MCP</a>. The repository is updated continuously; consult the README for the corresponding version for installation instructions and interface names.</p>
+<p>The tool screenshots come from the repository’s <a href="https://github.com/SHW2002/Unity-Autorun-MCP/blob/master/Documentation~/images/auto-run-window.png">original README image</a>. They have been cropped by interface section, with sensitive details hidden as described above.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/en/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/en/tags/MCP/" rel="tag"># MCP</a>
+              <a href="/en/tags/Editor-tools/" rel="tag"># Editor tools</a>
+              <a href="/en/tags/Automation/" rel="tag"># Automation</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/" rel="prev" title="Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions">
+                  <i class="fa fa-angle-left"></i> Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

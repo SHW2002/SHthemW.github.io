@@ -27,6 +27,7 @@
 <meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
 <meta property="og:description" content="最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 —-它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.shenhanwen.top/images/post-covers/mecanim-pass-through.webp">
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260304200813244.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260304210108799.png">
@@ -46,7 +47,7 @@
 <meta property="article:modified_time" content="2026-03-04T11:31:51.000Z">
 <meta property="article:author" content="HanWen">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png">
+<meta name="twitter:image" content="https://www.shenhanwen.top/images/post-covers/mecanim-pass-through.webp">
 
 
 <link rel="canonical" href="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/">
@@ -144,11 +145,11 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/2026/%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/" selected>
+        <option value="zh-CN" data-href="/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/2026/%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/">
+        <option value="en" data-href="/en/">
           English
         </option>
       
@@ -188,7 +189,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -198,8 +199,9 @@
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">25</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -290,10 +292,24 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 —-它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.</p>
-<img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;">
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>最近公司上线了一个休闲小游戏, 我操刀了游戏的动画部分, 也在项目里摸索出了一套基础但可用的动作同步方案. 它基于广播状态实现同步, 原理并不复杂. 但所谓适合的才是最好的 —-它对大多数非延迟敏感的小游戏来说都已经够用, 且能在不依赖三方插件的情况下快速搭建, 因此还是想分享一下构建它的思路.</p>
+</div>
+
+<div class="post-intro-media">
+
+<img src="/images/post-covers/mecanim-pass-through.webp" alt="Mecanim 透传状态图与过渡设置拼图">
+
+</div>
+
+</div>
 
 <span id="more"></span>
+
+<img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/image-20260305114052767.png" alt="image-20260305114052767" style="zoom:33%;">
 
 <hr>
 <h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>Unity自带的动画系统称为Mecanim, 这是一种基于有限状态机的动画系统; 每一个Layer都会维持一个活跃的状态 (State), 而状态持有动画片段 (motion), 活跃状态的动画片段会被播放. 多个Layer按照遮罩 (Mask) 层层叠加, 达到最终的动画效果.</p>
@@ -518,8 +534,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/en/2026/en-2026-03-04-Implementing-Animation-Synchronization-with-Pass-Through-States-in-Unity-Mecanim/" rel="prev" title="Implementing Action Synchronization with Pass-Through States in Unity Mecanim">
-                  <i class="fa fa-angle-left"></i> Implementing Action Synchronization with Pass-Through States in Unity Mecanim
+                <a href="/zh-CN/2026/%E6%89%A9%E5%B1%95Luban%E5%AF%BC%E8%A1%A8%E6%B5%81%E7%A8%8B-%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%B8%9A%E5%8A%A1ID/" rel="prev" title="扩展 Luban 导表流程：自动生成业务 ID">
+                  <i class="fa fa-angle-left"></i> 扩展 Luban 导表流程：自动生成业务 ID
                 </a>
             </div>
             <div class="post-nav-item">
