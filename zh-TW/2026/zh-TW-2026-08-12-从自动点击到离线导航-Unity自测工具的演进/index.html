@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/zh-TW/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="2024 年底，我做了一個很小的 Unity 自動點擊工具：之前每次進遊戲都要等待場景加載，再依次點幾個連接、登錄和進入遊戲的按鈕。這段流程大約持續半分鐘，操作不復雜，卻要我一直盯著，並不是很方便。 後來隨著AI技術的發展，感覺這一套自動工具如果給AI做為腳手架會大有可為。因此逐步增加了 UI 導航、編輯器入口和命令行調用接口。正式以一個AI Agent MCP為目標交付。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自動測試工具Unity-Autorun-Tool的演進(2026)">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-08-12-%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="2024 年底，我做了一個很小的 Unity 自動點擊工具：之前每次進遊戲都要等待場景加載，再依次點幾個連接、登錄和進入遊戲的按鈕。這段流程大約持續半分鐘，操作不復雜，卻要我一直盯著，並不是很方便。 後來隨著AI技術的發展，感覺這一套自動工具如果給AI做為腳手架會大有可為。因此逐步增加了 UI 導航、編輯器入口和命令行調用接口。正式以一個AI Agent MCP為目標交付。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://www.shenhanwen.top/images/post-covers/unity-autorun.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/autorun-cover.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/navigation-map.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/prepare-and-run.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/readme-mcp-panel.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/readme-navigation-panel.webp">
+<meta property="article:published_time" content="2026-08-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-11T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="编辑器工具">
+<meta property="article:tag" content="自动化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/images/post-covers/unity-autorun.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-08-12-%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-08-12-%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/","path":"zh-TW/2026/zh-TW-2026-08-12-从自动点击到离线导航-Unity自测工具的演进/","title":"自動測試工具Unity-Autorun-Tool的演進(2026)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>自動測試工具Unity-Autorun-Tool的演進(2026) | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zh-TW/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/zh-TW/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/zh-TW/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/zh-TW/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-categories"><a href="/zh-TW/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-游戏开发"><a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>遊戲開發</a></li><li class="menu-item menu-item-摄影技术"><a href="/zh-TW/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>攝影技術</a></li><li class="menu-item menu-item-ai技术"><a href="/zh-TW/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI 技術</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>繁體中文</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical aria-label="選擇語言">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/">
+          簡體中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-08-12-The-Evolution-of-Unity-Autorun-Tool/">
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-08-12-%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/" selected>
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%89%88%E5%8F%AA%E8%99%95%E7%90%86%E5%9B%BA%E5%AE%9A%E6%AD%A5%E9%A9%9F"><span class="nav-number">1.</span> <span class="nav-text">第一版只處理固定步驟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%9E%E6%93%8D%E4%BD%9C%E5%BA%8F%E5%88%97%E5%88%B0%E7%95%8C%E9%9D%A2%E9%97%9C%E4%BF%82"><span class="nav-number">2.</span> <span class="nav-text">從操作序列到界面關係</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AI-%E5%8F%83%E8%88%87%E6%BA%96%E5%82%99%EF%BC%8C%E6%97%A5%E5%B8%B8%E5%B0%8E%E8%88%AA%E7%94%B1%E7%A8%8B%E5%BA%8F%E5%9F%B7%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">AI 參與準備，日常導航由程序執行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%BB%9E%E6%93%8A%E5%AE%8C%E6%88%90%E8%88%87%E5%B0%8E%E8%88%AA%E5%AE%8C%E6%88%90%E6%98%AF%E5%85%A9%E4%BB%B6%E4%BA%8B"><span class="nav-number">4.</span> <span class="nav-text">點擊完成與導航完成是兩件事</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B7%A8%E8%BC%AF%E5%99%A8%E5%85%A5%E5%8F%A3%E8%88%87%E5%A4%96%E9%83%A8%E5%85%A5%E5%8F%A3%E5%85%B1%E7%94%A8%E5%9F%B7%E8%A1%8C%E8%83%BD%E5%8A%9B"><span class="nav-number">5.</span> <span class="nav-text">編輯器入口與外部入口共用執行能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%85%A5%E8%88%87%E4%BD%BF%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">接入與使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%9E%E7%B7%A8%E8%BC%AF%E5%99%A8%E9%80%B2%E5%85%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">6.1.</span> <span class="nav-text">從編輯器進入工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%96%E5%82%99%E5%A5%BD%E8%B7%AF%E5%BE%91%E5%BE%8C%E9%81%B8%E6%93%87%E7%9B%AE%E6%A8%99"><span class="nav-number">6.2.</span> <span class="nav-text">準備好路徑後選擇目標</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%B0%E9%81%94%E4%B9%8B%E5%BE%8C%E6%AA%A2%E6%9F%A5-UI-%E7%8B%80%E6%85%8B"><span class="nav-number">6.3.</span> <span class="nav-text">到達之後檢查 UI 狀態</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8E%E8%88%AA%E8%88%87%E6%96%B7%E8%A8%80%E8%83%BD%E5%A4%A0%E8%AD%89%E6%98%8E%E4%BB%80%E9%BA%BC"><span class="nav-number">7.</span> <span class="nav-text">導航與斷言能夠證明什麼</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen" src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">遊戲客戶端開發工程師, 風光攝影和星空愛好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zh-TW/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zh-TW/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zh-TW/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-08-12-%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="自動測試工具Unity-Autorun-Tool的演進(2026) | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content>
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          自動測試工具Unity-Autorun-Tool的演進(2026)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2026-08-12 00:00:00" itemprop="dateCreated datePublished" datetime="2026-08-12T00:00:00+08:00">2026-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zh-TW/categories/AI%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">AI技術</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>2024 年底，我做了一個很小的 Unity 自動點擊工具：之前每次進遊戲都要等待場景加載，再依次點幾個連接、登錄和進入遊戲的按鈕。這段流程大約持續半分鐘，操作不復雜，卻要我一直盯著，並不是很方便。</p>
+<p>後來隨著AI技術的發展，感覺這一套自動工具如果給AI做為腳手架會大有可為。因此逐步增加了 UI 導航、編輯器入口和命令行調用接口。正式以一個AI Agent MCP為目標交付。</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/images/post-covers/unity-autorun.webp" alt="Unity 自測工具的 MCP 面板與 UI 導航面板拼圖"></a></p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<p>最初我只想把這些點擊交給預設。後來要自測的界面越來越多，現在可以先準備好界面之間的路徑，日常調試時直接選擇目標，讓程序完成中間的導航。</p>
+<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/zh-CN/2026/从自动点击到离线导航-Unity自测工具的演进/autorun-cover.webp" alt="Unity Autorun Tool 的實際編輯器窗口，展示 MCP Bridge 運行狀態與進程列表，進程 ID 已隱藏" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
+<p><em>裁取自 README 中的實際界面截圖，保留窗口上部並隱藏進程 ID；點擊圖片可打開項目倉庫。</em></p>
+<h2 id="第一版只處理固定步驟"><a href="#第一版只處理固定步驟" class="headerlink" title="第一版只處理固定步驟"></a>第一版只處理固定步驟</h2><p>初版在 2024 年 11 月完成基本功能，隨後補充退出前的動作和使用說明。一個預設保存一組順序操作，每項主要包含：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>按鈕名稱</td>
+<td>定位要操作的對象</td>
+</tr>
+<tr>
+<td>按鈕文字</td>
+<td>必要時輔助區分同名按鈕</td>
+</tr>
+<tr>
+<td>等待時間</td>
+<td>等待場景或界面準備完成</td>
+</tr>
+<tr>
+<td>UI 框架</td>
+<td>選擇 UGUI 或 FairyGUI 的處理方式</td>
+</tr>
+</tbody></table>
+<p>運行工具之後，進入 Play Mode，再按順序執行配置。後來增加的 Stop 動作則在停止運行之前執行，例如先退出當前房間，再結束調試。</p>
+<p>這版工具沒有縮短遊戲自身的加載時間。它省掉的是等待期間必須由人完成的幾次操作，讓我能夠在加載時去做別的事情。</p>
+<p>同一套機制後來用於幾個不同工程。項目之間的登錄流程雖然不一樣，但只要調整預設，就不必為每個工程再寫一套編輯器按鈕。</p>
+<h2 id="從操作序列到界面關係"><a href="#從操作序列到界面關係" class="headerlink" title="從操作序列到界面關係"></a>從操作序列到界面關係</h2><p>順序預設適合固定入口，界面變多之後卻會暴露兩個問題。</p>
+<p>第一，多個目標會共享前半段流程。例如打開背包與打開設置都要先進入主界面，為每個目標複製一份完整序列，會讓登錄流程的改動傳播到很多預設。</p>
+<p>第二，執行起點不一定相同。有時還未進入 Play Mode，有時已經在主界面，有時正停在一個彈窗裡。只有一串按鈕名稱，很難表達這些差異。</p>
+<p>因此我開始用導航圖描述 UI，把信息拆成界面、控件、跳轉和路由：</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>記錄的內容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>View</td>
+<td>一個可以識別的界面或面板</td>
+</tr>
+<tr>
+<td>Control</td>
+<td>導航需要操作的按鈕等控件</td>
+</tr>
+<tr>
+<td>Transition</td>
+<td>從某個界面到另一個界面的操作關係</td>
+</tr>
+<tr>
+<td>Route</td>
+<td>一條可複用的導航路徑</td>
+</tr>
+</tbody></table>
+<img src="/zh-CN/2026/从自动点击到离线导航-Unity自测工具的演进/navigation-map.svg" alt="登錄界面進入主界面後，可以分別導航到背包或設置" width="540" style="display:block;width:540px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>簡化示意，界面名稱與具體項目無關。共享的登錄流程只需要維護一次。</em></p>
+<p>圖裡的一條邊也不能只寫“主界面可以打開背包”。還要知道通過哪個控件執行、到達後用什麼條件確認，以及在當前環境下是否具備執行前提。</p>
+<p>靜態代碼裡存在一次打開界面的調用，說明存在可達關係，但不代表自動化工具馬上就能走通。例如入口可能受等級條件限制，或者必須先完成一次異步操作。這些缺口需要保留下來，不能當作已經驗證的路徑。</p>
+<h2 id="AI-參與準備，日常導航由程序執行"><a href="#AI-參與準備，日常導航由程序執行" class="headerlink" title="AI 參與準備，日常導航由程序執行"></a>AI 參與準備，日常導航由程序執行</h2><p>項目裡有很多 UI 調用，手工整理完整導航圖本身也有成本。我讓 AI 輔助分析源碼中的界面關係，把候選整理成導航數據，再根據工具能夠識別和執行的條件進行檢查。</p>
+<p>這裡把兩類工作分開：</p>
+<ul>
+<li>準備階段理解代碼與界面語義，生成或修訂導航圖。</li>
+<li>執行階段讀取已準備的圖，運行確定的步驟，等待結果並報告狀態。</li>
+</ul>
+<img src="/zh-CN/2026/从自动点击到离线导航-Unity自测工具的演进/prepare-and-run.svg" alt="AI 輔助準備導航圖，編輯器和命令行複用同一份導航數據執行" width="540" style="display:block;width:540px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p>路徑已經具備後，點擊編輯器按鈕或通過命令行運行，不需要再讓模型為每一步重新做決定。這裡說的“離線導航”是指執行過程不依賴 AI 推理，遊戲本身仍然可能需要連接服務器。</p>
+<p>這也給維護劃出了範圍：界面結構或跳轉邏輯改動時更新相應數據；沒有變化的路徑繼續複用。導航圖是一份需要隨項目維護的工具數據，並不是生成一次就永遠有效。</p>
+<h2 id="點擊完成與導航完成是兩件事"><a href="#點擊完成與導航完成是兩件事" class="headerlink" title="點擊完成與導航完成是兩件事"></a>點擊完成與導航完成是兩件事</h2><p>早期順序預設主要依賴等待時間，但固定延遲有明顯侷限。機器負載、資源緩存和網絡響應變化後，同樣等兩秒可能太短，也可能白等很久。</p>
+<p>導航執行更適合圍繞狀態組織：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">确认起始界面</span><br><span class="line">    ↓</span><br><span class="line">等待目标控件可以操作</span><br><span class="line">    ↓</span><br><span class="line">执行点击</span><br><span class="line">    ↓</span><br><span class="line">等待目标界面满足到达条件</span><br><span class="line">    ↓</span><br><span class="line">继续下一步，或结束并报告原因</span><br></pre></td></tr></table></figure>
+
+<p>發送點擊只代表執行過操作，不代表目標面板已經打開。反過來，某個 GameObject 已經存在，也未必表示界面已經可見、可交互。到達判定必須與 UI 的實際生命週期對應。</p>
+<p>長流程還需要能被取消，並有明確的運行中、完成和失敗狀態。否則一旦卡在中間，使用者只能猜測是在等資源、沒有找到按鈕，還是某個前置條件沒有滿足。</p>
+<h2 id="編輯器入口與外部入口共用執行能力"><a href="#編輯器入口與外部入口共用執行能力" class="headerlink" title="編輯器入口與外部入口共用執行能力"></a>編輯器入口與外部入口共用執行能力</h2><p>工具後來通過本地 HTTP Bridge 暴露 Unity 內部操作，再由獨立的 MCP Server 對接外部客戶端。編輯器面板與外部入口最終使用同一套操作能力，不需要各自維護一套點擊邏輯。</p>
+<p>這個邊界也有實際意義：網絡請求處理與 Unity 對象訪問處在不同的執行環境，訪問場景對象、UI 和編輯器狀態的部分仍然需要回到 Unity 主線程。Bridge 負責把請求交給合適的執行位置，再把結果返回出去。</p>
+<p>進入 Play Mode 也不是一個瞬間完成的調用。執行任務需要跨過模式切換和初始化過程，所以外部調用更適合啟動一個任務，再查詢它的進度，而不是讓一次同步請求無限等下去。</p>
+<p>普通開發者未必需要了解這些接口。日常使用時，在窗口裡搜索目標界面並運行就夠了；外部接口則給批量調試和進一步的自測留下入口。</p>
+<h2 id="接入與使用"><a href="#接入與使用" class="headerlink" title="接入與使用"></a>接入與使用</h2><p>工具提供 UPM 安裝入口、編輯器內的 Bridge 與 MCP 管理，以及運行時 UI 狀態讀取，可以從編輯器面板完成接入，再執行導航和狀態檢查。</p>
+<h3 id="從編輯器進入工具"><a href="#從編輯器進入工具" class="headerlink" title="從編輯器進入工具"></a>從編輯器進入工具</h3><p>工具要求 Unity 2021.3 或更新版本，通過 Package Manager 的 <code>Add package from git URL...</code> 安裝：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/SHW2002/Unity-Autorun-MCP.git</span><br></pre></td></tr></table></figure>
+
+<p>安裝後打開 <code>Window &gt; Auto Run Window</code>。僅使用手動預設時，可以直接配置 Go 與 Stop 動作；接入 CLI 或 MCP 時，還需要 .NET 8 SDK。</p>
+<img src="/zh-CN/2026/从自动点击到离线导航-Unity自测工具的演进/readme-mcp-panel.webp" alt="README 中的 MCP 面板，展示 Bridge 狀態、進程檢查與安裝入口，項目路徑和進程 ID 已遮蓋" width="500" style="display:block;width:500px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>README 中的 MCP 面板，安裝路徑與進程 ID 已隱藏。</em></p>
+<p><code>Publish MCP</code> 生成服務端程序，<code>Install MCP</code> 為所選客戶端安裝連接配置，<code>Install Skill</code> 安裝配套工作流。Bridge 面板顯示 <code>Running</code>，並能識別客戶端進程後，再生成或更新導航圖。</p>
+<p>Bridge 的端口可能因為佔用而變化。外部入口讀取當前 Unity 項目發佈的端點，不應把示例裡的 <code>17331</code> 當成所有工程永久固定的端口。</p>
+<h3 id="準備好路徑後選擇目標"><a href="#準備好路徑後選擇目標" class="headerlink" title="準備好路徑後選擇目標"></a>準備好路徑後選擇目標</h3><p>導航圖保存為 <code>Gen/ui-nav-map.json</code>。使用配套 Skill 時，通過下面的命令生成或更新：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$unity-autorun gen-nav</span><br></pre></td></tr></table></figure>
+
+<p>準備完成後，在 <code>Navigation AutoRun</code> 中搜索並選擇目標，再點擊 <code>Go!</code>。如果 Unity 尚未進入 Play Mode，工具會先啟動遊戲，再繼續執行導航。</p>
+<img src="/zh-CN/2026/从自动点击到离线导航-Unity自测工具的演进/readme-navigation-panel.webp" alt="README 中的 Navigation AutoRun 面板，包含目標搜索、選擇與 Go 按鈕，項目界面名稱已遮蓋" width="520" style="display:block;width:520px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>裁取自同一張 README 截圖，項目專用界面名稱已隱藏。</em></p>
+<p>外部客戶端調用 <code>start_ui_navigation</code> 後會得到 <code>navigationId</code>，再用 <code>get_ui_navigation_status</code> 查詢終態。這讓啟動、登錄和中間等待留在工具內部執行，外部不必不停地重新列舉按鈕。</p>
+<p>README 還提供 <code>Preview Nav Map</code>：用隨包附帶的 Graphviz 渲染可交互的本地 HTML，支持搜索界面、查看相鄰路徑、縮放和平移。導航失敗時，可以先檢查目標是否可達，再檢查那條邊是否具備實際操作條件。</p>
+<h3 id="到達之後檢查-UI-狀態"><a href="#到達之後檢查-UI-狀態" class="headerlink" title="到達之後檢查 UI 狀態"></a>到達之後檢查 UI 狀態</h3><p><code>get_ui_state</code> 可以讀取 UGUI 與 TextMeshPro 控件的文本、活動狀態和交互屬性，<code>wait_for_ui_state</code> 則持續檢查條件直到滿足或超時。支持 FairyGUI 的按鈕點擊，並不表示所有 FairyGUI 控件都具備相同的類型化狀態讀取能力，需要按工具支持範圍使用。</p>
+<p>例如等待一個音樂開關打開，可以向 Bridge 提交如下請求：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;check-music&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wait_for_ui_state&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;MusicToggle&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;types&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Toggle&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;property&quot;</span><span class="punctuation">:</span> <span class="string">&quot;isOn&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;comparison&quot;</span><span class="punctuation">:</span> <span class="string">&quot;equals&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expected&quot;</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;timeoutMilliseconds&quot;</span><span class="punctuation">:</span> <span class="number">10000</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>與固定等待幾秒不同，這個調用有具體的成功條件；超時時會返回最後觀察到的值。查詢時限定控件名稱、範圍與類型，也更容易定位到底檢查了哪一個對象。</p>
+<h2 id="導航與斷言能夠證明什麼"><a href="#導航與斷言能夠證明什麼" class="headerlink" title="導航與斷言能夠證明什麼"></a>導航與斷言能夠證明什麼</h2><p>這套工具在我日常工作中最常用的場景，仍然是快速進入遊戲併到達待調試界面。它減少的是操作路徑上的重複勞動。</p>
+<p>到達界面之後，按鈕狀態、數據正確性、動效以及網絡行為仍然需要各自的驗證。導航成功不能直接等同於功能測試通過，也不能證明所有設備上的視覺表現都正確。</p>
+<p>運行時斷言把“到哪裡”和“到了之後檢查什麼”分別交給路由與狀態條件。這樣頁面入口變動時只修改導航，業務判斷也可以獨立維護；但控件文本與狀態符合條件，仍然不能直接證明動效和所有設備上的視覺表現都正確。</p>
+<p>從第一版自動點擊到後來的導航圖，需求始終來自重複發生的小操作。先把最穩定的部分配置化，再隨著使用範圍擴大補充狀態和外部接口，比一開始就規劃完整測試平臺更符合這次工具的演進過程。</p>
+<p>項目地址：<a href="https://github.com/SHW2002/Unity-Autorun-MCP">Unity-Autorun-MCP</a>。倉庫持續更新，安裝方式和接口名稱以對應版本的 README 為準。</p>
+<p>工具界面配圖來自倉庫的 <a href="https://github.com/SHW2002/Unity-Autorun-MCP/blob/master/Documentation~/images/auto-run-window.png">README 原圖</a>，本文按說明區域裁切並補充脫敏。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zh-TW/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/zh-TW/tags/%E7%BC%96%E8%BE%91%E5%99%A8%E5%B7%A5%E5%85%B7/" rel="tag"># 編輯器工具</a>
+              <a href="/zh-TW/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/" rel="tag"># 自動化</a>
+              <a href="/zh-TW/tags/MCP/" rel="tag"># MCP</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-07-21-%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="prev" title="團結引擎長時間掛機導致系統卡死的問題排查">
+                  <i class="fa fa-angle-left"></i> 團結引擎長時間掛機導致系統卡死的問題排查
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/" rel="next" title="在遊戲開發中實現網絡同步的雙人牽手玩法">
+                  在遊戲開發中實現網絡同步的雙人牽手玩法 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

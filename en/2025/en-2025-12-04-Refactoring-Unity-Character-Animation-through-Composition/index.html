@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/en/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Local players, remote players, and AI shared one animation component. As holding items and gifting arrived, business code accumulated “if this is another player” branches. I split the implementati">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Refactoring Unity Character Animation through Composition">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2025/en-2025-12-04-Refactoring-Unity-Character-Animation-through-Composition/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="Local players, remote players, and AI shared one animation component. As holding items and gifting arrived, business code accumulated “if this is another player” branches. I split the implementati">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/parameter-controller.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/state-controller.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/old-animation-component.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/driver-composition.svg">
+<meta property="article:published_time" content="2025-12-04T10:15:10.000Z">
+<meta property="article:modified_time" content="2025-12-04T10:15:10.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="动画">
+<meta property="article:tag" content="重构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/parameter-controller.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2025/en-2025-12-04-Refactoring-Unity-Character-Animation-through-Composition/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2025/en-2025-12-04-Refactoring-Unity-Character-Animation-through-Composition/","path":"en/2025/en-2025-12-04-Refactoring-Unity-Character-Animation-through-Composition/","title":"Refactoring Unity Character Animation through Composition"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Refactoring Unity Character Animation through Composition | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/en/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/en/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/en/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/en/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-categories"><a href="/en/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-游戏开发"><a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>Game Development</a></li><li class="menu-item menu-item-摄影技术"><a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>Photography</a></li><li class="menu-item menu-item-ai技术"><a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI Technology</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>English</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2025/en-2025-12-04-Refactoring-Unity-Character-Animation-through-Composition/" selected>
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2025/zh-TW-2025-12-04-Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/">
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Problems-in-the-old-version"><span class="nav-number">1.</span> <span class="nav-text">Problems in the old version</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#One-class-two-control-strategies"><span class="nav-number">1.1.</span> <span class="nav-text">One class, two control strategies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Common-behavior-required-external-special-cases"><span class="nav-number">1.2.</span> <span class="nav-text">Common behavior required external special cases</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#A-component%E2%80%99s-existence-does-not-mean-it-is-ready"><span class="nav-number">1.3.</span> <span class="nav-text">A component’s existence does not mean it is ready</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Split-implementations-by-their-driving-strategy"><span class="nav-number">2.</span> <span class="nav-text">Split implementations by their driving strategy</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Compose-Controller-and-AnimDriver-separately"><span class="nav-number">2.1.</span> <span class="nav-text">Compose Controller and AnimDriver separately</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Give-one-business-interface-different-implementations"><span class="nav-number">2.2.</span> <span class="nav-text">Give one business interface different implementations</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Let-the-entity-manage-the-lifecycle"><span class="nav-number">3.</span> <span class="nav-text">Let the entity manage the lifecycle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-this-refactoring-addresses"><span class="nav-number">4.</span> <span class="nav-text">What this refactoring addresses</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/en/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/en/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/en/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2025/en-2025-12-04-Refactoring-Unity-Character-Animation-through-Composition/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Refactoring Unity Character Animation through Composition | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Refactoring Unity Character Animation through Composition
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-12-04 18:15:10" itemprop="dateCreated datePublished" datetime="2025-12-04T18:15:10+08:00">2025-12-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">游戏开发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>Local players, remote players, and AI shared one animation component. As holding items and gifting arrived, business code accumulated “if this is another player” branches.</p>
+<p>I split the implementations by how they drive the Animator and made the entity own each driver as a plain C# object. This article explains the problems and how composition removed those special cases.</p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<h2 id="Problems-in-the-old-version"><a href="#Problems-in-the-old-version" class="headerlink" title="Problems in the old version"></a>Problems in the old version</h2><h3 id="One-class-two-control-strategies"><a href="#One-class-two-control-strategies" class="headerlink" title="One class, two control strategies"></a>One class, two control strategies</h3><p>The old <code>ModelPlayerAnim</code> was attached to the character model and exposed parameter updates, state transitions, network broadcast handling, and held-action loading.</p>
+<p>These methods all appeared to operate on an Animator, but depended on different contexts:</p>
+<table>
+<thead>
+<tr>
+<th>Character</th>
+<th>Input source</th>
+<th>Animation control</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Local player</td>
+<td>Local input and character state</td>
+<td>Set parameters; Animator transition conditions select states</td>
+</tr>
+<tr>
+<td>Remote player</td>
+<td>Animation states received over the network</td>
+<td>Play or CrossFade directly from state information</td>
+</tr>
+<tr>
+<td>AI character</td>
+<td>AI decisions</td>
+<td>In that implementation, parameter-driven like the local player</td>
+</tr>
+</tbody></table>
+<p>Local players need <code>SetFloat</code> and <code>SetBool</code>. Remote players need direct state changes without rerunning local input decisions. Combining both paths in one class exposes methods that each character type does not need.</p>
+<img src="/zh-CN/2025/Unity角色动画模块的组合式重构/parameter-controller.webp" alt="An Animator state machine driven by transition conditions" width="560" style="display:block;width:560px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>A parameter-driven controller retains transition conditions and lets the Animator change states.</em></p>
+<img src="/zh-CN/2025/Unity角色动画模块的组合式重构/state-controller.webp" alt="An Animator layout for direct state control" width="560" style="display:block;width:560px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>A state-driven controller mainly receives explicit playback targets; the two strategies need different interfaces.</em></p>
+<h3 id="Common-behavior-required-external-special-cases"><a href="#Common-behavior-required-external-special-cases" class="headerlink" title="Common behavior required external special cases"></a>Common behavior required external special cases</h3><p>Updating a held item is a clear example. Business code simply wants to enter the holding state, but the original interface was designed around local players and set Animator parameters internally.</p>
+<p>The remote controller does not use those parameter transitions. Its caller therefore had to know the state name, animation layer, and blend duration and add another <code>CrossFade</code>. Animation knowledge leaked into item and character synchronization modules, creating two maintenance points for the same behavior.</p>
+<p>A simplified old call site looked like this:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">player.Animation.SetHolding(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (player.IsRemote)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// The caller also needs to know remote animation implementation details.</span></span><br><span class="line">    player.Animator.CrossFade(holdState, blendTime, holdLayer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Different local and remote holding flows had already caused inconsistent actions. Special handling fixed the visible issue, but continuing this approach could duplicate the same branch for every new behavior.</p>
+<h3 id="A-component’s-existence-does-not-mean-it-is-ready"><a href="#A-component’s-existence-does-not-mean-it-is-ready" class="headerlink" title="A component’s existence does not mean it is ready"></a>A component’s existence does not mean it is ready</h3><p>The old animation component was instantiated with the character, while its model, Animator, and skeleton became valid only after later loading.</p>
+<img src="/zh-CN/2025/Unity角色动画模块的组合式重构/old-animation-component.webp" alt="The old animation business component attached to the character model" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>The component existed before the business functionality was ready.</em></p>
+<p>Methods often returned when the Animator was missing to avoid null references. This prevented an immediate crash but could silently discard a necessary state update. A successful return did not mean the action had actually been applied.</p>
+<h2 id="Split-implementations-by-their-driving-strategy"><a href="#Split-implementations-by-their-driving-strategy" class="headerlink" title="Split implementations by their driving strategy"></a>Split implementations by their driving strategy</h2><h3 id="Compose-Controller-and-AnimDriver-separately"><a href="#Compose-Controller-and-AnimDriver-separately" class="headerlink" title="Compose Controller and AnimDriver separately"></a>Compose Controller and AnimDriver separately</h3><p>The character entity now owns a movement controller and an animation driver separately; neither determines the other’s type. The combinations at that time were:</p>
+<table>
+<thead>
+<tr>
+<th>Animation driver</th>
+<th>Local controller</th>
+<th>Remote controller</th>
+<th>AI controller</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Parameter-driven</td>
+<td>Local player</td>
+<td>—</td>
+<td>AI character</td>
+</tr>
+<tr>
+<td>State-driven</td>
+<td>—</td>
+<td>Remote player</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<p>The distinction follows the <strong>driving strategy</strong>, rather than copying a complete animation module for every player type. AI and local players have different decision sources but can reuse a parameter driver if they share the same parameter state machine.</p>
+<img src="/zh-CN/2025/Unity角色动画模块的组合式重构/driver-composition.svg" alt="The character entity separately composes movement controllers and animation drivers" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p>The entity assembles the appropriate objects. Business code calls behavior interfaces without repeatedly checking player types.</p>
+<h3 id="Give-one-business-interface-different-implementations"><a href="#Give-one-business-interface-different-implementations" class="headerlink" title="Give one business interface different implementations"></a>Give one business interface different implementations</h3><p>For holding, retain one public “set holding state” interface. The parameter driver sets a Boolean; the state driver directly changes the corresponding layer’s state.</p>
+<p>This example shows only that difference; the names do not refer to a specific business configuration:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">AnimationDriver</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">SetHolding</span>(<span class="params"><span class="built_in">bool</span> holding</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">Dispose</span>()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">ParameterAnimationDriver</span> : <span class="title">AnimationDriver</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Animator animator;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">int</span> Holding = Animator.StringToHash(<span class="string">&quot;Holding&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ParameterAnimationDriver</span>(<span class="params">Animator animator</span>)</span></span><br><span class="line">        =&gt; <span class="keyword">this</span>.animator = animator;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">SetHolding</span>(<span class="params"><span class="built_in">bool</span> holding</span>)</span></span><br><span class="line">        =&gt; animator.SetBool(Holding, holding);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Dispose</span>()</span> &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The state driver keeps its layer, target state, and transition duration internally:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">SetHolding</span>(<span class="params"><span class="built_in">bool</span> holding</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">int</span> targetState = holding ? holdStateHash : emptyStateHash;</span><br><span class="line">    animator.CrossFade(targetState, transitionDuration, upperBodyLayer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The drivers need not perform the same low-level operation. Their behavior must agree: after <code>SetHolding(true)</code>, the character should show the appropriate holding action. Each implementation decides how to produce that result in the Animator.</p>
+<p>The held-item module then only updates resources and calls the animation interface, without maintaining remote state names and transition details.</p>
+<h2 id="Let-the-entity-manage-the-lifecycle"><a href="#Let-the-entity-manage-the-lifecycle" class="headerlink" title="Let the entity manage the lifecycle"></a>Let the entity manage the lifecycle</h2><p>An animation driver is now a plain C# object, created by the entity once its dependencies are ready and disposed when the entity exits. An early-attached MonoBehaviour no longer stands in for “the animation module exists.”</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Lifecycle sketch; the project&#x27;s entity framework handles loading and release.</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnModelReady</span>(<span class="params">Animator animator</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    animationDriver = CreateAnimationDriver(animator);</span><br><span class="line">    ApplyCurrentPresentation();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnEntityHide</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    animationDriver?.Dispose();</span><br><span class="line">    animationDriver = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Callers explicitly decide what to do before model readiness. Necessary business state can be retained and reapplied afterward; a disposable transient effect can be skipped. A single internal null check no longer silently treats all cases alike.</p>
+<p>For example, while a remote character is still spawning, a call site can deliberately ignore an animation transition message. But “what the character is currently holding” is persistent state and must not be permanently lost just because no driver existed during loading.</p>
+<p>This does not eliminate asynchronous loading problems. It separates “not ready yet” from “operation executed,” making it possible to locate where an operation was ignored.</p>
+<h2 id="What-this-refactoring-addresses"><a href="#What-this-refactoring-addresses" class="headerlink" title="What this refactoring addresses"></a>What this refactoring addresses</h2><p>Parameter and state drivers now maintain their own transition logic, expose common behavior through consistent interfaces, and compose with Controllers according to character needs. Later dynamic holding actions have a clear implementation location.</p>
+<p>This separation assumes the project really uses two animation control strategies. If every character follows the same flow, there is no reason to introduce multiple classes merely to add layers.</p>
+<p>The useful signal here is when callers repeatedly need a character’s internal animation knowledge to use an apparently general interface correctly. At that point, review the interface’s responsibility.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/en/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/en/tags/%E5%8A%A8%E7%94%BB/" rel="tag"># 动画</a>
+              <a href="/en/tags/%E9%87%8D%E6%9E%84/" rel="tag"># 重构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/2025/en-2025-10-20-Analyzing-Crash-Causes-with-Android-Studio-Debugging-on-Real-Devices/" rel="prev" title="Analyzing Crash Causes with Android Studio Debugging on Real Devices">
+                  <i class="fa fa-angle-left"></i> Analyzing Crash Causes with Android Studio Debugging on Real Devices
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2025/en-2025-12-16-Troubleshooting-the-Issue-of-Loading-SpriteTexture2D-Resource-Types-with-the-GameFramework-in-Unity/" rel="next" title="Troubleshooting the Issue of Loading Sprite&#x2F;Texture2D Resource Types with the GameFramework in Unity">
+                  Troubleshooting the Issue of Loading Sprite/Texture2D Resource Types with the GameFramework in Unity <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/zh-TW/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="公司的社交遊戲有一套雙人牽手玩法，由我負責 3C 方面的開發。發起方控制移動，接收方跟隨；兩名角色需要適應地形、保持手部接觸，並與遊戲中的個人動作和操作玩法配合。下面從能實現基本表現的跟隨與握手設計講起，結合調試過程和體驗反饋，逐步說明旋轉位移、手部姿態和網絡同步的改進。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在遊戲開發中實現網絡同步的雙人牽手玩法">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="公司的社交遊戲有一套雙人牽手玩法，由我負責 3C 方面的開發。發起方控制移動，接收方跟隨；兩名角色需要適應地形、保持手部接觸，並與遊戲中的個人動作和操作玩法配合。下面從能實現基本表現的跟隨與握手設計講起，結合調試過程和體驗反饋，逐步說明旋轉位移、手部姿態和網絡同步的改進。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-start.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-closer.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-small-gap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-large-gap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-target.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-chase.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-settled.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-edge.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-inside.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-start.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-later.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-floating.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-projected.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-comparison.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/joint-limits.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-0.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-1.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-0.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-1.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg">
+<meta property="article:published_time" content="2026-09-01T03:07:19.000Z">
+<meta property="article:modified_time" content="2026-09-01T03:07:19.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="IK">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="网络同步">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/","path":"zh-TW/2026/zh-TW-2026-09-01-在游戏开发中实现网络同步的双人牵手玩法/","title":"在遊戲開發中實現網絡同步的雙人牽手玩法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>在遊戲開發中實現網絡同步的雙人牽手玩法 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zh-TW/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/zh-TW/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/zh-TW/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/zh-TW/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-categories"><a href="/zh-TW/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-游戏开发"><a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>遊戲開發</a></li><li class="menu-item menu-item-摄影技术"><a href="/zh-TW/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>攝影技術</a></li><li class="menu-item menu-item-ai技术"><a href="/zh-TW/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI 技術</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>繁體中文</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical aria-label="選擇語言">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/">
+          簡體中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/">
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/" selected>
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%A8%AD%E8%A8%88%E7%9B%AE%E6%A8%99%E8%88%87%E6%8E%A7%E5%88%B6%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">1. 設計目標與控制模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%95%B4%E9%AB%94%E6%9E%B6%E6%A7%8B%E8%88%87%E6%95%B8%E6%93%9A%E6%B5%81"><span class="nav-number">2.</span> <span class="nav-text">2. 整體架構與數據流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%B5%84%E4%BB%B6%E5%88%86%E5%B7%A5%E8%88%87%E6%9B%B4%E6%96%B0%E6%99%82%E6%A9%9F"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 組件分工與更新時機</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%B8%80%E6%AC%A1%E5%AE%8C%E6%95%B4%E4%BA%A4%E4%BA%92%E7%9A%84%E6%99%82%E5%BA%8F"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 一次完整交互的時序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BA%92%E5%8B%95%E7%8B%80%E6%85%8B%E8%88%87%E7%94%9F%E5%91%BD%E9%80%B1%E6%9C%9F"><span class="nav-number">3.</span> <span class="nav-text">3. 互動狀態與生命週期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%AB%8B%E6%B1%82%E5%92%8C%E6%8E%A5%E5%8F%97"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 請求和接受</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%BA%96%E5%82%99%E8%88%87%E6%AD%A3%E5%BC%8F%E8%B7%9F%E9%9A%A8"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 準備與正式跟隨</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E9%80%80%E5%87%BA%E8%88%87%E6%8F%9B%E6%88%BF"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 退出與換房</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BD%8D%E7%BD%AE%E8%B7%9F%E9%9A%A8%E8%88%87%E7%A7%BB%E5%8B%95%E5%B9%B3%E6%BB%91"><span class="nav-number">4.</span> <span class="nav-text">4. 位置跟隨與移動平滑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%A8%AD%E8%A8%88%E7%9B%AE%E6%A8%99"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 設計目標</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%B1%80%E9%83%A8%E5%81%8F%E7%A7%BB%E8%88%87%E8%B7%9D%E9%9B%A2%E6%AF%94%E4%BE%8B%E8%B7%9F%E9%9A%A8"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 局部偏移與距離比例跟隨</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-%E6%AD%A3%E5%BC%8F%E8%B7%9F%E9%9A%A8%E7%9B%AE%E6%A8%99"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 正式跟隨目標</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-2-%E5%BD%88%E7%B0%A7%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.2.2.</span> <span class="nav-text">4.2.2 彈簧模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-3-%E5%9F%BA%E6%9C%AC%E8%A1%A8%E7%8F%BE%E8%88%87%E5%8F%96%E6%8D%A8"><span class="nav-number">4.2.3.</span> <span class="nav-text">4.2.3 基本表現與取捨</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E9%AB%94%E9%A9%97%E4%B8%AD%E7%9A%84%E9%80%9F%E5%BA%A6%E8%88%87%E9%AB%98%E5%BA%A6%E5%95%8F%E9%A1%8C"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 體驗中的速度與高度問題</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E5%88%86%E9%96%8B%E8%A8%88%E7%AE%97%E6%B0%B4%E5%B9%B3%E8%B7%9F%E9%9A%A8%E8%88%87%E7%B9%9E%E8%A1%8C%E6%97%8B%E8%BD%89"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 分開計算水平跟隨與繞行旋轉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-KCC-%E6%8E%A5%E5%85%A5%E8%88%87%E6%A8%A1%E5%A1%8A%E5%8A%83%E5%88%86"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 KCC 接入與模塊劃分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E7%A7%BB%E5%8B%95%E8%88%87%E5%B9%B3%E6%BB%91%E5%84%AA%E5%8C%96"><span class="nav-number">4.6.</span> <span class="nav-text">4.6 移動與平滑優化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-1-%E5%81%9C%E6%AD%A2%E5%8D%80%E9%80%A3%E7%BA%8C%E6%B8%9B%E9%80%9F"><span class="nav-number">4.6.1.</span> <span class="nav-text">4.6.1 停止區連續減速</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-2-%E7%B9%9E%E8%A1%8C%E6%97%8B%E8%BD%89%E6%BB%AF%E5%BE%8C%E8%88%87%E9%99%90%E9%80%9F"><span class="nav-number">4.6.2.</span> <span class="nav-text">4.6.2 繞行旋轉滯後與限速</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-3-%E8%B2%BC%E5%9C%B0%E9%98%B2%E6%8A%96%E8%88%87%E8%90%BD%E9%BB%9E%E9%99%90%E9%AB%98"><span class="nav-number">4.6.3.</span> <span class="nav-text">4.6.3 貼地防抖與落點限高</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-4-%E5%B0%8D%E9%BD%8A-KCC-%E8%88%87%E7%9B%B8%E6%A9%9F%E7%9A%84%E6%8E%A1%E6%A8%A3%E9%9A%8E%E6%AE%B5"><span class="nav-number">4.6.4.</span> <span class="nav-text">4.6.4 對齊 KCC 與相機的採樣階段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-5-%E5%82%B3%E9%80%81%E6%99%82%E9%87%8D%E7%BD%AE%E5%B9%B3%E6%BB%91%E7%8B%80%E6%85%8B"><span class="nav-number">4.6.5.</span> <span class="nav-text">4.6.5 傳送時重置平滑狀態</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E8%81%AF%E8%AA%BF%E4%B8%AD%E7%9A%84%E5%8B%95%E4%BD%9C%E9%8A%9C%E6%8E%A5"><span class="nav-number">4.7.</span> <span class="nav-text">4.7 聯調中的動作銜接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-%E5%85%A9%E7%A8%AE%E8%B7%9F%E9%9A%A8%E6%96%B9%E5%BC%8F%E7%9A%84%E5%B0%8D%E6%AF%94"><span class="nav-number">4.8.</span> <span class="nav-text">4.8 兩種跟隨方式的對比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%8B%95%E7%95%AB%E5%90%8C%E6%AD%A5%E8%88%87%E5%8F%83%E6%95%B8%E5%B9%B3%E6%BB%91"><span class="nav-number">5.</span> <span class="nav-text">5. 動畫同步與參數平滑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E8%A8%AD%E8%A8%88%E7%9B%AE%E6%A8%99"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 設計目標</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E7%B3%BB%E7%B5%B1%E8%A8%AD%E8%A8%88%E8%88%87%E5%8E%9F%E7%90%86"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 系統設計與原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-Animator-%E6%8E%A5%E5%85%A5%E8%88%87%E6%A8%A1%E5%A1%8A%E5%8A%83%E5%88%86"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 Animator 接入與模塊劃分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E5%8B%95%E7%95%AB%E5%B9%B3%E6%BB%91%E8%88%87%E5%85%BC%E5%AE%B9%E5%84%AA%E5%8C%96"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 動畫平滑與兼容優化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-1-%E9%80%9F%E5%BA%A6%E6%BF%BE%E6%B3%A2%E5%8F%AA%E6%8E%A8%E9%80%B2%E4%B8%80%E6%AC%A1"><span class="nav-number">5.4.1.</span> <span class="nav-text">5.4.1 速度濾波只推進一次</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-2-%E8%B5%B7%E5%81%9C%E6%BB%AF%E5%9B%9E%E8%88%87%E5%82%B3%E9%80%81%E6%B8%85%E9%9B%B6"><span class="nav-number">5.4.2.</span> <span class="nav-text">5.4.2 起停滯回與傳送清零</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-3-%E6%93%8D%E4%BD%9C%E5%B1%A4%E8%88%87%E5%80%8B%E4%BA%BA%E5%8B%95%E4%BD%9C%E8%AE%93%E4%BD%8D"><span class="nav-number">5.4.3.</span> <span class="nav-text">5.4.3 操作層與個人動作讓位</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%89%8B%E9%83%A8-IK"><span class="nav-number">6.</span> <span class="nav-text">6. 手部 IK</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E8%A8%AD%E8%A8%88%E7%9B%AE%E6%A8%99"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 設計目標</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%85%B1%E4%BA%AB%E6%8E%A5%E8%A7%B8%E9%BB%9E%E8%88%87%E5%8F%AF%E9%81%94%E7%AF%84%E5%9C%8D"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 共享接觸點與可達範圍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-1-%E5%BE%9E%E5%85%A9%E5%80%8B%E6%8E%A5%E8%A7%B8-Pose-%E5%BE%97%E5%88%B0%E5%85%B1%E4%BA%AB-Pose"><span class="nav-number">6.2.1.</span> <span class="nav-text">6.2.1 從兩個接觸 Pose 得到共享 Pose</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-2-%E7%94%A8%E5%8F%AF%E9%81%94%E7%90%83%E9%AB%94%E8%BF%91%E4%BC%BC%E5%85%A9%E6%AE%B5%E6%89%8B%E8%87%82"><span class="nav-number">6.2.2.</span> <span class="nav-text">6.2.2 用可達球體近似兩段手臂</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-3-%E7%90%83%E9%AB%94%E4%BA%A4%E9%9B%86%E7%B4%84%E6%9D%9F%E7%AE%97%E6%B3%95"><span class="nav-number">6.2.3.</span> <span class="nav-text">6.2.3 球體交集約束算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-4-%E5%B9%B3%E6%BB%91%E3%80%81%E9%80%A3%E6%8E%A5%E7%8B%80%E6%85%8B%E5%92%8C%E6%AC%8A%E9%87%8D"><span class="nav-number">6.2.4.</span> <span class="nav-text">6.2.4 平滑、連接狀態和權重</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-5-%E5%9F%BA%E6%9C%AC%E8%A1%A8%E7%8F%BE%E8%88%87%E5%8F%96%E6%8D%A8"><span class="nav-number">6.2.5.</span> <span class="nav-text">6.2.5 基本表現與取捨</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E9%81%8B%E5%8B%95%E4%B8%AD%E7%9A%84%E6%89%8B%E9%83%A8%E5%A7%BF%E6%85%8B%E5%95%8F%E9%A1%8C"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 運動中的手部姿態問題</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E7%A9%A9%E5%AE%9A%E5%8F%83%E8%80%83%E8%88%87%E5%8F%97%E7%B4%84%E6%9D%9F%E7%9A%84%E5%85%B1%E4%BA%AB%E7%9B%AE%E6%A8%99"><span class="nav-number">6.4.</span> <span class="nav-text">6.4 穩定參考與受約束的共享目標</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-4-1-%E7%99%BC%E8%B5%B7%E6%96%B9%E8%A8%88%E7%AE%97%E5%85%B1%E4%BA%AB%E6%8E%A5%E8%A7%B8%E7%9B%AE%E6%A8%99"><span class="nav-number">6.4.1.</span> <span class="nav-text">6.4.1 發起方計算共享接觸目標</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-4-2-%E5%85%A9%E5%81%B4%E5%8F%AF%E9%81%94%E7%90%83%E9%AB%94%E7%9A%84%E4%BA%A4%E9%9B%86"><span class="nav-number">6.4.2.</span> <span class="nav-text">6.4.2 兩側可達球體的交集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-4-3-%E9%85%8D%E5%B0%8D%E6%9C%89%E6%95%88%E6%80%A7%E8%88%87%E9%80%A3%E6%8E%A5%E7%8B%80%E6%85%8B"><span class="nav-number">6.4.3.</span> <span class="nav-text">6.4.3 配對有效性與連接狀態</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-Final-IK-%E7%9A%84%E6%87%89%E7%94%A8%E8%88%87%E6%A8%A1%E5%A1%8A%E5%8A%83%E5%88%86"><span class="nav-number">6.5.</span> <span class="nav-text">6.5 Final IK 的應用與模塊劃分</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-1-%E4%BD%BF%E7%94%A8-LimbIK-%E6%B1%82%E8%A7%A3%E5%96%AE%E5%81%B4%E6%89%8B%E8%87%82"><span class="nav-number">6.5.1.</span> <span class="nav-text">6.5.1 使用 LimbIK 求解單側手臂</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-2-%E9%AA%A8%E9%8F%88%E7%B6%81%E5%AE%9A%E8%88%87%E6%89%8B%E5%8B%95%E6%9B%B4%E6%96%B0"><span class="nav-number">6.5.2.</span> <span class="nav-text">6.5.2 骨鏈綁定與手動更新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-3-%E6%8A%8A%E6%8E%8C%E5%BF%83%E7%9B%AE%E6%A8%99%E8%BD%89%E6%8F%9B%E7%82%BA%E6%89%8B%E8%85%95%E7%9B%AE%E6%A8%99"><span class="nav-number">6.5.3.</span> <span class="nav-text">6.5.3 把掌心目標轉換為手腕目標</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-4-%E9%A0%85%E7%9B%AE%E6%A8%A1%E5%A1%8A%E8%88%87%E6%8F%92%E4%BB%B6%E7%9A%84%E9%82%8A%E7%95%8C"><span class="nav-number">6.5.4.</span> <span class="nav-text">6.5.4 項目模塊與插件的邊界</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-6-IK-%E7%A9%A9%E5%AE%9A%E6%80%A7%E8%88%87%E5%B9%B3%E6%BB%91%E5%84%AA%E5%8C%96"><span class="nav-number">6.6.</span> <span class="nav-text">6.6 IK 穩定性與平滑優化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-1-%E5%9B%BA%E5%AE%9A%E5%8F%83%E8%80%83%E5%A7%BF%E6%85%8B%EF%BC%8C%E9%9A%94%E9%9B%A2%E5%8B%95%E7%95%AB%E6%93%BE%E5%8B%95"><span class="nav-number">6.6.1.</span> <span class="nav-text">6.6.1 固定參考姿態，隔離動畫擾動</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-2-%E5%9C%A8%E8%A7%92%E8%89%B2%E5%B1%80%E9%83%A8%E7%A9%BA%E9%96%93%E5%B9%B3%E6%BB%91%E6%8E%A5%E8%A7%B8%E9%BB%9E"><span class="nav-number">6.6.2.</span> <span class="nav-text">6.6.2 在角色局部空間平滑接觸點</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-3-%E8%82%A9%E3%80%81%E8%82%98%E3%80%81%E8%85%95%E4%B8%89%E8%BB%B8%E9%99%90%E5%88%B6%E8%88%87%E9%98%B2%E5%8F%8D%E6%8A%98"><span class="nav-number">6.6.3.</span> <span class="nav-text">6.6.3 肩、肘、腕三軸限制與防反折</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-4-%E9%97%9C%E7%AF%80%E6%97%8B%E8%BD%89%E5%B9%B3%E6%BB%91%E8%88%87%E6%B1%82%E8%A7%A3%E9%A0%86%E5%BA%8F"><span class="nav-number">6.6.4.</span> <span class="nav-text">6.6.4 關節旋轉平滑與求解順序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-5-%E6%AC%8A%E9%87%8D%E9%81%8E%E6%B8%A1%E8%88%87%E6%93%8D%E4%BD%9C%E8%AE%93%E4%BD%8D"><span class="nav-number">6.6.5.</span> <span class="nav-text">6.6.5 權重過渡與操作讓位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-7-%E5%A7%BF%E6%85%8B%E8%AA%BF%E6%95%B4%E8%88%87%E8%A4%87%E6%B8%AC"><span class="nav-number">6.7.</span> <span class="nav-text">6.7 姿態調整與複測</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-8-%E5%85%A9%E7%A8%AE%E6%89%8B%E9%83%A8%E6%B1%82%E8%A7%A3%E6%96%B9%E5%BC%8F%E7%9A%84%E5%B0%8D%E6%AF%94"><span class="nav-number">6.8.</span> <span class="nav-text">6.8 兩種手部求解方式的對比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E7%B6%B2%E7%B5%A1%E5%90%8C%E6%AD%A5%E8%88%87%E6%92%AD%E6%94%BE%E5%B9%B3%E6%BB%91"><span class="nav-number">7.</span> <span class="nav-text">7. 網絡同步與播放平滑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E8%A8%AD%E8%A8%88%E7%9B%AE%E6%A8%99"><span class="nav-number">7.1.</span> <span class="nav-text">7.1 設計目標</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E7%B3%BB%E7%B5%B1%E8%A8%AD%E8%A8%88%E8%88%87%E6%95%B8%E6%93%9A%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.2.</span> <span class="nav-text">7.2 系統設計與數據模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E5%90%8C%E6%AD%A5%E6%A8%A1%E5%A1%8A%E5%8A%83%E5%88%86"><span class="nav-number">7.3.</span> <span class="nav-text">7.3 同步模塊劃分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%E7%B6%B2%E7%B5%A1%E8%88%87%E5%B9%B3%E6%BB%91%E5%84%AA%E5%8C%96"><span class="nav-number">7.4.</span> <span class="nav-text">7.4 網絡與平滑優化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-1-%E9%9B%99%E4%BA%BA%E5%85%B1%E7%94%A8%E6%8E%A1%E6%A8%A3%E6%99%82%E5%88%BB"><span class="nav-number">7.4.1.</span> <span class="nav-text">7.4.1 雙人共用採樣時刻</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-2-%E9%80%A3%E7%BA%8C%E6%92%AD%E6%94%BE%E6%99%82%E9%96%93%E8%88%87%E5%B0%8F%E5%B9%85%E8%AA%BF%E9%80%9F"><span class="nav-number">7.4.2.</span> <span class="nav-text">7.4.2 連續播放時間與小幅調速</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-3-%E6%9C%89%E9%99%90%E5%A4%96%E6%8E%A8%E8%88%87%E9%A0%90%E6%B8%AC%E8%AA%A4%E5%B7%AE%E6%B6%88%E9%80%80"><span class="nav-number">7.4.3.</span> <span class="nav-text">7.4.3 有限外推與預測誤差消退</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-4-%E4%B8%89%E6%A2%9D%E8%A1%A8%E7%8F%BE%E6%B5%81%E7%8D%A8%E7%AB%8B%E8%AA%BF%E9%A0%BB"><span class="nav-number">7.4.4.</span> <span class="nav-text">7.4.4 三條表現流獨立調頻</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-5-%E6%8B%92%E7%B5%95%E9%81%8E%E6%9C%9F%E6%95%B8%E6%93%9A%E8%88%87%E9%98%B2%E6%AD%A2%E9%87%8D%E8%A4%87%E9%A9%85%E5%8B%95"><span class="nav-number">7.4.5.</span> <span class="nav-text">7.4.5 拒絕過期數據與防止重複驅動</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-6-IK-%E5%B1%80%E9%83%A8%E7%9B%AE%E6%A8%99%E5%90%8C%E6%AD%A5%E8%88%87%E9%87%8D%E5%BB%BA"><span class="nav-number">7.4.6.</span> <span class="nav-text">7.4.6 IK 局部目標同步與重建</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-5-%E7%AC%AC%E4%B8%89%E6%96%B9%E8%A6%96%E8%A7%92%E8%A4%87%E6%B8%AC"><span class="nav-number">7.5.</span> <span class="nav-text">7.5 第三方視角複測</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E9%81%8B%E8%A1%8C%E9%82%8A%E7%95%8C%E8%88%87%E8%AA%BF%E5%8F%83%E9%97%9C%E4%BF%82"><span class="nav-number">8.</span> <span class="nav-text">8. 運行邊界與調參關係</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E7%95%B0%E5%B8%B8%E8%88%87%E9%99%8D%E7%B4%9A%E8%A1%8C%E7%82%BA"><span class="nav-number">8.1.</span> <span class="nav-text">8.1 異常與降級行為</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E5%90%84%E9%A1%9E%E5%B9%B3%E6%BB%91%E7%9A%84%E4%BD%9C%E7%94%A8%E7%AF%84%E5%9C%8D"><span class="nav-number">8.2.</span> <span class="nav-text">8.2 各類平滑的作用範圍</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen" src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">遊戲客戶端開發工程師, 風光攝影和星空愛好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zh-TW/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zh-TW/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zh-TW/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="在遊戲開發中實現網絡同步的雙人牽手玩法 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content>
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          在遊戲開發中實現網絡同步的雙人牽手玩法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2026-09-01 11:07:19" itemprop="dateCreated datePublished" datetime="2026-09-01T11:07:19+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">遊戲開發</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>公司的社交遊戲有一套雙人牽手玩法，由我負責 3C 方面的開發。發起方控制移動，接收方跟隨；兩名角色需要適應地形、保持手部接觸，並與遊戲中的個人動作和操作玩法配合。下面從能實現基本表現的跟隨與握手設計講起，結合調試過程和體驗反饋，逐步說明旋轉位移、手部姿態和網絡同步的改進。</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp" alt="雙人牽手聯調畫面，左側為接收方，右側為發起方"></p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<p><em>雙人牽手聯調畫面，已裁去外圍界面。</em></p>
+<h2 id="1-設計目標與控制模型"><a href="#1-設計目標與控制模型" class="headerlink" title="1. 設計目標與控制模型"></a>1. 設計目標與控制模型</h2><p>牽手看起來只是“讓兩名玩家的手靠在一起”，實際上需要同時協調四個系統：</p>
+<ol>
+<li>互動狀態：誰發起、誰接受、何時開始、何時結束。</li>
+<li>根節點位移：接收方跟隨發起方，適應地面高度、轉向和傳送。</li>
+<li>動畫表現：雙方主要動作保持一致，接收方的步態又能反映自己的實際移動。</li>
+<li>手部 IK：不同長度、不同朝向的手臂，在關節限制內儘量靠近同一個接觸點。</li>
+</ol>
+<p>此外，這些結果還要在發起方、接收方和旁觀者三種視角中保持一致。項目採用“發起方單點權威”的控制模型：</p>
+<ul>
+<li>發起方擁有本地移動權，計算接收方的跟隨位置、移動動畫參數和共享 IK 目標。</li>
+<li>接收方凍結本地移動輸入和 KCC Motor，消費發起方的計算結果。</li>
+<li>旁觀者消費同一份成對快照，在統一的播放時刻顯示雙方。</li>
+</ul>
+<p>這裡的權威指客戶端表現計算的來源。服務器維護互動關係和相關業務數據，客戶端根據房間狀態建立或解除控制。身體位移、手臂目標和動畫狀態分別管理，避免多個系統同時寫入同一份表現結果。</p>
+<h2 id="2-整體架構與數據流"><a href="#2-整體架構與數據流" class="headerlink" title="2. 整體架構與數據流"></a>2. 整體架構與數據流</h2><h3 id="2-1-組件分工與更新時機"><a href="#2-1-組件分工與更新時機" class="headerlink" title="2.1 組件分工與更新時機"></a>2.1 組件分工與更新時機</h3><p><code>HoldHandComponent</code> 組合三個控制器，外層由 <code>PlayerInteractionRuntimeComponent</code> 根據房間互動狀態分發：</p>
+<table>
+<thead>
+<tr>
+<th>組件</th>
+<th>職責與更新時機</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HoldHandRuntimeController</code></td>
+<td>維護本地互動、凍結與恢復控制；在 KCC 更新完成後計算或消費位姿，驅動接收方動畫併發出廣播</td>
+</tr>
+<tr>
+<td><code>HoldHandObserverSyncController</code></td>
+<td>管理旁觀者看到的雙人配對，每幀採樣雙方共用的快照緩衝</td>
+</tr>
+<tr>
+<td><code>HoldHandIKRuntimeController</code></td>
+<td>管理骨架註冊、共享接觸點、IK 暫停與權重，以及 IK 目標的發送和消費</td>
+</tr>
+<tr>
+<td><code>HoldHandIKLateUpdateDriver</code></td>
+<td>以執行順序 <code>10000</code> 的 <code>LateUpdate</code> 驅動 IK，在動畫和根節點更新後處理手臂</td>
+</tr>
+</tbody></table>
+<p>位移、遠端播放和骨骼求解具有不同的更新時機。將它們分開後，個人動作暫時佔用手部時，可以釋放 IK，同時保留牽手關係和位置跟隨。</p>
+<pre>
+<code class="mermaid">
+
+flowchart TB
+    UI[親密互動入口] --&gt;|請求、接受、取消| Room[房間 PlayerData]
+    Room --&gt; Dispatch[互動狀態分發]
+    Dispatch --&gt; Runtime[本地牽手運行時]
+    Runtime --&gt;|KCC 更新後計算| Pair[成對位姿與接收方動畫]
+    Pair --&gt; Recipient[接收方快照緩衝]
+    Pair --&gt; Observer[旁觀者快照緩衝]
+    Room --&gt; IK[手部 IK 控制器]
+    IK --&gt;|LateUpdate 求解| Targets[發起方局部空間 IK 目標]
+    Targets --&gt; RemoteIK[遠端 LimbIK 求解與關節限制]
+</code>
+</pre>
+
+<h3 id="2-2-一次完整交互的時序"><a href="#2-2-一次完整交互的時序" class="headerlink" title="2.2 一次完整交互的時序"></a>2.2 一次完整交互的時序</h3><p>請求響應成功只表示協議處理成功。客戶端以房間中實際生效的 <code>IntimacyInteractState</code> 驅動牽手錶現：</p>
+<pre>
+<code class="mermaid">
+
+sequenceDiagram
+    participant A as 發起方
+    participant S as 服務端與房間數據
+    participant B as 接收方
+    participant V as 旁觀者
+    A-&gt;&gt;S: IntimacyInteractReq
+    S--&gt;&gt;B: PendingIntimacyRequest
+    B-&gt;&gt;S: IntimacyInteractReplyReq(Accept&#x3D;true)
+    S--&gt;&gt;A: Initiator、OtherUid、Revision
+    S--&gt;&gt;B: Recipient、OtherUid、Revision
+    A-&gt;&gt;A: 初始化，下一幀開始跟隨計算
+    B-&gt;&gt;B: 凍結 Motor，準備位置與動畫
+    A--&gt;&gt;B: 成對位姿、SampleTime、Revision
+    A--&gt;&gt;V: 同一份成對位姿
+    A--&gt;&gt;B: 接收方動畫參數、IK 目標
+    A--&gt;&gt;V: 動畫與 IK 目標
+    A-&gt;&gt;S: IntimacyInteractCancelReq
+    S--&gt;&gt;A: 清除互動狀態
+    S--&gt;&gt;B: 清除互動狀態
+</code>
+</pre>
+
+<h2 id="3-互動狀態與生命週期"><a href="#3-互動狀態與生命週期" class="headerlink" title="3. 互動狀態與生命週期"></a>3. 互動狀態與生命週期</h2><h3 id="3-1-請求和接受"><a href="#3-1-請求和接受" class="headerlink" title="3.1 請求和接受"></a>3.1 請求和接受</h3><p>互動入口通過 <code>IntimacyComponent.RequestInteractionAsync</code>、<code>ReplyInteractionAsync</code> 等接口發送請求。請求前檢查目標、同房間關係、雙方忙碌狀態以及變身等玩法限制；發出邀請前，還會結束可能衝突的個人動作。</p>
+<p>請求的核心字段如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IntimacyInteractReq</span><br><span class="line">  Category  = Continuous</span><br><span class="line">  Type      = DataHoldHandControl.HoldHandInteractionType</span><br><span class="line">  TargetUid = 目标玩家 UID</span><br><span class="line">  Source    = 交互来源</span><br></pre></td></tr></table></figure>
+
+<p><code>Type</code> 對應配置表中的 <code>ItemId.IntimacyAction_QianShou</code>，當前值為 <code>7030001</code>。服務端確認接受後，雙方收到互相指向的狀態：</p>
+<table>
+<thead>
+<tr>
+<th>玩家</th>
+<th>Role</th>
+<th>OtherUid</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>發起方</td>
+<td>Initiator</td>
+<td>接收方 UID</td>
+</tr>
+<tr>
+<td>接收方</td>
+<td>Recipient</td>
+<td>發起方 UID</td>
+</tr>
+</tbody></table>
+<p>配對校驗要求角色、類型和夥伴 UID 相互匹配。位姿包中的 <code>InteractionRevision</code> 還要與當前互動版本一致，防止另一段牽手關係的遲到數據進入當前表現。</p>
+<h3 id="3-2-準備與正式跟隨"><a href="#3-2-準備與正式跟隨" class="headerlink" title="3.2 準備與正式跟隨"></a>3.2 準備與正式跟隨</h3><p>運行時通過狀態和配置判斷是否需要重新 <code>Begin</code>。下圖表示表現階段，初始化階段由開始幀控制：</p>
+<pre>
+<code class="mermaid">
+
+stateDiagram-v2
+    [*] --&gt; 無互動
+    無互動 --&gt; 初始化: 房間牽手狀態生效
+    初始化 --&gt; 跟隨中: 發起方到達下一幀
+    跟隨中 --&gt; 初始化: 互動身份或配置改變
+    初始化 --&gt; 無互動: 狀態失效
+    跟隨中 --&gt; 無互動: 取消、離場或狀態失效
+</code>
+</pre>
+
+<p>發起方將 <code>m_FollowStartFrame</code> 設為當前幀加一，初始化繞行方向和廣播計時器。接收方立即凍結移動、禁用 Motor、清理動畫請求並切換到遠端動畫控制器；若夥伴實體已加載，則按準備偏移對齊並播放傳送表現。</p>
+<p>這一幀的間隔用於區分初始化與持續驅動。IK 配對也會等到首次觀察後的下一幀，再正式進入連接階段。</p>
+<h3 id="3-3-退出與換房"><a href="#3-3-退出與換房" class="headerlink" title="3.3 退出與換房"></a>3.3 退出與換房</h3><p>正常取消通過取消請求和互動狀態清理收尾。<code>Stop</code> 負責解除凍結，恢復進入前的 Motor 啟用狀態和 Animator，清除快照緩衝、驅動位置、轉向狀態及動畫速度緩存；失效配對的 IK 也會釋放。</p>
+<p>切房前先解除雙人關係，取消失敗時阻止繼續切房；成功後先清理本地狀態，再停止表現，避免下一幀重新進入牽手。夥伴離開本房間時，外層分發器同樣停止本地運行時。同房間內的大距離傳送則由位置跟隨模塊處理。</p>
+<h2 id="4-位置跟隨與移動平滑"><a href="#4-位置跟隨與移動平滑" class="headerlink" title="4. 位置跟隨與移動平滑"></a>4. 位置跟隨與移動平滑</h2><h3 id="4-1-設計目標"><a href="#4-1-設計目標" class="headerlink" title="4.1 設計目標"></a>4.1 設計目標</h3><p>接收方需要維持合適的雙人站位，同時具備自然的追趕感。直線跑動應能跟上，原地轉向時繞行速度應可控，斜坡和臺階上的高度應合理，傳送時應及時到達新位置。</p>
+<p>這些目標分別涉及水平位移、繞行旋轉、垂直高度和離散位置變化，需要獨立計算和調參。網絡緩衝負責遠端播放，本節描述發起方如何生成每幀的權威位置。</p>
+<p>下文統一用<strong>紅色圓頭三角身圖標表示發起方，藍色圓頭菱形身圖標表示接收方</strong>，圖標腳底中點表示角色根節點。十字或空心標記表示計算目標，不能與角色實際位置混淆。每組圖保持相同場景和比例，用“狀態一”“狀態二”等標記處理前後的狀態；解釋放在圖外。</p>
+<h3 id="4-2-局部偏移與距離比例跟隨"><a href="#4-2-局部偏移與距離比例跟隨" class="headerlink" title="4.2 局部偏移與距離比例跟隨"></a>4.2 局部偏移與距離比例跟隨</h3><p>先從一個簡單的設計入手：在發起方身邊放置一個隨朝向旋轉的目標點，讓接收方按距離追趕它。這樣就能實現基本的雙人站位與跟隨，控制參數也集中在偏移和追趕速度上。</p>
+<h4 id="4-2-1-正式跟隨目標"><a href="#4-2-1-正式跟隨目標" class="headerlink" title="4.2.1 正式跟隨目標"></a>4.2.1 正式跟隨目標</h4><p><strong>先只看兩個人。</strong> 發起方是帶著走的人，接收方是被帶著走的人。圖中紅色三角身圖標表示發起方，藍色菱形身圖標表示接收方，腳底中點是角色的位置。</p>
+<p>沒有跟隨控制時，發起方往前走，接收方仍留在原地：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="沒有跟隨控制時的兩個人">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-before.svg" alt="起初：兩個人站在彼此身邊。" width="900" height="490" loading="lazy"></a>
+    <figcaption>起初：兩個人站在彼此身邊。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-after.svg" alt="發起方向前移動，接收方仍留在原地，兩個人逐漸拉開。" width="900" height="490" loading="lazy"></a>
+    <figcaption>發起方向前移動，接收方仍留在原地，兩個人逐漸拉開。</figcaption>
+  </figure>
+</div>
+
+<p>兩個人會逐漸拉開，所以先要規定接收方應該站到哪裡。</p>
+<p><strong>再增加一個站位點。</strong> 在發起方身邊選一個位置，比如左側略靠後，用十字表示這個希望接收方站到的位置。發起方前進時，站位點一起前進；每幀直接把接收方放到這裡，就有了最基本的跟隨：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="直接設置接收方位置">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-before.svg" alt="移動前：接收方與站位點重合，保持在發起方左後側。" width="900" height="490" loading="lazy"></a>
+    <figcaption>移動前：接收方與站位點重合，保持在發起方左後側。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-after.svg" alt="移動後：站位點隨發起方前移，接收方也被直接放到新的位置。" width="900" height="490" loading="lazy"></a>
+    <figcaption>移動後：站位點隨發起方前移，接收方也被直接放到新的位置。</figcaption>
+  </figure>
+</div>
+
+<p>這樣能保持雙人站位，但接收方像固定在發起方身上一樣，缺少被帶著走的追趕感。站位點突然變化時，它也會立即跳過去。下一小節保留這個站位點，只改變接收方到達它的方式。</p>
+<p><strong>把站位寫成相對角色的偏移。</strong> 左右、前後兩個距離共同決定站位點，它們隨發起方的位置和朝向一起變化。代碼中的 <code>FollowOffset</code> 就描述這份偏移；例如左側約 0.82 米、後方約 0.17 米，可以形成略有前後錯位的並排站位。無論發起方朝向如何，這份相對站位都能保持一致。</p>
+<p>進入互動時還會使用 <code>PreparationOffset</code> 做一次準備位置對齊；正式跟隨後使用 <code>FollowOffset</code>。準備位置與持續追趕的站位點用途不同，對應關係如下：</p>
+<table>
+<thead>
+<tr>
+<th>對象與方向</th>
+<th>對應代碼</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“發起方”</td>
+<td><code>initiator.RootTransform.position</code></td>
+<td>提供整組站位在世界中的位置</td>
+</tr>
+<tr>
+<td>角色右側、前方及其朝向</td>
+<td><code>initiator.RootTransform.rotation</code></td>
+<td>確定角色的右側、前方，以及局部偏移旋轉到世界的方向</td>
+</tr>
+<tr>
+<td>左右和前後的站位偏移</td>
+<td><code>FollowOffset</code></td>
+<td>決定接收方目標在角色左右、前後多遠的位置；水平配置的兩個分量對應局部 X&#x2F;Z</td>
+</tr>
+<tr>
+<td>準備偏移與準備位置</td>
+<td><code>PreparationOffset</code>、準備位置</td>
+<td>在互動進入時做一次位置對齊</td>
+</tr>
+<tr>
+<td>站位點</td>
+<td><code>targetPosition</code></td>
+<td>偏移變換到世界後，相對根節點得到的跟隨目標</td>
+</tr>
+</tbody></table>
+<h4 id="4-2-2-彈簧模型"><a href="#4-2-2-彈簧模型" class="headerlink" title="4.2.2 彈簧模型"></a>4.2.2 彈簧模型</h4><p><strong>讓接收方逐幀追趕。</strong> 不再每幀直接對齊站位點，而是從接收方自己的位置向它走一小段。離得越遠，追得越快；離得越近，追得越慢。可以把它想像成兩者之間連著一根彈簧：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="距離決定追趕力度">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-start.svg" alt="站位點已經前移，接收方還在後面，剩餘距離較大，本幀前進得較多。" width="900" height="490" loading="lazy"></a>
+    <figcaption>站位點已經前移，接收方還在後面，剩餘距離較大，本幀前進得較多。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-closer.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-closer.svg" alt="接收方逐漸追近，剩餘距離縮小，本幀前進的距離也隨之減小。" width="900" height="490" loading="lazy"></a>
+    <figcaption>接收方逐漸追近，剩餘距離縮小，本幀前進的距離也隨之減小。</figcaption>
+  </figure>
+</div>
+
+<p>“彈簧係數”決定相同距離下的追趕力度。藍色箭頭表示本幀步長，它還取決於本幀經過的時間：同樣的速度下，幀間隔越短，單步越小。每次推進的結果保留下來，作為下一幀的驅動位置。</p>
+<p>單純按距離決定速度有兩個邊界：距離很大時可能追得過快，距離很小時又可能拖得太慢。</p>
+<p><strong>給速度加上最低值和最高值。</strong> 小距離也保持足夠的跟隨力度，大距離則不會讓速度無限增加：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="給彈簧追趕增加速度範圍">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-small-gap.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-small-gap.svg" alt="距離較小時，最低速度讓接收方仍能積極追趕。" width="900" height="490" loading="lazy"></a>
+    <figcaption>距離較小時，最低速度讓接收方仍能積極追趕。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-large-gap.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-large-gap.svg" alt="距離較大時，最高速度限制本幀位移，避免接收方突然高速衝過去。" width="900" height="490" loading="lazy"></a>
+    <figcaption>距離較大時，最高速度限制本幀位移，避免接收方突然高速衝過去。</figcaption>
+  </figure>
+</div>
+
+<p>上下限讓追趕速度更容易配置，但很接近站位點時，最低速度仍可能帶來過大的步長。基礎處理可以在進入停止半徑後直接貼到目標，完成最後一小段對齊；固定距離貼合帶來的頓挫，放到 4.6.1 中繼續處理。</p>
+<p><code>MoveTowards</code> 根據速度與幀時長推進；本幀預算足以到達時停在目標，避免越過。幾何圖用於說明距離和步長的關係，不按下面的示例參數等比例繪製。</p>
+<table>
+<thead>
+<tr>
+<th>幾何標記</th>
+<th>對應代碼</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>追趕開始時的接收方</td>
+<td><code>m_DrivenPosition</code> &#x2F; <code>drivenPosition</code></td>
+<td>使用發起方上一次算出的結果作為本幀起點</td>
+</tr>
+<tr>
+<td>“剩餘距離”</td>
+<td><code>Vector3.Distance(drivenPosition, targetPosition)</code></td>
+<td>決定當前要追趕多遠，作為速度計算輸入</td>
+</tr>
+<tr>
+<td>推進後的接收方</td>
+<td><code>nextPosition</code></td>
+<td>保存本幀推進結果，作為下一幀的起點</td>
+</tr>
+<tr>
+<td>“本幀步長”</td>
+<td>速度與 <code>elapseSeconds</code>，幀時長經非負保護後使用</td>
+<td>同一速度下，幀間隔越短，本幀位移越小；不會反向推進</td>
+</tr>
+</tbody></table>
+<p>這一計算由 <code>DataHoldHandControl.CalculateFollowSpeed</code> 和 <code>Vector3.MoveTowards</code> 完成，基礎跟隨使用的參數示例如下：</p>
+<table>
+<thead>
+<tr>
+<th>參數</th>
+<th>控制對象</th>
+<th align="right">示例值</th>
+<th>含義</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SpringCoefficient</td>
+<td>“彈簧係數”</td>
+<td align="right">16</td>
+<td>決定相同距離下的追趕力度</td>
+</tr>
+<tr>
+<td>MinFollowSpeed</td>
+<td>“最低速度”</td>
+<td align="right">12 m&#x2F;s</td>
+<td>離開停止半徑後的最低跟隨速度</td>
+</tr>
+<tr>
+<td>MaxFollowSpeed</td>
+<td>“最高速度”</td>
+<td align="right">24 m&#x2F;s</td>
+<td>限制距離很大時的追趕速度</td>
+</tr>
+<tr>
+<td>StopRadius</td>
+<td>“停止半徑”</td>
+<td align="right">0.02 m</td>
+<td>直接貼合目標的誤差半徑</td>
+</tr>
+</tbody></table>
+<p>這裡的“彈簧”不是嚴格的二階物理彈簧，而是“距離比例速度 + 上下限 + 受限位移”的工程化模型。它不依賴質量和阻尼參數，策劃更容易調出穩定手感。</p>
+<p>一個關鍵細節是 <code>m_DrivenPosition</code> 不讀取遠端接收方實體的插值位置。遠端實體可能因為網絡包延遲暫時落後，如果把它重新作為下一幀起點，就會把網絡抖動反饋進權威計算，形成越追越抖的閉環。</p>
+<h4 id="4-2-3-基本表現與取捨"><a href="#4-2-3-基本表現與取捨" class="headerlink" title="4.2.3 基本表現與取捨"></a>4.2.3 基本表現與取捨</h4><p>到這裡，接收方已經可以被帶到發起方身邊，並在移動時保持追趕。這套設計有兩個直接的好處：</p>
+<ul>
+<li>局部偏移天然保持雙人相對站位，旋轉和移動邏輯簡單。</li>
+<li>受限彈簧不會因為單個快照誤差直接瞬移，速度上下限可獨立調參。</li>
+</ul>
+<p>發起方急轉、快速跨越障礙或被服務器糾正時，接收方必然存在追趕延遲。(其實這也不能算缺點, 如果位置移動很硬的話就不像主從運動了)</p>
+<p>因此，基本表現並不要求接收方時刻釘在目標上；適當的滯後本身就是被牽著走的感覺。接下來需要改善的是急轉時的速度和地形適應，讓這種追趕保持自然。</p>
+<h3 id="4-3-體驗中的速度與高度問題"><a href="#4-3-體驗中的速度與高度問題" class="headerlink" title="4.3 體驗中的速度與高度問題"></a>4.3 體驗中的速度與高度問題</h3><p>這套局部偏移與距離比例速度可以保持雙人站位，但發起方的轉向會直接旋轉整個偏移。原地急轉時，接收方的目標也會快速繞到另一側，追趕過程容易出現被甩過去的感覺；單純降低跟隨速度，又會影響正常走路和跑步。</p>
+<p>實際調參時，很難同時兼顧跑步和急轉：把跟隨速度調到能正常追上走路、跑步時，接收方在快速轉向時又會繞得太快。調低速度後，轉向時的表現確實緩和了，但繼續降低，正常跑步又會跟不上。直線追趕和轉身繞行共用一套速度約束，很難只靠調整同一個速度值兼顧兩種表現，需要把它們分開處理。</p>
+<p>進一步體驗還暴露了兩個相關問題：固定的高度偏移會讓接收方插進地面，原地轉向時接收方又可能維持 Idle，看起來像站著滑過去。因此，繞行目標、地面高度和實際移動動畫需要一起調整，才能讓跟隨表現自然起來。</p>
+<h3 id="4-4-分開計算水平跟隨與繞行旋轉"><a href="#4-4-分開計算水平跟隨與繞行旋轉" class="headerlink" title="4.4 分開計算水平跟隨與繞行旋轉"></a>4.4 分開計算水平跟隨與繞行旋轉</h3><p>為了保留追趕感，同時讓轉向速度可以單獨調整，我將水平追趕、繞行旋轉和地面高度拆開求解。距離比例跟隨繼續負責移動到目標，獨立的旋轉狀態決定目標如何繞行，地面探測負責高度。</p>
+<p><strong>先看目標直接轉動的情況。</strong> “站在左後方”是相對發起方的朝向而言的。如果發起方突然向右轉，站位點立即採用這個朝向，就會一下換到另一側：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="直接改變朝向對彈簧追趕的影響">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-before.svg" alt="轉身前：接收方就在左後方的站位點。" width="900" height="570" loading="lazy"></a>
+    <figcaption>轉身前：接收方就在左後方的站位點。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-after.svg" alt="發起方突然向右轉，左後方的站位點立即換到另一側；接收方尚未移動，追趕距離突然變大。" width="900" height="570" loading="lazy"></a>
+    <figcaption>發起方突然向右轉，左後方的站位點立即換到另一側；接收方尚未移動，追趕距離突然變大。</figcaption>
+  </figure>
+</div>
+
+<p>彈簧看到的是追趕距離突然變大，於是讓接收方加速。只降低追趕速度雖然能緩和急轉，卻又容易影響正常跑步。</p>
+<p><strong>讓站位點也逐幀繞行。</strong> 保留接收方的彈簧追趕，只改變站位點的運動方式：發起方轉身後，站位點圍繞它逐幀繞過去；每一幀先更新站位點，再讓接收方從上一次的位置追向它。</p>
+<p>黑色虛線表示站位點已經走過的軌跡，藍色實線表示接收方實際走過的軌跡。藍色虛線箭頭指向本幀尚未追到的站位點：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="從彈簧追趕疊加目標繞行得到完整模型">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-before.svg" alt="轉身前：接收方與站位點重合，兩者都還沒有開始繞行。" width="900" height="580" loading="lazy"></a>
+    <figcaption>轉身前：接收方與站位點重合，兩者都還沒有開始繞行。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-target.svg" alt="轉身過程中，站位點先沿圓弧移動，接收方逐幀朝它追趕，此時還沒有追上本幀的站位點。" width="900" height="580" loading="lazy"></a>
+    <figcaption>轉身過程中，站位點先沿圓弧移動，接收方逐幀朝它追趕，此時還沒有追上本幀的站位點。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-chase.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-chase.svg" alt="後續每幀先更新站位點，再讓接收方從上一次的位置繼續追趕。接收方走過的路線由這些短位移連接而成。" width="900" height="580" loading="lazy"></a>
+    <figcaption>後續每幀先更新站位點，再讓接收方從上一次的位置繼續追趕。接收方走過的路線由這些短位移連接而成。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-settled.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-settled.svg" alt="站位點逐漸到達轉身後的左後方，接收方追完剩餘距離，重新穩定在身邊。" width="900" height="580" loading="lazy"></a>
+    <figcaption>站位點逐漸到達轉身後的左後方，接收方追完剩餘距離，重新穩定在身邊。</figcaption>
+  </figure>
+</div>
+
+<p>到這裡，模型從兩個獨立角色，逐步變成了“接收方用彈簧追趕，站位點平滑繞行”。接收方每幀仍做有限步長的直線推進，許多短位移連接起來才形成實際軌跡。</p>
+<p>為了分清兩條軌跡，這組平地示意把追趕係數設為 8、速度範圍設為 <code>0.2～0.6 m/s</code>；旋轉平滑時間仍為 <code>0.2 s</code>，繞行角速度上限仍為 <code>180°/s</code>，停止區半徑仍為 <code>0.05 m</code>。圖按代碼的更新順序、以每秒 60 幀計算，未加入網絡延遲和碰撞。實際資源配置追趕更緊，兩條軌跡通常更接近。</p>
+<p><strong>再將高度單獨交給地面處理。</strong> 前面的圖只看平地。角色帶有俯仰或側傾時，旋轉後的偏移可能包含高度，直接使用會把接收方帶離地面。因此先保留水平方向的偏移，讓跟隨目標落在發起方所在高度；之後再處理貼地或空中跟隨：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="4.4 分開計算水平跟隨與繞行旋轉的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls.svg" alt="狀態一：旋轉後的偏移仍在水平面內，“投影前目標”與水平目標重合。兩名角色的位置使用同一組圖標標出。" width="1040" height="570" loading="lazy"></a>
+    <figcaption>狀態一：旋轉後的偏移仍在水平面內，“投影前目標”與水平目標重合。兩名角色的位置使用同一組圖標標出。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls-tilted.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls-tilted.svg" alt="狀態二：朝向帶入俯仰，藍色偏移產生垂直分量；代碼去掉這部分高度，紅色目標仍落在發起方所在水平面。" width="1040" height="570" loading="lazy"></a>
+    <figcaption>狀態二：朝向帶入俯仰，藍色偏移產生垂直分量；代碼去掉這部分高度，紅色目標仍落在發起方所在水平面。</figcaption>
+  </figure>
+</div>
+
+<p>圖中的藍色“旋轉後偏移”是局部偏移按站位參考旋轉變換後的結果，去掉垂直分量後得到紅色“水平偏移”。這裡的參考旋轉專門用於計算站位點，它會平滑追趕發起方的轉身；其實現和接收方身體朝向的區別見 4.6.2。</p>
+<p><code>PreparationOffset</code> 和 <code>FollowOffset</code> 使用水平面上的兩個分量，分別描述左右和前後距離。準備時讓接收方站到發起方後方一米；正式跟隨時，目標位於左側約 0.55 米、後方約 0.22 米。偏移方向先經過繞行平滑，再投影到水平面，高度交給貼地或空中跟隨處理。接收方的身體朝向取發起方朝向。</p>
+<p>實際推進仍從發起方保存的驅動位置開始：先按距離選擇受上下限約束的追趕速度，進入停止區域後再逐漸減速，結合本幀時長決定前進距離。到達目標時停止；停止半徑配置為零時，省略這段額外的減速處理。</p>
+<p>這裡還要區分距離的計算時機：<strong>允許貼地時，先臨時把目標高度設為驅動位置的高度，按水平距離推進，再探測地面；沒有開啟貼地時，按包含高度差的三維距離追趕。</strong> 超距瞬移判斷髮生在這次高度處理之前，始終包含高度差。</p>
+<table>
+<thead>
+<tr>
+<th>參數</th>
+<th>圖中標記</th>
+<th align="right">當前資源值</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SpringCoefficient</code></td>
+<td>“彈簧係數”</td>
+<td align="right">40</td>
+<td>決定未限幅時速度隨距離增加的幅度</td>
+</tr>
+<tr>
+<td><code>MinFollowSpeed</code></td>
+<td>“最低速度”</td>
+<td align="right">2.5 m&#x2F;s</td>
+<td>停止區減速前的速度下限</td>
+</tr>
+<tr>
+<td><code>MaxFollowSpeed</code></td>
+<td>“最高速度”</td>
+<td align="right">8 m&#x2F;s</td>
+<td>跟隨速度上限</td>
+</tr>
+<tr>
+<td><code>StopRadius</code></td>
+<td>“減速半徑”</td>
+<td align="right">0.05 m</td>
+<td>限定連續減速作用的距離範圍</td>
+</tr>
+<tr>
+<td><code>FollowTeleportDistance</code></td>
+<td>“瞬移閾值”</td>
+<td align="right">8 m</td>
+<td>三維距離超過閾值時重建位置基線</td>
+</tr>
+</tbody></table>
+<h3 id="4-5-KCC-接入與模塊劃分"><a href="#4-5-KCC-接入與模塊劃分" class="headerlink" title="4.5 KCC 接入與模塊劃分"></a>4.5 KCC 接入與模塊劃分</h3><p>KCC 是項目中角色運動的底層驅動。發起方繼續使用正常的 KCC 運動，接收方在牽手期間禁用本地 Motor，並清零移動、跳躍、重力輸入和基礎速度；退出時恢復保存的啟用狀態。</p>
+<table>
+<thead>
+<tr>
+<th>模塊</th>
+<th>職責</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HoldHandRuntimeController</code></td>
+<td>維護驅動位置，計算跟隨、貼地和傳送結果</td>
+</tr>
+<tr>
+<td><code>HoldHandRotationFollowState</code></td>
+<td>維護繞行滯後角和角速度</td>
+</tr>
+<tr>
+<td><code>HoldHandGroundSnapDebouncer</code></td>
+<td>管理接地狀態切換的防抖</td>
+</tr>
+<tr>
+<td><code>ControllerSelfPlayer.OnKccUpdateDone</code></td>
+<td>在 KCC 更新完成後應用牽手位姿，隨後供相機採樣</td>
+</tr>
+<tr>
+<td><code>DataHoldHandControl</code></td>
+<td>集中配置偏移、速度、高度和各類平滑參數</td>
+</tr>
+</tbody></table>
+<h3 id="4-6-移動與平滑優化"><a href="#4-6-移動與平滑優化" class="headerlink" title="4.6 移動與平滑優化"></a>4.6 移動與平滑優化</h3><h4 id="4-6-1-停止區連續減速"><a href="#4-6-1-停止區連續減速" class="headerlink" title="4.6.1 停止區連續減速"></a>4.6.1 停止區連續減速</h4><p>前面用最低速度保證追趕力度，但到了站位點附近仍可能邁出過大的步長。足夠近時直接貼過去能夠收尾，卻會產生不隨幀間隔縮小的跳變。</p>
+<p>於是隻增加一個減速區：接收方進入站位點周圍的這片區域後，剩餘距離越小，追趕速度就越低，最後一小段也逐幀完成：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="讓接近目標的過程連續減速">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-edge.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-edge.svg" alt="接收方接近減速區，仍按正常追趕速度前進。" width="900" height="490" loading="lazy"></a>
+    <figcaption>接收方接近減速區，仍按正常追趕速度前進。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-inside.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-inside.svg" alt="接收方進入減速區後，下一步變小，逐漸收斂到站位點。" width="900" height="490" loading="lazy"></a>
+    <figcaption>接收方進入減速區後，下一步變小，逐漸收斂到站位點。</figcaption>
+  </figure>
+</div>
+
+<p>增大 <code>StopRadius</code> 會讓額外減速更早介入。最低速度只是減速前的下限，因此停止區內實際速度可以低於它；彈簧係數、速度上下限和減速半徑共同決定追趕與收尾的響應。停止半徑為零時，省略這段額外減速。</p>
+<p><code>MoveTowards</code> 將速度與本幀時長一起用於位移計算。只有本幀步長足以到達時才落到目標，因而高幀率下的小距離運動也受時間步長約束。</p>
+<p>驅動位置只來自權威端自己的計算，不讀取遠端實體已經插值的位置，避免把網絡抖動重新反饋進跟隨過程。</p>
+<h4 id="4-6-2-繞行旋轉滯後與限速"><a href="#4-6-2-繞行旋轉滯後與限速" class="headerlink" title="4.6.2 繞行旋轉滯後與限速"></a>4.6.2 繞行旋轉滯後與限速</h4><p>4.4 已經把站位點的繞行與接收方的追趕分開。現在先補清一個容易混淆的關係：走向哪裡和身體朝哪裡是兩件事。接收方的位置繼續追趕站位點，身體朝向卻直接跟隨發起方，所以轉身時二者可能不同：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="繞行時身體朝向與移動方向的區別">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-start.svg" alt="發起方轉身後，接收方身體也朝向右方，但本幀位移仍沿黑色虛線指向站位點。" width="900" height="580" loading="lazy"></a>
+    <figcaption>發起方轉身後，接收方身體也朝向右方，但本幀位移仍沿黑色虛線指向站位點。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-later.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-later.svg" alt="站位點繼續繞行，接收方的追趕方向隨之變化；身體朝向仍與發起方一致。" width="900" height="580" loading="lazy"></a>
+    <figcaption>站位點繼續繞行，接收方的追趕方向隨之變化；身體朝向仍與發起方一致。</figcaption>
+  </figure>
+</div>
+
+<p>決定站位點繞到哪裡的是 <code>followRotation</code>。它是計算站位時採用的參考旋轉；發起方已經轉過身，而這份參考還在追趕時，站位點便逐幀繞行。它不直接設置接收方的身體旋轉。</p>
+<p>只有“逐幀轉動”還不夠，急轉時依然需要控制響應。因此再加兩項約束：旋轉平滑控制追趕轉向的過程，最大角速度限制一幀實際能轉過多少。當前 <code>RotationFollowSmoothTime</code> 為 <code>0.2 s</code>，<code>MaxRotationFollowSpeed</code> 為 <code>180°/s</code>。</p>
+<p>每幀的處理順序如下：</p>
+<ol>
+<li>讀取發起方本幀偏航變化，累加尚未消化的轉角。</li>
+<li>用 <code>SmoothDamp</code> 消化轉角，再按本幀時長限制實際轉過的角度，得到站位參考旋轉。</li>
+<li>將 <code>FollowOffset</code> 按這個參考旋轉變換，生成本幀站位點。</li>
+<li>從接收方保存的驅動位置計算到目標的距離，用距離比例速度、速度上下限和停止區減速確定步長，再執行 <code>MoveTowards</code>。</li>
+<li>按接地條件修正高度，寫入接收方位置；身體旋轉直接使用發起方的旋轉。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>對象</th>
+<th>對應代碼</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>發起方身體朝向</td>
+<td><code>initiatorRotation</code> 及其偏航</td>
+<td>給出本幀希望跟上的方向</td>
+</tr>
+<tr>
+<td>站位參考旋轉</td>
+<td><code>HoldHandRotationFollowState.Update</code> 的結果，即 <code>followRotation</code></td>
+<td>決定站位點繞行到哪裡</td>
+</tr>
+<tr>
+<td>本幀站位點</td>
+<td><code>targetPosition</code></td>
+<td>由參考旋轉與跟隨偏移算出的追趕目標</td>
+</tr>
+<tr>
+<td>接收方當前位置</td>
+<td><code>m_DrivenPosition</code></td>
+<td>本幀從這裡繼續推進</td>
+</tr>
+<tr>
+<td>黑色站位點軌跡</td>
+<td>每幀的 <code>targetPosition</code></td>
+<td>受旋轉平滑與角速度限制</td>
+</tr>
+<tr>
+<td>藍色接收方軌跡</td>
+<td>每幀的 <code>nextPosition</code></td>
+<td>逐幀追向站位點，受移動速度與停止區減速約束</td>
+</tr>
+</tbody></table>
+<p>作為對照，按當前資源配置、以每秒 60 幀計算同樣的原地右轉 90°，目標與接收方的距離差最大約為 <code>6 mm</code>。4.4 的教學圖放慢了直線追趕，便於看清處理順序；實際距離差取決於直線追趕與旋轉限速兩套約束。</p>
+<p><code>m_AngularVelocity</code> 保存旋轉平滑的速度狀態，<code>m_LagAngle</code> 保存尚未追完的角度。連續轉動時保留繞行方向，但不累計需要補轉的整圈；停轉約 <code>0.05 s</code> 後就近歸位，反向轉身時也限制殘留角速度繼續把目標推遠。平滑時間或最大繞行角速度為零時，直接使用發起方朝向。</p>
+<p>這一處理將直線追趕速度與目標繞行速度分開。跑步可以保持足夠的追趕能力，轉身時目標仍按受控的速度繞行；接收方是否產生明顯滯後，取決於兩套約束在當前動作中的相對大小。</p>
+<h4 id="4-6-3-貼地防抖與落點限高"><a href="#4-6-3-貼地防抖與落點限高" class="headerlink" title="4.6.3 貼地防抖與落點限高"></a>4.6.3 貼地防抖與落點限高</h4><p>先看最簡單的高度處理：接收方沿用發起方高度。在坡面上，兩人腳下的地面卻可能不同，接收方就會懸空或陷入地面。</p>
+<p>因此從接收方上方向下發出射線，用命中的地面高度修正它的位置；水平方向繼續沿用彈簧跟隨：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="從固定高度到最基本的射線貼地">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-floating.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-floating.svg" alt="沿用發起方高度時，坡下的接收方可能懸空；反過來走到更高地面時，也可能陷入地面。" width="900" height="490" loading="lazy"></a>
+    <figcaption>沿用發起方高度時，坡下的接收方可能懸空；反過來走到更高地面時，也可能陷入地面。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-projected.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-projected.svg" alt="向下探測地面後，將接收方放到落點的高度，水平方向繼續由彈簧控制。" width="900" height="490" loading="lazy"></a>
+    <figcaption>向下探測地面後，將接收方放到落點的高度，水平方向繼續由彈簧控制。</figcaption>
+  </figure>
+</div>
+
+<p>這能適應普通坡面，但地形邊緣可能讓接地狀態反覆變化，射線也可能打到高處或深處的平臺。接下來分別加入狀態防抖與落點限高。</p>
+<p>發起方穩定接地、KCC 沒有禁止吸附，並且雙方高度差在限制內時，系統允許接收方貼地。先在水平面推進，再向下發射射線探測地面。</p>
+<p>接地狀態在臺階邊緣可能交替變化，<code>HoldHandGroundSnapDebouncer</code> 要求候選狀態持續一定時間才切換。當前資源的防抖時間為 <code>2 s</code>，最大高度差為 <code>0.5 m</code>；高度差超限會立即關閉貼地，不等待防抖計時。</p>
+<p>射線命中後還要檢查落點與發起方的高度差。這個檢查是硬限制，防止已開啟的貼地狀態把接收方吸到過高的平臺或過深的地面。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="4.6.3 貼地防抖與落點限高的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap.svg" alt="狀態一：候選接地狀態變為真，但持續時間尚未達到防抖門檻；接收方保持原有高度，尚未開啟本次地面投影。" width="1040" height="590" loading="lazy"></a>
+    <figcaption>狀態一：候選接地狀態變為真，但持續時間尚未達到防抖門檻；接收方保持原有高度，尚未開啟本次地面投影。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-active.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-active.svg" alt="狀態二：狀態持續達到門檻，開啟貼地；射線命中的“地面候選” 位於高度限制內，接收方沿垂直方向落到該地面。" width="1040" height="590" loading="lazy"></a>
+    <figcaption>狀態二：狀態持續達到門檻，開啟貼地；射線命中的“地面候選” 位於高度限制內，接收方沿垂直方向落到該地面。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-rejected.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-rejected.svg" alt="狀態三：更低的地面進入探測位置，命中點超過高度邊界；即使貼地模式仍開啟，也拒絕此次落點，角色保留投影前高度。" width="1040" height="590" loading="lazy"></a>
+    <figcaption>狀態三：更低的地面進入探測位置，命中點超過高度邊界；即使貼地模式仍開啟，也拒絕此次落點，角色保留投影前高度。</figcaption>
+  </figure>
+</div>
+
+<p>左側 “發起方”、“接收方位置” 是雙方位置，射線從接收方上方的 “射線起點” 向下檢測，“地面候選” 是地面候選點，“落點高度差” 與藍色高度邊界共同決定是否接受落點。右側紅線 “接地候選” 是候選狀態，藍線 “貼地狀態” 是實際貼地模式，“防抖時長” 標出切換所需的持續時間。側視幾何不按米等比繪製。</p>
+<table>
+<thead>
+<tr>
+<th>幾何標記</th>
+<th>對應代碼</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“起點抬高”</td>
+<td><code>RecipientGroundProbeHeight</code></td>
+<td>從待投影位置上方 <code>10 m</code> 發射射線</td>
+</tr>
+<tr>
+<td>“射線長度”</td>
+<td><code>RecipientGroundProbeDistance</code></td>
+<td>從射線起點向下最多檢測 <code>100 m</code></td>
+</tr>
+<tr>
+<td>“允許高度差”、“落點高度差”</td>
+<td><code>GroundSnapMaxHeightDifference</code>、實際高度差</td>
+<td>允許落點偏離發起方高度最多 <code>0.5 m</code>；命中射線並不自動通過限高</td>
+</tr>
+<tr>
+<td>“防抖時長”</td>
+<td><code>GroundSnapDebounceDuration</code></td>
+<td>候選接地狀態持續達到此時長才切換，當前資源值為 <code>2 s</code></td>
+</tr>
+<tr>
+<td>“接地候選”</td>
+<td>穩定接地且 <code>SnappingPrevented</code> 為假</td>
+<td>只有可吸附的穩定地面才能請求開啟貼地</td>
+</tr>
+<tr>
+<td>“貼地狀態”</td>
+<td><code>useGroundSnapping</code></td>
+<td>決定先水平推進再投影地面，還是按三維位置追趕</td>
+</tr>
+</tbody></table>
+<p>射線只檢測接收方配置的穩定地面層，層配置無效時使用地圖層，並忽略觸發器。防抖保留的是接地模式；高度差一旦超限，模式立即關閉，射線落點也必須單獨通過限高檢查。</p>
+<h4 id="4-6-4-對齊-KCC-與相機的採樣階段"><a href="#4-6-4-對齊-KCC-與相機的採樣階段" class="headerlink" title="4.6.4 對齊 KCC 與相機的採樣階段"></a>4.6.4 對齊 KCC 與相機的採樣階段</h4><p>如果跟隨先讀取物理位置，而相機隨後讀取插值後的顯示位置，同一幀的身體與相機就可能使用不同階段的數據。最直接的改進是統一採樣順序：先完成角色顯示位置更新，再計算跟隨，最後讓相機讀取結果。</p>
+<p>權威計算和接收方寫回都放在 <code>OnKccUpdateDone</code>，使用 KCC 插值後的顯示位置，並在相機位置採樣前完成。這樣身體、跟隨目標和相機使用相同階段的位置，避免固定步長的運動與渲染幀混用造成抖動。</p>
+<p>發起方本地的接收方實體直接應用逐幀計算結果，避免將本地跟隨平滑與網絡播放平滑疊加。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="4.6.4 對齊 KCC 與相機的採樣階段的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order.svg" alt="狀態一：本幀 KCC 顯示更新尚未完成，雙方與相機錨點仍對應之前的顯示狀態。" width="1040" height="490" loading="lazy"></a>
+    <figcaption>狀態一：本幀 KCC 顯示更新尚未完成，雙方與相機錨點仍對應之前的顯示狀態。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order-applied.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order-applied.svg" alt="狀態二：先完成 KCC 顯示更新，再應用雙人位姿，隨後才採樣相機錨點；三個時間標記說明它們的先後關係。" width="1040" height="490" loading="lazy"></a>
+    <figcaption>狀態二：先完成 KCC 顯示更新，再應用雙人位姿，隨後才採樣相機錨點；三個時間標記說明它們的先後關係。</figcaption>
+  </figure>
+</div>
+
+<h4 id="4-6-5-傳送時重置平滑狀態"><a href="#4-6-5-傳送時重置平滑狀態" class="headerlink" title="4.6.5 傳送時重置平滑狀態"></a>4.6.5 傳送時重置平滑狀態</h4><p>普通移動可以繼續用彈簧追趕，但傳送會讓兩個人突然相距很遠，緩慢追過去就不合適了。因此增加一個距離閾值：超過閾值時直接對齊新的站位，並從這裡重新開始跟隨。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="4.6.5 傳送時重置平滑狀態的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport.svg" alt="狀態一：紅色主體已經到達傳送位置，藍色接收方仍在原位置；新目標位於閾值球之外，高度差同樣計入距離。" width="1040" height="595" loading="lazy"></a>
+    <figcaption>狀態一：紅色主體已經到達傳送位置，藍色接收方仍在原位置；新目標位於閾值球之外，高度差同樣計入距離。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport-reset.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport-reset.svg" alt="狀態二：接收方直接對齊重算後的站位，驅動位置和平滑狀態從這裡重新開始；虛線邊界隨新的驅動位置更新。" width="1040" height="595" loading="lazy"></a>
+    <figcaption>狀態二：接收方直接對齊重算後的站位，驅動位置和平滑狀態從這裡重新開始；虛線邊界隨新的驅動位置更新。</figcaption>
+  </figure>
+</div>
+
+<p>虛線圓是三維閾值球的截面，“瞬移閾值” 對應 <code>FollowTeleportDistance</code>，“追趕距離” 是驅動位置到目標的三維距離。圖中的 “高度差” 強調垂直位移也參與判斷；恰好到達閾值時仍使用普通跟隨。</p>
+<p>驅動位置到目標的距離超過 <code>8 m</code> 時，直接採用發起方當前朝向下的新站位，並重置繞行角、貼地防抖和接收方動畫速度，立即廣播帶 <code>Teleported</code> 標記的結果。</p>
+<p>傳送屬於位置的不連續變化，清理平滑緩存可以避免角色沿舊方向漂移或跨越大段距離緩慢追趕。遠端對應的緩衝重置見網絡同步章節。</p>
+<h3 id="4-7-聯調中的動作銜接"><a href="#4-7-聯調中的動作銜接" class="headerlink" title="4.7 聯調中的動作銜接"></a>4.7 聯調中的動作銜接</h3><p>加入旋轉解算後，通過演示和實際操作與策劃確認繞行表現，再結合走路、跑步和原地轉向繼續檢查。這一輪聯調的重點，是確認目標移動更平穩後，角色的身體朝向與步態能否自然銜接。</p>
+<p>接收方繞著發起方移動時，自身也在轉身；如果此時仍播放 Idle，就會出現站著平移的感覺。因此，身體朝向繼續跟隨發起方，移動動畫則根據接收方自身的實際速度驅動，具體放在第 5 節說明。</p>
+<h3 id="4-8-兩種跟隨方式的對比"><a href="#4-8-兩種跟隨方式的對比" class="headerlink" title="4.8 兩種跟隨方式的對比"></a>4.8 兩種跟隨方式的對比</h3><p>兩種做法都以發起方為計算來源，並保留接收方自己的驅動位置。區別主要在於如何生成目標、如何分配速度，以及如何處理接近目標和地形變化的情況。</p>
+<table>
+<thead>
+<tr>
+<th>設計點</th>
+<th>局部偏移與距離比例跟隨</th>
+<th>分離繞行與水平跟隨</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目標轉向</td>
+<td>偏移直接隨發起方朝向旋轉</td>
+<td>偏移方向單獨平滑，並限制繞行角速度</td>
+</tr>
+<tr>
+<td>速度調節</td>
+<td>同一組追趕參數影響直線移動和轉向繞行</td>
+<td>直線追趕速度與繞行角速度分別配置</td>
+</tr>
+<tr>
+<td>接近目標</td>
+<td>進入停止半徑後直接貼合</td>
+<td>在停止區內連續減速，位移受幀間隔約束</td>
+</tr>
+<tr>
+<td>高度處理</td>
+<td>使用根節點變換後的三維偏移</td>
+<td>水平偏移與高度分開，貼地帶防抖和落點限高</td>
+</tr>
+<tr>
+<td>大跨度變化</td>
+<td>按追趕速度向目標移動</td>
+<td>超距時直接對齊，並重置運動和平滑狀態</td>
+</tr>
+<tr>
+<td>實現成本</td>
+<td>核心狀態少，容易調出基本跟隨</td>
+<td>需要維護繞行角速度、貼地狀態和重置時機</td>
+</tr>
+</tbody></table>
+<p>局部偏移與距離比例速度已經能夠表達雙人跟隨；當目標還包括自然轉向、複雜地面和穩定的幀間表現時，拆開這些約束能提供更明確的調參空間。</p>
+<h2 id="5-動畫同步與參數平滑"><a href="#5-動畫同步與參數平滑" class="headerlink" title="5. 動畫同步與參數平滑"></a>5. 動畫同步與參數平滑</h2><h3 id="5-1-設計目標"><a href="#5-1-設計目標" class="headerlink" title="5.1 設計目標"></a>5.1 設計目標</h3><p>雙方需要共享走路、跳躍、滑翔等主要動作語義，同時讓接收方的步態匹配自己的位移。例如發起方原地轉向時，接收方仍可能繞行；發起方停止後，接收方也可能繼續追趕。</p>
+<p>動畫系統還要給持物、收穫、單手操作和個人動作保留控制空間，避免牽手鏡像覆蓋正在執行的操作。</p>
+<h3 id="5-2-系統設計與原理"><a href="#5-2-系統設計與原理" class="headerlink" title="5.2 系統設計與原理"></a>5.2 系統設計與原理</h3><p>發起方提供可鏡像動畫層的快照，並根據每幀求得的接收方水平位移計算移動速度。速度轉換到發起方根節點的局部座標後，生成 <code>SpeedPerc_XZ</code>、<code>SpeedPerc_LocalX</code> 和 <code>SpeedPerc_LocalZ</code>，用於接收方的移動混合樹。</p>
+<p>普通地面 Move&#x2F;Idle 狀態按接收方速度驅動；跳躍、滑翔等狀態繼續使用發起方的動作狀態。動畫廣播攜帶接收方專屬快照，遠端直接消費這些參數，使三種視角都使用相同的速度來源。</p>
+<h3 id="5-3-Animator-接入與模塊劃分"><a href="#5-3-Animator-接入與模塊劃分" class="headerlink" title="5.3 Animator 接入與模塊劃分"></a>5.3 Animator 接入與模塊劃分</h3><table>
+<thead>
+<tr>
+<th>模塊</th>
+<th>職責</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HoldHandRuntimeController</code></td>
+<td>每幀生成並平滑一份接收方動畫速度，維護週期補發</td>
+</tr>
+<tr>
+<td><code>ControllerSelfPlayer.HoldHand</code></td>
+<td>複製允許鏡像的動畫快照，寫入接收方移動參數</td>
+</tr>
+<tr>
+<td><code>HoldHandStateUtility</code></td>
+<td>確定可鏡像層、接收方操作層，以及右手是否被操作佔用</td>
+</tr>
+<tr>
+<td>接收方動畫驅動器</td>
+<td>消費權威狀態，在遠端控制器與個人動作控制器之間切換</td>
+</tr>
+</tbody></table>
+<p>接收方平時使用 <code>OtherPlayerAnimatorController</code>，本地移動輸入不參與其普通步態決策。個人動作通過動作 ID 校驗和加載 Clip，持物、收穫等操作由各自邏輯驅動。</p>
+<h3 id="5-4-動畫平滑與兼容優化"><a href="#5-4-動畫平滑與兼容優化" class="headerlink" title="5.4 動畫平滑與兼容優化"></a>5.4 動畫平滑與兼容優化</h3><h4 id="5-4-1-速度濾波只推進一次"><a href="#5-4-1-速度濾波只推進一次" class="headerlink" title="5.4.1 速度濾波只推進一次"></a>5.4.1 速度濾波只推進一次</h4><p>貼地高度變化不應被當作跑動，因此先移除位移的 Y 分量，再將速度限制到 <code>MaxFollowSpeed</code> 以內。之後以 <code>AnimationVelocitySmoothTime = 0.1 s</code> 做指數平滑：</p>
+<div class="math-display">\[\alpha&#x3D;1-e^{-\Delta t&#x2F;\tau},\qquad
+\bar v_{next}&#x3D;\operatorname{Lerp}(\bar v,v_{raw},\alpha)\]</div>
+<p>這份速度只在發起方每幀完成位移求解後更新一次。動畫層和廣播都只讀取它，避免動畫層數量或發送次數改變濾波速度，從而抑制 <code>SpeedPerc</code> 波動引起的步態抖動。</p>
+<h4 id="5-4-2-起停滯回與傳送清零"><a href="#5-4-2-起停滯回與傳送清零" class="headerlink" title="5.4.2 起停滯回與傳送清零"></a>5.4.2 起停滯回與傳送清零</h4><p>啟動和停止分別使用 <code>0.1 m/s</code>、<code>0.05 m/s</code> 閾值。停止判定同時檢查原始速度與平滑速度，降低接近靜止時移動狀態反覆切換的概率。傳送時清零速度和移動標記，避免把大跨度位移解釋為高速跑步。</p>
+<p>基礎層按獨立間隔補發，即使發起方處於待機，接收方的追趕或繞行動畫也能持續更新。</p>
+<h4 id="5-4-3-操作層與個人動作讓位"><a href="#5-4-3-操作層與個人動作讓位" class="headerlink" title="5.4.3 操作層與個人動作讓位"></a>5.4.3 操作層與個人動作讓位</h4><p><code>ShouldMirrorAnimationLayer</code> 排除接收方的上半身、單手、雙手、<code>Base_1</code> 等操作層，以及個人動作展示層，讓各層保留自己的驅動來源。</p>
+<p>進入受支持的個人動作時，運行時記錄進入次數，暫停牽手 IK 和對應音樂，並按需恢復本地 Animator 控制器；最後一個個人動作結束後，恢復牽手控制器和持物表現。接收方操作佔用右手時，該側 IK 權重暫時歸零，讓手臂服從操作動畫。</p>
+<h2 id="6-手部-IK"><a href="#6-手部-IK" class="headerlink" title="6. 手部 IK"></a>6. 手部 IK</h2><h3 id="6-1-設計目標"><a href="#6-1-設計目標" class="headerlink" title="6.1 設計目標"></a>6.1 設計目標</h3><p>手部 IK 需要讓發起方左手與接收方右手儘量接觸，同時維持自然的肩、肘、腕姿態。角色的臂長、掛點偏移和身體位置可能不同，因此共享目標必須考慮雙方可達範圍，骨骼結果還要滿足關節限制。</p>
+<p>跑步、跳躍和轉向時，接觸點應穩定地隨雙人位置移動；滑翔或個人動作佔用手臂時，應能平滑釋放和恢復。IK 只調整手臂表現，角色根節點的位置由移動系統負責。</p>
+<p>IK 圖沿用紅色發起方、藍色接收方圖標，每一幅都畫出兩條參與牽手的骨鏈，共六個圓形節點。紅色“肩 → 肘 → 腕”屬於發起方，藍色“肩 → 肘 → 腕”屬於接收方，分別對應 LimbIK 的 <code>bone1 → bone2 → bone3</code>。十字表示“掌心”“目標握點”等邏輯點位，虛線骨鏈表示參考，不增加實際節點。</p>
+<p>這些圖是二維幾何說明，連續狀態保持上臂、前臂長度一致，用來展示輸入、目標和約束的變化；角色比例與姿態不作為實機參數標定。</p>
+<h3 id="6-2-共享接觸點與可達範圍"><a href="#6-2-共享接觸點與可達範圍" class="headerlink" title="6.2 共享接觸點與可達範圍"></a>6.2 共享接觸點與可達範圍</h3><p>實現基本握手可以先解決一個問題：讓兩條手臂追向同一個接觸位置。由兩隻手的 Pose 得到偏好點，用雙方的可達範圍約束它，再交給 Final IK 的 LimbIK 求解，配合連接狀態和權重過渡，就能建立基本的牽手錶現。</p>
+<h4 id="6-2-1-從兩個接觸-Pose-得到共享-Pose"><a href="#6-2-1-從兩個接觸-Pose-得到共享-Pose" class="headerlink" title="6.2.1 從兩個接觸 Pose 得到共享 Pose"></a>6.2.1 從兩個接觸 Pose 得到共享 Pose</h4><p>先只看兩條手臂和一個共同握點。每條手臂由肩、肘、腕三個節點組成，暫時把手腕末端當作接觸位置：固定肩的位置，只調整肘和腕，讓雙方末端靠向同一個目標。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="兩條手臂向同一握點求解">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-input.svg" alt="求解前：雙方手臂各自擺動，肩、肘、腕組成兩條骨鏈；黑色十字指定一個共同握點。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>求解前：雙方手臂各自擺動，肩、肘、腕組成兩條骨鏈；黑色十字指定一個共同握點。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-solved.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-solved.svg" alt="求解後：肩的位置不動，肘和腕圍繞目標調整，骨長不變；紅、藍兩個腕節點在握點處重合。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>求解後：肩的位置不動，肘和腕圍繞目標調整，骨長不變；紅、藍兩個腕節點在握點處重合。</figcaption>
+  </figure>
+</div>
+
+<p>給定末端目標，再反向調整關節以到達它，就是逆向運動學，簡稱 IK。這個模型能建立基本接觸，但還沒有回答兩條手臂是否都夠得到，下一步需要補上可達範圍。</p>
+<p>把發起方左手和接收方右手的兩個接觸 Pose 放到同一個世界空間後，位置取兩者的算術中點，旋轉通過 <code>Quaternion.Slerp</code> 取兩者之間 <code>0.5</code> 處的方向。這個尚未經過可達約束、位置平滑和最終偏移的結果，就是本文所說的<strong>偏好 Pose</strong>；代碼在約束前將它保存為 <code>preferredContact</code>，便於觀察後續處理對目標造成的變化。</p>
+<p>當前實現中，這兩個輸入來自 6.4.1 保存並還原的穩定參考，不會每幀重新採用動畫擺動後的手部 Pose。雙方最終使用同一個接觸位置，只分別疊加 <code>InitiatorContactRotationOffset</code> 和 <code>RecipientContactRotationOffset</code> 調整握持朝向。</p>
+<p>這一步建立的是共同目標，LimbIK 實際接受的手腕目標還要根據掌心掛點反算，具體見 6.5.3。</p>
+<h4 id="6-2-2-用可達球體近似兩段手臂"><a href="#6-2-2-用可達球體近似兩段手臂" class="headerlink" title="6.2.2 用可達球體近似兩段手臂"></a>6.2.2 用可達球體近似兩段手臂</h4><p>上一小節先讓兩條骨鏈追向共同位置。現在把目標往遠處移動：肘部可以展開，手卻不能無限伸長，因為上臂和前臂的長度固定。</p>
+<p>先只增加“兩段骨長”這個約束，再用它們能覆蓋的範圍近似可達球體。圖中畫出球體截面，比較彎曲與展開兩種狀態：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="6.2.2 用可達球體近似兩段手臂的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-bent.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-bent.svg" alt="狀態一：兩條手臂彎曲，腕部位於可達範圍內部。圓形節點仍是肩、肘、腕，“球心”與“肩”節點 分開標記。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態一：兩條手臂彎曲，腕部位於可達範圍內部。圓形節點仍是肩、肘、腕，“球心”與“肩”節點 分開標記。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-extended.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-extended.svg" alt="狀態二：接觸目標向外移動，肘部展開；上臂、前臂的長度與對應可達圓保持不變，變化的是骨骼夾角。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態二：接觸目標向外移動，肘部展開；上臂、前臂的長度與對應可達圓保持不變，變化的是骨骼夾角。</figcaption>
+  </figure>
+</div>
+
+<p>最直接的近似是把上臂與前臂長度相加，作為可達半徑；肘部彎曲時手靠近身體，展開時能到達更遠的位置，但骨長與範圍本身不變。掌心掛點相對手腕存在偏移時，還可以按掛點修正球心，圖中因而把“球心”與“肩”分開標記；後面的 6.4.2 再說明另一種預留範圍的處理。</p>
+<p>得到雙方的可達球體後，<code>TryConstrainSharedContact</code> 負責把偏好點限制在共同區域。球體表達伸展範圍，肘部應往哪邊彎、關節能轉多遠仍需要另外處理。</p>
+<h4 id="6-2-3-球體交集約束算法"><a href="#6-2-3-球體交集約束算法" class="headerlink" title="6.2.3 球體交集約束算法"></a>6.2.3 球體交集約束算法</h4><p>單側可達範圍確定了，還不能保證兩隻手碰到一起：兩個人相距太遠時，範圍可能完全分離。先觀察兩人從遠處靠近、範圍逐漸相交的過程：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="球體交集約束算法的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact.svg" alt="範圍分離：兩人相距較遠，即使手臂伸直也有間隙；中間的目標只能作為折中位置，雙方不能同時夠到。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>範圍分離：兩人相距較遠，即使手臂伸直也有間隙；中間的目標只能作為折中位置，雙方不能同時夠到。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact-overlap.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact-overlap.svg" alt="範圍相交：雙方靠近後出現共同區域，將範圍外的原握點移到這裡，兩條骨鏈便能朝同一個位置求解。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>範圍相交：雙方靠近後出現共同區域，將範圍外的原握點移到這裡，兩條骨鏈便能朝同一個位置求解。</figcaption>
+  </figure>
+</div>
+
+<p>紅、藍虛線圓是雙方可達球的截面。出現交集後，如果原握點在共同範圍外，就把它移回雙方都能伸到的位置；沒有交集時，只能保留折中目標，不能保證雙方同時夠到。</p>
+<p>實現中進一步按下面的候選順序選擇目標：</p>
+<ol>
+<li>偏好點已經位於兩個球體內部，直接使用。</li>
+<li>兩球分離時，沿球心連線按雙方伸展能力選取折中點，並將 <code>HasSharedReach</code> 記為假。</li>
+<li>兩球相交但偏好點在外部時，先檢查投影到單側球體的候選，選擇同時滿足雙方範圍、且離偏好點最近的一個。</li>
+<li>單側投影都不滿足時，利用兩球的交圓確定共同區域，將偏好點投影並限制在其中。</li>
+</ol>
+<p>兩球相交形成的交圓用於確定共同邊界；具體半徑還取決於掛點預留方式。這裡先講幾何上能否到達，肘部應向哪邊彎、關節能轉多遠仍需要另外限制。</p>
+<h4 id="6-2-4-平滑、連接狀態和權重"><a href="#6-2-4-平滑、連接狀態和權重" class="headerlink" title="6.2.4 平滑、連接狀態和權重"></a>6.2.4 平滑、連接狀態和權重</h4><p>兩隻手能夠求向同一位置後，目標變化或連接切換仍可能顯得突然。先給共享目標加上平滑，讓它逐幀靠近計算結果；再處理連接邊界和手臂的過渡程度。</p>
+<p>共同目標在發起方根節點的局部空間中經過 <code>Vector3.SmoothDamp</code> 平滑，當前資源使用 <code>ContactPositionSmoothTime = 0.01 s</code>。平滑後若雙方範圍有交集，再將結果限制回交集，避免過渡過程中越界；完整的局部空間處理見 6.6.2。</p>
+<p>IK 配對首次被觀察到時先經過一個準備幀；從下一幀開始，只要配對仍然有效且沒有暫停原因，就進入連接狀態。滑翔、個人動作等暫停原因出現時解除連接，全部消失後再恢復。</p>
+<p>當前 <code>UpdateConnection</code> 不按雙方距離決定連接狀態。雙方是否同時夠得到由 <code>HasSharedReach</code> 單獨記錄，它不會直接斷開互動或 IK 連接。</p>
+<p>連接狀態決定目標權重是 1 還是 0，實際權重再逐幀靠近這個目標，避免整條手臂立即跳到另一個姿態：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="6.2.4 連接狀態和權重過渡的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-released.svg" alt="狀態一：準備階段或存在暫停原因時，目標權重為零；完成淡出後，六個節點回到各自動畫姿態。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態一：準備階段或存在暫停原因時，目標權重為零；完成淡出後，六個節點回到各自動畫姿態。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-connected.svg" alt="狀態二：準備幀結束且沒有暫停原因時，目標權重逐幀升高；完成淡入後，肩、肘、腕朝共同目標排列。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態二：準備幀結束且沒有暫停原因時，目標權重逐幀升高；完成淡入後，肩、肘、腕朝共同目標排列。</figcaption>
+  </figure>
+</div>
+
+<p>兩張圖顯示權重過渡的端點，中間仍逐幀推進。連接狀態隻影響 IK，不清除房間互動狀態。當前最大位置、旋轉權重均為 1，淡入、淡出時間均為 <code>0.3 s</code>；位置權重決定骨鏈追向目標的程度，旋轉權重決定手腕服從目標朝向的程度。每幀將目標交給 <code>LimbIK.solver</code>，再手動求解。</p>
+<h4 id="6-2-5-基本表現與取捨"><a href="#6-2-5-基本表現與取捨" class="headerlink" title="6.2.5 基本表現與取捨"></a>6.2.5 基本表現與取捨</h4><p>共享目標、可達約束與權重過渡已經能把兩隻手連在一起。這套設計的優點在於：</p>
+<ul>
+<li>共享接觸點讓兩隻手在視覺上擁有同一個“握手位置”，比兩端各自追目標更穩定。</li>
+<li>球體交集算法計算量小、邊界明確，能顯式處理兩側臂長不同的情況。</li>
+<li>準備幀、暫停狀態和權重淡入淡出讓手臂能夠連續地進入、釋放和恢復。</li>
+<li>發起方統一求解並廣播，接收方和第三方不需要重複運行完整可達性邏輯，結果更一致。</li>
+<li>Final IK LimbIK 可以複用現有骨架和彎曲方向配置，落地成本低。</li>
+</ul>
+<p>這些特點讓它適合先建立基本的手部接觸，再結合動作體驗細調偏移與權重。接觸點的幾何可達性確定以後，還需要檢查手臂在運動中的姿態。</p>
+<h3 id="6-3-運動中的手部姿態問題"><a href="#6-3-運動中的手部姿態問題" class="headerlink" title="6.3 運動中的手部姿態問題"></a>6.3 運動中的手部姿態問題</h3><p>球體只表達“能不能夠到”，沒有表達肘部偏好、肩部關節限位、碰撞體和衣服約束，某些姿勢會出現肘部翻轉或穿模。兩球分離時也只能返回折中目標，不能保證雙方同時夠到；接觸目標、骨骼動畫和根節點運動同時變化時，還容易把手部擺動帶進求解。</p>
+<p>跑測中，靜止狀態下能把兩隻手調到一起，還不足以保證運動中的表現。接觸處可能折起來，移動時有明顯卡頓和手部擺動，手腕偶爾會彎到不自然的角度，大跳下落時手臂還會往上拉。接觸點對齊之外，還需要控制動畫變化對求解的影響。</p>
+<p>一個比較明確的復現是：跑步中被碰撞卡住後，IK 位置會一直不對，要斷開再連接才能恢復；小跳和大跳結束後的手部表現也不自然。針對這些現象，優化集中在兩個方向：固定接觸點和骨骼的參考，避免它們不斷被當前動畫改寫；再為肩、肘、腕分別加上姿態限制。</p>
+<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-comparison.webp" alt="聯調中的接觸點異常與重新連接後的手部狀態對比"></p>
+<p><em>參考姿態穩定性的問題復現：左側為接觸異常，右側為重新建立連接後的姿態。</em></p>
+<h3 id="6-4-穩定參考與受約束的共享目標"><a href="#6-4-穩定參考與受約束的共享目標" class="headerlink" title="6.4 穩定參考與受約束的共享目標"></a>6.4 穩定參考與受約束的共享目標</h3><p>為了讓基本的手部接觸在跑步、跳躍和暫停恢復時也保持穩定，我保留共享接觸點與球體約束，並將求解輸入固定到穩定參考姿態。目標只隨角色之間的相對關係變化，骨骼結果再經過獨立的關節限制和平滑處理。</p>
+<h4 id="6-4-1-發起方計算共享接觸目標"><a href="#6-4-1-發起方計算共享接觸目標" class="headerlink" title="6.4.1 發起方計算共享接觸目標"></a>6.4.1 發起方計算共享接觸目標</h4><p>每幀從當前手部動畫取接觸點，容易把擺臂或一次異常姿態帶進後續目標。於是先保存一份參考：牽手建立時，記錄兩隻手相對各自角色的位置與旋轉。</p>
+<p>這就是局部空間：參考記錄的是“相對這個角色在哪裡”，而不是地圖上的絕對位置。角色整體移動時，參考點跟著移動；動畫中的手腕可以擺動，卻不重新定義參考：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="保存手部相對角色的參考點">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-capture.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-capture.svg" alt="保存參考：記錄此時手部相對角色的位置。紅、藍十字各自綁定到對應角色，虛線表示它們之間保存的相對關係。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>保存參考：記錄此時手部相對角色的位置。紅、藍十字各自綁定到對應角色，虛線表示它們之間保存的相對關係。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-moved.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-moved.svg" alt="角色移動後：參考點隨角色整體移動，當前動畫中的手腕卻可以擺到別處；後續仍從保存的參考點形成握點。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>角色移動後：參考點隨角色整體移動，當前動畫中的手腕卻可以擺到別處；後續仍從保存的參考點形成握點。</figcaption>
+  </figure>
+</div>
+
+<p>配對首次達到掛點與骨鏈都可用的狀態時，把兩側接觸 Pose 分別保存到各自根節點的局部空間。之後每幀隨當前根節點還原這兩個參考，先用位置中點與旋轉中值形成偏好 Pose，再進入可達約束、局部平滑和最終偏移；當前動畫中的手部擺動不會重新定義基準。</p>
+<p>這組圖畫的是讀取參考階段，實線骨鏈表示送入 IK 前的動畫姿態。<code>preferredContact</code> 對應剛形成、尚未處理的偏好 Pose；可達約束會修改它的位置，但不會修改其中間旋轉。隨後才進行局部平滑、再次約束併疊加 <code>ContactPositionOffset</code>，最後生成雙方共用的位置與各自獨立的旋轉目標。完整計算由發起方執行，遠端消費局部目標。</p>
+<h4 id="6-4-2-兩側可達球體的交集"><a href="#6-4-2-兩側可達球體的交集" class="headerlink" title="6.4.2 兩側可達球體的交集"></a>6.4.2 兩側可達球體的交集</h4><p>前面按完整臂長近似可達範圍，仍可能把手腕推到伸展極限。掌心掛點在手腕之外，握持朝向或接觸距離改變時還需要一點餘量。</p>
+<p>因此保持球心在肩部，從半徑中預留掌心掛點的偏移；需要額外掌心間距時，再預留這段接觸距離。圖中每次只改變一項預留：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="6.4.2 兩側可達球體的交集的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-reserved.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-reserved.svg" alt="狀態一：骨長固定，半徑先為“掌心偏移” 預留空間；共同目標位於雙方都能接受的區域。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態一：骨長固定，半徑先為“掌心偏移” 預留空間；共同目標位於雙方都能接受的區域。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-palm-distance.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-palm-distance.svg" alt="狀態二：“接觸間距” 增大，保守可達範圍縮小，“偏好握點”重新約束到“目標握點”；兩側還沿各自肩部到目標的方向調整掌心距離。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態二：“接觸間距” 增大，保守可達範圍縮小，“偏好握點”重新約束到“目標握點”；兩側還沿各自肩部到目標的方向調整掌心距離。</figcaption>
+  </figure>
+</div>
+
+<p>可達球心取肩部。半徑從上臂、前臂的總長度中，預留掌心掛點偏移以及 <code>PalmContactDistance</code> 的絕對長度；這樣手腕旋轉和接觸距離調整時仍有伸展餘量。扣除後半徑非正，就無法建立有效可達球。</p>
+<p>圖中接觸距離的變化用於展示參數作用，當前資源的 <code>PalmContactDistance</code> 為零。球體交集沿用 6.2.3 的候選與投影處理；沒有交集時保留折中目標繼續嘗試，最終手臂仍受關節限制保護。</p>
+<h4 id="6-4-3-配對有效性與連接狀態"><a href="#6-4-3-配對有效性與連接狀態" class="headerlink" title="6.4.3 配對有效性與連接狀態"></a>6.4.3 配對有效性與連接狀態</h4><p>IK 只處理狀態互指、類型一致、Avatar 已下載且骨架就緒的配對。配對經過首次觀察的準備幀，且沒有暫停原因時進入連接。</p>
+<p>滑翔、個人動作等通過暫停原因集合控制連接；只有所有原因解除後才恢復。<code>HasSharedReach</code> 描述幾何可達性，不直接決定互動關係或 IK 是否斷開。骨架失效、天氣變身和接收方右手操作分別有對應的釋放或讓位邏輯。</p>
+<h3 id="6-5-Final-IK-的應用與模塊劃分"><a href="#6-5-Final-IK-的應用與模塊劃分" class="headerlink" title="6.5 Final IK 的應用與模塊劃分"></a>6.5 Final IK 的應用與模塊劃分</h3><h4 id="6-5-1-使用-LimbIK-求解單側手臂"><a href="#6-5-1-使用-LimbIK-求解單側手臂" class="headerlink" title="6.5.1 使用 LimbIK 求解單側手臂"></a>6.5.1 使用 LimbIK 求解單側手臂</h4><p>項目使用 <strong>Final IK（命名空間 <code>RootMotion.FinalIK</code>）</strong> 插件，其中 <strong><code>LimbIK</code> 是用於單條肢體的 IK 組件</strong>。每個角色準備左、右兩條手臂的 LimbIK，牽手配對使用發起方的左臂和接收方的右臂。</p>
+<p>LimbIK 內部使用 <code>IKSolverLimb</code>，它繼承基於餘弦定理的解析式 <code>IKSolverTrigonometric</code>。求解鏈由上臂、前臂、手腕三個骨骼節點組成，對應兩段骨長；給定末端目標和彎曲平面後，求解器計算骨鏈的姿態，並提供末端旋轉和權重控制。</p>
+<p>項目將彎曲模式設置為 <code>IKSolverLimb.BendModifier.Arm</code>，讓插件提供適合手臂的彎曲平面。共享目標計算、網絡權威、暫停狀態和三軸關節限制由項目自己的模塊負責，插件承擔具體的骨鏈求解。</p>
+<h4 id="6-5-2-骨鏈綁定與手動更新"><a href="#6-5-2-骨鏈綁定與手動更新" class="headerlink" title="6.5.2 骨鏈綁定與手動更新"></a>6.5.2 骨鏈綁定與手動更新</h4><p><code>EntityBaseHead.InitializeHoldHandIK</code> 使用 <code>G_LweaponTransform</code> 和 <code>G_RweaponTransform</code> 作為左右接觸掛點。從掛點依次向上取得手腕、前臂和上臂，校驗骨鏈後建立求解器。核心配置可概括為：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">limb.enabled = <span class="literal">false</span>;</span><br><span class="line">limb.fixTransforms = <span class="literal">false</span>;</span><br><span class="line">limb.solver.goal = goal; <span class="comment">// LeftHand 或 RightHand</span></span><br><span class="line">limb.solver.target = <span class="literal">null</span>;</span><br><span class="line">limb.solver.bendModifier = IKSolverLimb.BendModifier.Arm;</span><br><span class="line">limb.solver.bendModifierWeight = <span class="number">1f</span>;</span><br><span class="line">limb.solver.maintainRotationWeight = <span class="number">0f</span>;</span><br><span class="line">limb.solver.SetIKPositionWeight(<span class="number">0f</span>);</span><br><span class="line">limb.solver.SetIKRotationWeight(<span class="number">0f</span>);</span><br><span class="line">limb.solver.SetChain(upperArm, lowerArm, hand, Transform);</span><br></pre></td></tr></table></figure>
+
+<p>關閉 LimbIK 組件的自動更新後，項目通過 <code>SetIKPosition</code>、<code>SetIKRotation</code> 設置目標，並在受控階段手動調用 <code>limb.solver.Update()</code>。這樣可以在動畫完成後求解，並在求解之後施加關節限制，避免組件獨立更新造成順序衝突。</p>
+<p><code>fixTransforms = false</code> 讓骨骼參考姿態的恢復由項目代碼控制；<code>target = null</code> 表示直接寫入目標 Pose，不依賴目標 Transform。任一掛點、骨鏈或 LimbIK 無效，角色就不進入有效 IK 註冊。</p>
+<h4 id="6-5-3-把掌心目標轉換為手腕目標"><a href="#6-5-3-把掌心目標轉換為手腕目標" class="headerlink" title="6.5.3 把掌心目標轉換為手腕目標"></a>6.5.3 把掌心目標轉換為手腕目標</h4><p>前面把末端接觸簡化為一個點；實際接入插件時，LimbIK 的末端是手腕，玩法希望對齊的卻是掌心。直接把掌心目標當作手腕目標，會忽略兩者之間的掛點偏移。</p>
+<p>先把掌心目標固定住，再觀察握持朝向改變時的情況：偏移方向旋轉後，手腕也必須換一個位置，掌心才能仍然停在目標上。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="把掌心目標轉換為手腕目標的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-target.svg" alt="狀態一：“掌心目標”固定，紅、藍兩側的“腕”節點通過各自“掌心偏移”連接到它；六個骨骼節點圍繞手腕目標求解。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態一：“掌心目標”固定，紅、藍兩側的“腕”節點通過各自“掌心偏移”連接到它；六個骨骼節點圍繞手腕目標求解。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-rotated.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-rotated.svg" alt="狀態二：握持朝向改變，掛點偏移的世界方向隨之旋轉，手腕位置也必須改變，掌心目標才能保持不動。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態二：握持朝向改變，掛點偏移的世界方向隨之旋轉，手腕位置也必須改變，掌心目標才能保持不動。</figcaption>
+  </figure>
+</div>
+
+<p>玩法要求對齊掌心掛點，LimbIK 的末端卻是手腕骨骼。因此要先抵消掛點相對手腕的局部旋轉，得到手腕朝向；再把經過角色縮放的掛點位置偏移按這個朝向轉到世界空間，從掌心目標向回退到手腕目標。</p>
+<p>圖中將掛點偏移放大以便觀察。<code>ContactTargetToHandTarget</code> 處理這一轉換，輸入包括接觸目標 Pose、<code>contact.localRotation</code>、<code>contact.localPosition</code> 和手腕的 <code>lossyScale</code>。反算後的手腕 Pose 才送入 LimbIK；<code>PalmContactDistance</code> 的調整發生在此之前。</p>
+<h4 id="6-5-4-項目模塊與插件的邊界"><a href="#6-5-4-項目模塊與插件的邊界" class="headerlink" title="6.5.4 項目模塊與插件的邊界"></a>6.5.4 項目模塊與插件的邊界</h4><table>
+<thead>
+<tr>
+<th>模塊</th>
+<th>職責</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HoldHandIKRuntimeController</code></td>
+<td>枚舉有效配對、計算共享目標、管理權重與暫停、發送或消費權威目標</td>
+</tr>
+<tr>
+<td><code>HoldHandIKPairState</code></td>
+<td>保存參考接觸 Pose、位置平滑狀態、網絡序列和遠端目標</td>
+</tr>
+<tr>
+<td><code>EntityBaseHead.HoldHandIK</code></td>
+<td>註冊骨架、綁定 LimbIK、轉換掌心目標、管理手臂參考姿態並執行求解</td>
+</tr>
+<tr>
+<td>Final IK 的 <code>LimbIK / IKSolverLimb</code></td>
+<td>根據手腕目標和彎曲模式計算三節點手臂骨鏈</td>
+</tr>
+<tr>
+<td><code>HoldHandArmRotationLimits</code></td>
+<td>對肩、肘、腕執行旋轉平滑、三軸限制和肘部防反折</td>
+</tr>
+<tr>
+<td><code>HoldHandIKLateUpdateDriver</code></td>
+<td>統一安排每幀 IK 更新時機</td>
+</tr>
+<tr>
+<td><code>DataHoldHandControl</code></td>
+<td>配置接觸偏移、平滑時間、權重和關節範圍</td>
+</tr>
+</tbody></table>
+<h3 id="6-6-IK-穩定性與平滑優化"><a href="#6-6-IK-穩定性與平滑優化" class="headerlink" title="6.6 IK 穩定性與平滑優化"></a>6.6 IK 穩定性與平滑優化</h3><h4 id="6-6-1-固定參考姿態，隔離動畫擾動"><a href="#6-6-1-固定參考姿態，隔離動畫擾動" class="headerlink" title="6.6.1 固定參考姿態，隔離動畫擾動"></a>6.6.1 固定參考姿態，隔離動畫擾動</h4><p>跑步擺臂和跳躍會持續改變骨骼姿態。如果每幀從動畫結果重新提取基準，目標點和限制參考也會隨之變化，甚至把一次異常姿勢留在下一次求解中。</p>
+<p>系統分別保存配對的局部接觸 Pose，以及首次有效求解時的手臂骨骼參考旋轉。接觸點隨角色根節點移動，骨鏈從穩定參考姿態開始求解。滑翔等臨時暫停保留這些參考，配對重建或骨架失效時才按生命週期重置。</p>
+<h4 id="6-6-2-在角色局部空間平滑接觸點"><a href="#6-6-2-在角色局部空間平滑接觸點" class="headerlink" title="6.6.2 在角色局部空間平滑接觸點"></a>6.6.2 在角色局部空間平滑接觸點</h4><p>固定參考減少了擺臂帶來的擾動，但兩人相對運動時，共享點仍可能輕微跳動。直接在世界空間平滑又會讓角色整體前進、跳躍時的目標落後。</p>
+<p>因此只平滑目標相對發起方的變化：整體位移立即帶動目標，相對變化再逐幀追近。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="在角色局部空間平滑接觸點的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-start.svg" alt="相對位置穩定：平滑握點已經追上目標，兩條手臂共同伸向這個位置。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>相對位置穩定：平滑握點已經追上目標，兩條手臂共同伸向這個位置。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-step.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-step.svg" alt="相對位置變化：角色整體位移直接帶動局部參考；兩人之間的變化讓目標稍有移動，平滑握點再逐幀追近它。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>相對位置變化：角色整體位移直接帶動局部參考；兩人之間的變化讓目標稍有移動，平滑握點再逐幀追近它。</figcaption>
+  </figure>
+</div>
+
+<p>共享點在發起方根節點局部空間做 <code>SmoothDamp</code>，平滑時間為 <code>0.01 s</code>，然後變換回世界空間。這樣平滑只作用於雙方相對位置的變化，角色整體移動和跳躍可以直接帶動目標，避免世界空間平滑造成目標落後。</p>
+<p>圖中先只畫局部目標與平滑握點。接入可達約束和配置偏移時，還需要下面兩步：</p>
+<p>有共同可達區域時，平滑結果會再次投影回該區域。之後按發起方根節點旋轉疊加 <code>ContactPositionOffset</code>，當前值為 <code>(-0.04, -0.31, -0.01)</code>；該偏移不回寫平滑緩存，避免累加或被下一次平滑覆蓋。偏移可能把目標推到可達區域外，需要與骨骼限制一起調試。</p>
+<p>遠端收到的 IK 目標同樣在發起方局部空間平滑，再用本地顯示的根節點還原；網絡目標的具體消費方式見第 7 節。</p>
+<h4 id="6-6-3-肩、肘、腕三軸限制與防反折"><a href="#6-6-3-肩、肘、腕三軸限制與防反折" class="headerlink" title="6.6.3 肩、肘、腕三軸限制與防反折"></a>6.6.3 肩、肘、腕三軸限制與防反折</h4><p>共享握點解決了“手到哪裡”，可達範圍解決了“夠不夠得到”，仍不能保證關節彎得自然。接下來只給肩、肘、腕增加各自的旋轉範圍，並防止肘部反折：先得到 IK 姿態，再讓最終骨骼服從這些限制。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="肩、肘、腕三軸限制與防反折的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-input.svg" alt="狀態一：LimbIK 得到朝向共同目標的姿態，但各關節旋轉還需要經過自身約束。六個圓點是本次骨鏈輸出。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態一：LimbIK 得到朝向共同目標的姿態，但各關節旋轉還需要經過自身約束。六個圓點是本次骨鏈輸出。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-output.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-output.svg" alt="狀態二：肩、肘、腕經過旋轉平滑與硬限制，骨長保持不變，實際接觸位置可以偏離“目標握點”；黑色虛線只對照前一個姿態。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態二：肩、肘、腕經過旋轉平滑與硬限制，骨長保持不變，實際接觸位置可以偏離“目標握點”；黑色虛線只對照前一個姿態。</figcaption>
+  </figure>
+</div>
+
+<p><code>HoldHandArmRotationLimits</code> 為上臂、肘部、手腕分別提供偏航、俯仰和橫滾範圍。上臂相對角色建立參考系，肘部相對上臂，手腕相對前臂；骨骼軸在初始化時標定，運行時參考系跟隨角色或父骨旋轉。</p>
+<p>“肩部限角”“肘部限角”“腕部限角”弧線標出旋轉約束的位置，實際實現分別限制偏航、俯仰、橫滾三個軸。圖中用二維姿態說明處理順序，不作為資源角度的實測結果。</p>
+<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/joint-limits.webp" alt="上臂、肘部、手腕分別配置三軸旋轉範圍的編輯器界面"></p>
+<p><em>三關節配置入口與參考系說明，實際使用值見下表。</em></p>
+<table>
+<thead>
+<tr>
+<th>關節</th>
+<th>偏航範圍</th>
+<th>俯仰範圍</th>
+<th>橫滾範圍</th>
+<th>旋轉平滑時間</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上臂</td>
+<td>-45° ～ 80°</td>
+<td>-90° ～ 10°</td>
+<td>-45° ～ 45°</td>
+<td>0.03 s</td>
+</tr>
+<tr>
+<td>肘部</td>
+<td>0° ～ 145°</td>
+<td>-5° ～ 5°</td>
+<td>-80° ～ 80°</td>
+<td>0.03 s</td>
+</tr>
+<tr>
+<td>手腕</td>
+<td>-30° ～ 20°</td>
+<td>-45° ～ 45°</td>
+<td>-5° ～ 5°</td>
+<td>0.03 s</td>
+</tr>
+</tbody></table>
+<p>肘部同時滿足角度範圍與正常屈曲半空間。兩種約束聯合計算，避免先限角、再防反折時互相覆蓋；範圍沒有可行交集時，也不能靠反折去滿足目標。</p>
+<h4 id="6-6-4-關節旋轉平滑與求解順序"><a href="#6-6-4-關節旋轉平滑與求解順序" class="headerlink" title="6.6.4 關節旋轉平滑與求解順序"></a>6.6.4 關節旋轉平滑與求解順序</h4><p>每個關節在自己的穩定參考系中進行旋轉平滑，當前時間均為 <code>0.03 s</code>。這樣可以緩和求解結果的微小跳變，同時讓角色整體轉身和父骨旋轉及時傳遞到手臂。</p>
+<p>平滑之後執行三軸硬限制，並緩存受約束後的旋轉，防止濾波狀態在限位之外積累誤差。單次手臂更新的順序為：</p>
+<ol>
+<li>保存當前動畫姿態，恢復穩定參考姿態，用 LimbIK 求出完整 IK 結果。</li>
+<li>應用相對參考姿態的整體最大轉角限制，再按位置、旋轉權重與動畫混合。</li>
+<li>根據混合後的手腕朝向重新反算掌心偏移，再調用 LimbIK 校正接觸位置。</li>
+<li>對肩、肘、腕做旋轉平滑、三軸硬限制和防反折，作為本幀骨骼輸出。</li>
+</ol>
+<p>最後一步之後不能再次運行 IK 覆蓋限位。因此在接觸精度與關節範圍衝突時，系統優先滿足關節限制，允許掌心存在少量間隙。</p>
+<h4 id="6-6-5-權重過渡與操作讓位"><a href="#6-6-5-權重過渡與操作讓位" class="headerlink" title="6.6.5 權重過渡與操作讓位"></a>6.6.5 權重過渡與操作讓位</h4><p>只有連接與斷開還不足以處理個人動作。牽手關係仍在時，操作動畫也可能臨時佔用一條手臂；如果兩套邏輯同時寫骨骼，就會互相覆蓋。</p>
+<p>因此增加暫停與恢復：暫停期間讓動畫接管，保留這段牽手的參考；動作結束後，再朝同一套參考逐幀恢復權重。</p>
+<div class="holdhand-state-gallery" role="group" aria-label="權重過渡與操作讓位的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-connected.svg" alt="狀態一：雙方正常牽手，六個節點圍繞接觸目標排列，參考握點屬於本次配對。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態一：雙方正常牽手，六個節點圍繞接觸目標排列，參考握點屬於本次配對。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-released.svg" alt="狀態二：個人動作等原因暫停 IK，完成淡出後由動畫控制手臂；保留參考握點，不把釋放時的姿態重新記為基準。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態二：個人動作等原因暫停 IK，完成淡出後由動畫控制手臂；保留參考握點，不把釋放時的姿態重新記為基準。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-resumed.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-resumed.svg" alt="狀態三：暫停原因全部解除，權重逐幀恢復，骨鏈重新求向同一套參考目標。三幅圖只畫過渡端點，過程並非瞬間切換。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態三：暫停原因全部解除，權重逐幀恢復，骨鏈重新求向同一套參考目標。三幅圖只畫過渡端點，過程並非瞬間切換。</figcaption>
+  </figure>
+</div>
+
+<p>連接狀態通過 <code>MoveTowards</code> 推進權重，淡入、淡出時間均為 <code>0.3 s</code>，最大位置和旋轉權重均為 1。求解結果與動畫按權重混合，使進入、暫停和恢復過程具有連續過渡。</p>
+<p>暫停原因用集合管理，避免一種玩法解除暫停時覆蓋另一種玩法的佔用。接收方自己的操作使用右手時，該側位置和旋轉權重暫時歸零，骨骼服從操作動畫；天氣變身、骨架缺失等狀態則按各自路徑釋放 IK。</p>
+<h3 id="6-7-姿態調整與複測"><a href="#6-7-姿態調整與複測" class="headerlink" title="6.7 姿態調整與複測"></a>6.7 姿態調整與複測</h3><p>將求解參考固定到進入牽手時的骨骼姿態後，移動中的手部擺動有所改善。和策劃複測時，重點繼續放在小幅左右抖動、跳躍和碰撞後的恢復，避免只憑靜止或直線移動時的效果判斷整體表現。</p>
+<p>確認剩餘問題後，手肘姿態與站著平移分別處理：肩、肘、腕的三軸限制和旋轉平滑負責骨骼表現，實際移動速度驅動動畫負責步態。這樣每次調整都能對應到具體的體驗問題。</p>
+<h3 id="6-8-兩種手部求解方式的對比"><a href="#6-8-兩種手部求解方式的對比" class="headerlink" title="6.8 兩種手部求解方式的對比"></a>6.8 兩種手部求解方式的對比</h3><p>兩種做法都由發起方決定共享接觸目標，並使用 LimbIK 完成本地骨鏈求解。進一步的處理主要圍繞參考姿態、目標平滑和骨骼約束展開。</p>
+<table>
+<thead>
+<tr>
+<th>設計點</th>
+<th>共享接觸點與可達約束</th>
+<th>穩定參考與關節約束</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目標參考</td>
+<td>從當前手部 Pose 提取偏好接觸點</td>
+<td>保存各自根節點下的參考 Pose，隨根節點還原</td>
+</tr>
+<tr>
+<td>骨骼求解起點</td>
+<td>在當前動畫姿態上求解</td>
+<td>從固定的手臂參考旋轉開始求解，再與動畫混合</td>
+</tr>
+<tr>
+<td>可達範圍</td>
+<td>以臂長和掛點修正近似可達球體</td>
+<td>肩部為球心，半徑為掌心掛點與接觸距離預留空間</td>
+</tr>
+<tr>
+<td>接觸點平滑</td>
+<td>在世界空間平滑目標</td>
+<td>在發起方局部空間平滑相對變化，整體移動直接傳遞</td>
+</tr>
+<tr>
+<td>姿態限制</td>
+<td>依靠 LimbIK 彎曲模式和可達區域</td>
+<td>肩、肘、腕分別平滑與限角，並約束肘部反折</td>
+</tr>
+<tr>
+<td>連接與暫停</td>
+<td>準備幀後建立連接，以權重平滑進入和釋放</td>
+<td>顯式暫停原因控制讓位，臨時釋放時保留參考姿態</td>
+</tr>
+<tr>
+<td>表現取捨</td>
+<td>計算和接入較簡單，能建立基本握手</td>
+<td>運動中的姿態更可控，關節限位可能留下少量掌心間隙</td>
+</tr>
+<tr>
+<td>實現成本</td>
+<td>管理接觸目標、可達性和權重</td>
+<td>還需管理參考姿態、關節座標系、平滑緩存和求解順序</td>
+</tr>
+</tbody></table>
+<p>共享點解決了手在哪裡相遇，穩定參考與關節約束則進一步控制手臂如何到達那裡。角色體型差異、衣服和身體碰撞仍需要專門處理，不能只靠提高 IK 權重消除。</p>
+<h2 id="7-網絡同步與播放平滑"><a href="#7-網絡同步與播放平滑" class="headerlink" title="7. 網絡同步與播放平滑"></a>7. 網絡同步與播放平滑</h2><h3 id="7-1-設計目標"><a href="#7-1-設計目標" class="headerlink" title="7.1 設計目標"></a>7.1 設計目標</h3><p>網絡層需要把發起方計算的雙人結果穩定地呈現給接收方和旁觀者，既控制延遲，又避免到包抖動導致身體頓挫、雙人相對距離拉伸和手部目標跳動。</p>
+<p>位置、動畫和 IK 的變化頻率不同，三條表現流獨立調頻；它們共享互動身份和控制來源，但保留各自的消費與平滑邏輯。</p>
+<h3 id="7-2-系統設計與數據模型"><a href="#7-2-系統設計與數據模型" class="headerlink" title="7.2 系統設計與數據模型"></a>7.2 系統設計與數據模型</h3><p>發起方通過 <code>NetworkServiceComponent</code> 發送成對位姿、動畫快照和 IK 目標。成對位姿的關鍵字段如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>雙方 UID、互動類型</td>
+<td>標識配對，校驗本地房間狀態</td>
+</tr>
+<tr>
+<td>雙方位置與旋轉</td>
+<td>同一次採樣中的兩個根節點 Pose</td>
+</tr>
+<tr>
+<td><code>SampleTime</code></td>
+<td>發起方的單調採樣時間，用於排序和速度估算</td>
+</tr>
+<tr>
+<td><code>InteractionRevision</code></td>
+<td>校驗快照屬於當前互動</td>
+</tr>
+<tr>
+<td><code>Teleported</code></td>
+<td>要求清理舊軌跡並重建緩衝基線</td>
+</tr>
+</tbody></table>
+<p><code>SampleTime</code> 只比較同一發送端的時間差，不要求各客戶端時鐘同步。接收方和旁觀者各自維護播放時間，每次從一份成對快照緩衝中採樣雙方位姿。</p>
+<p>IK 廣播獨立攜帶兩套局部目標 Pose、<code>Sequence</code>、<code>BlendWeight</code>、<code>Connected</code> 和 <code>HasSharedReach</code>。動畫廣播則包含發起方生成的接收方移動參數，避免遠端依賴網絡位移反推步態。</p>
+<h3 id="7-3-同步模塊劃分"><a href="#7-3-同步模塊劃分" class="headerlink" title="7.3 同步模塊劃分"></a>7.3 同步模塊劃分</h3><table>
+<thead>
+<tr>
+<th>模塊</th>
+<th>職責</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>NetworkServiceComponent.HoldHand</code></td>
+<td>組織併發送牽手位姿和 IK 廣播</td>
+</tr>
+<tr>
+<td><code>BroadcastHoldHandTransformUpdateHandler</code></td>
+<td>校驗配對、採樣時間和互動版本，並分發位姿</td>
+</tr>
+<tr>
+<td><code>HoldHandPairSnapshot</code></td>
+<td>表示同一採樣時刻的雙方位姿</td>
+</tr>
+<tr>
+<td><code>HoldHandSnapshotBuffer</code></td>
+<td>保存時間軸，完成插值、有限外推和預測誤差消退</td>
+</tr>
+<tr>
+<td><code>HoldHandRuntimeController</code></td>
+<td>消費本地接收方的緩衝，並統一應用雙方位姿</td>
+</tr>
+<tr>
+<td><code>HoldHandObserverSyncController</code></td>
+<td>管理旁觀者配對，驅動雙方實體的緩衝結果</td>
+</tr>
+<tr>
+<td><code>HoldHandIKRuntimeController / HoldHandIKPairState</code></td>
+<td>校驗 IK 序列，平滑和還原遠端局部目標</td>
+</tr>
+</tbody></table>
+<h3 id="7-4-網絡與平滑優化"><a href="#7-4-網絡與平滑優化" class="headerlink" title="7.4 網絡與平滑優化"></a>7.4 網絡與平滑優化</h3><h4 id="7-4-1-雙人共用採樣時刻"><a href="#7-4-1-雙人共用採樣時刻" class="headerlink" title="7.4.1 雙人共用採樣時刻"></a>7.4.1 雙人共用採樣時刻</h4><p><strong>先看收到位置就直接顯示。</strong> 發起方發來的位置是一份份離散消息；兩次消息之間沒有更新，畫面會停一下，下一份消息到達後又跳過去：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="收到網絡位置後直接顯示的侷限">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-0.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-0.svg" alt="收到一份雙人位置後，顯示兩名角色。" width="900" height="490" loading="lazy"></a>
+    <figcaption>收到一份雙人位置後，顯示兩名角色。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-1.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-1.svg" alt="下一份消息到達，角色直接跳到新位置，兩次到包之間缺少連續運動。" width="900" height="490" loading="lazy"></a>
+    <figcaption>下一份消息到達，角色直接跳到新位置，兩次到包之間缺少連續運動。</figcaption>
+  </figure>
+</div>
+
+<p><strong>在相鄰位置之間補出中間狀態。</strong> 保存前後兩份位置，顯示時逐幀取它們之間的中間值，這就是插值。為了知道下一份位置，需要稍微延後播放，代價是增加一點顯示延遲：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="網絡位置之間的連續播放">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-0.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-0.svg" alt="已經知道下一份位置，先顯示較早的狀態。十字是收到的位置，角色圖標是當前顯示位置。" width="900" height="490" loading="lazy"></a>
+    <figcaption>已經知道下一份位置，先顯示較早的狀態。十字是收到的位置，角色圖標是當前顯示位置。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-1.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-1.svg" alt="每幀向下一份位置推進一點，兩名角色一起更新，畫面不必等到下次收包才移動。" width="900" height="490" loading="lazy"></a>
+    <figcaption>每幀向下一份位置推進一點，兩名角色一起更新，畫面不必等到下次收包才移動。</figcaption>
+  </figure>
+</div>
+
+<p><strong>再讓兩個人共用播放時刻。</strong> 如果雙方各自插值，進度差異仍可能拉伸兩人之間的距離。於是把同一次計算中的雙人位置放在同一份快照裡，再從同一條時間軸一起取值。</p>
+<p>下圖中，採樣時間表示發起方何時記錄位置，到包時間表示消息何時抵達，播放指針表示當前顯示哪一刻；兩個人共用最後這個指針：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="雙人共用採樣時刻的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline.svg" alt="狀態一：播放指針位於 200 ms 與 300 ms 樣本之間，雙方都取 240 ms 對應的位姿。" width="1040" height="540" loading="lazy"></a>
+    <figcaption>狀態一：播放指針位於 200 ms 與 300 ms 樣本之間，雙方都取 240 ms 對應的位姿。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline-next.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline-next.svg" alt="狀態二：指針推進到 280 ms，雙方一起推進，不因各自的到包時刻分叉。" width="1040" height="540" loading="lazy"></a>
+    <figcaption>狀態二：指針推進到 280 ms，雙方一起推進，不因各自的到包時刻分叉。</figcaption>
+  </figure>
+</div>
+
+<p><code>HoldHandSnapshotBuffer</code> 最多保存 64 份成對快照。處於相鄰樣本之間時，位置做線性插值，旋轉做球面插值；發起方和接收方始終採用同一個播放時刻，避免兩條獨立軌跡的誤差疊加到手臂距離上。</p>
+<p>三條時間軸分別表示發送端採樣、本地到包和緩衝播放。到包間隔可以不均勻，但播放指針連續前進，雙方始終取同一時刻的結果。底部圖標表示雙方的採樣結果，不是地圖站位；運動速度與插值進度由發送端時間計算。</p>
+<table>
+<thead>
+<tr>
+<th>視角</th>
+<th>播放方式</th>
+<th align="right">插值延遲</th>
+<th align="right">最長外推</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>發起方本地</td>
+<td>直接應用逐幀權威結果</td>
+<td align="right">無網絡緩衝</td>
+<td align="right">不需要</td>
+</tr>
+<tr>
+<td>接收方本地</td>
+<td>KCC 更新後應用同一時刻的雙方位姿</td>
+<td align="right">0.06 s</td>
+<td align="right">0.03 s</td>
+</tr>
+<tr>
+<td>旁觀者</td>
+<td>配對控制器每幀採樣並應用雙方位姿</td>
+<td align="right">0.09 s</td>
+<td align="right">0.1 s</td>
+</tr>
+</tbody></table>
+<p>緩衝更長可以吸收更多網絡抖動，也會增加顯示延遲，因此接收方與旁觀者分別配置插值延遲和外推上限。</p>
+<h4 id="7-4-2-連續播放時間與小幅調速"><a href="#7-4-2-連續播放時間與小幅調速" class="headerlink" title="7.4.2 連續播放時間與小幅調速"></a>7.4.2 連續播放時間與小幅調速</h4><p>播放時刻以本地連續時間推進，保持相對最新樣本的目標延遲。緩衝深度偏離目標超過一個位置同步間隔時，通過約 <code>±5%</code> 的播放速度修正漂移，不在每次收包時重新定位時間軸。</p>
+<p>這樣即使一幀內收到多包，播放進度也不會按到包節奏反覆跳動。主線程長時間停頓或積累過大的播放落後時，系統將播放時刻重新對齊到最新樣本減去配置延遲，並清理修正量。</p>
+<h4 id="7-4-3-有限外推與預測誤差消退"><a href="#7-4-3-有限外推與預測誤差消退" class="headerlink" title="7.4.3 有限外推與預測誤差消退"></a>7.4.3 有限外推與預測誤差消退</h4><p>缺包時使用最後兩份樣本的發送時間差估算速度，最多推進配置時長。外推僅作用於水平位置，速度上限為 <code>20 m/s</code>，高度和旋轉保持最新樣本值，避免繼續放大貼地跳變或猜測轉向。</p>
+<p>當新樣本修正了正在播放的預測軌跡，緩衝記錄同一播放時刻的預測差異，再按指數衰減逐幀消除位置和旋轉誤差。修正時間取 <code>max(0.05 s, 插值延迟)</code>，既保持收包瞬間的連續性，也讓表現逐步回到權威軌跡。</p>
+<p>顯式傳送、大距離跳變或樣本間隔超過重同步閾值時，清空舊軌跡與誤差，直接重建基線。當前配置下樣本間隔閾值為 <code>1 s</code>；達到最長外推時間仍無新樣本時，則停止繼續預測。</p>
+<h4 id="7-4-4-三條表現流獨立調頻"><a href="#7-4-4-三條表現流獨立調頻" class="headerlink" title="7.4.4 三條表現流獨立調頻"></a>7.4.4 三條表現流獨立調頻</h4><p>所有同步參數集中在 <code>DataHoldHandControl</code>，當前週期配置如下：</p>
+<table>
+<thead>
+<tr>
+<th>流</th>
+<th>發送間隔</th>
+<th>內容與策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>成對位姿</td>
+<td>0.1 s，約 10 Hz</td>
+<td>雙方根節點、採樣時間、互動版本和傳送標記</td>
+</tr>
+<tr>
+<td>接收方基礎層動畫補發</td>
+<td>0.2 s，約 5 Hz</td>
+<td>持續更新接收方的地面移動參數，常規動畫同步請求也可觸發發送</td>
+</tr>
+<tr>
+<td>IK 目標</td>
+<td>0.2 s，約 5 Hz</td>
+<td>兩側局部目標、權重和連接狀態，遠端逐幀平滑</td>
+</tr>
+</tbody></table>
+<p>按職責調頻可以分別權衡帶寬、延遲和表現精度。傳送會觸發即時位姿與動畫廣播，接收方的位置上報復用普通玩家機制；表中的數值表示週期配置，不保證網絡實際到包間隔。</p>
+<h4 id="7-4-5-拒絕過期數據與防止重複驅動"><a href="#7-4-5-拒絕過期數據與防止重複驅動" class="headerlink" title="7.4.5 拒絕過期數據與防止重複驅動"></a>7.4.5 拒絕過期數據與防止重複驅動</h4><p>位姿接收器校驗雙方互指關係、互動類型、有效採樣時間和 <code>InteractionRevision</code>；緩衝拒絕不遞增的採樣時間。IK 流通過帶回繞處理的 <code>Sequence</code> 比較拒絕重複和亂序目標。</p>
+<p>普通玩家位姿包可以更新數據緩存，但有效牽手期間不能覆蓋成對位姿控制。接收方統一應用雙方採樣結果，發起方本地直接驅動接收方實體，避免把額外的位置平滑再次疊加到同一條運動軌跡。</p>
+<p>沒有采樣時間的位姿使用目標平滑路徑：接收方以 <code>SmoothDamp</code> 消費目標，夥伴使用相對錨點；旁觀者分別平滑雙方目標。包含有效 <code>SampleTime</code> 的成對位姿使用本節所述的時間軸緩衝。</p>
+<h4 id="7-4-6-IK-局部目標同步與重建"><a href="#7-4-6-IK-局部目標同步與重建" class="headerlink" title="7.4.6 IK 局部目標同步與重建"></a>7.4.6 IK 局部目標同步與重建</h4><p>先設想直接發送地圖上的握點位置：遠端身體已經通過插值向前移動，手部目標卻可能還停在上一次收到的位置。兩種更新錯開後，就會出現手落在身體後面的感覺。</p>
+<p>因此沿用局部空間，把目標記錄為“相對發起方的位置與旋轉”。遠端先處理這份相對變化，再按自己當前顯示的角色位置還原目標：</p>
+<div class="holdhand-state-gallery" role="group" aria-label="IK 局部目標同步與重建的連續狀態圖">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-local.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-local.svg" alt="狀態一：目標相對發起方根節點記錄為“局部目標”，雙方骨鏈使用還原後的共同位置。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態一：目標相對發起方根節點記錄為“局部目標”，雙方骨鏈使用還原後的共同位置。</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-rebuilt.svg" target="_blank" rel="noopener" title="查看原尺寸示意圖"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-rebuilt.svg" alt="狀態二：本地顯示的根節點移動，相同局部目標隨之還原到新的世界位置；六個骨骼節點跟隨更新，局部關係保持一致。" width="1040" height="650" loading="lazy"></a>
+    <figcaption>狀態二：本地顯示的根節點移動，相同局部目標隨之還原到新的世界位置；六個骨骼節點跟隨更新，局部關係保持一致。</figcaption>
+  </figure>
+</div>
+
+<p>發起方把 IK 目標描述成相對自身根節點的位置與旋轉後發送。遠端先在這個局部空間平滑，再按本地顯示的根節點變換還原世界目標，交給雙方 LimbIK。</p>
+<p>圖中展示平移，旋轉也通過同一根節點變換還原。遠端目標與權重的平滑時間取 IK 同步間隔的一半，並保留 <code>0.01 s</code> 的下限，當前為 <code>0.1 s</code>。根節點整體運動直接傳遞給目標，相對姿態變化由濾波處理。</p>
+<p>遠端執行自己的 LimbIK 與關節限制，不重複共享球體求解。首份 IK 包到達前釋放手臂；配對有效但持續收不到 IK 包時，繼續消費最後一份目標。當前沒有獨立的 IK 包超時，位姿外推上限不會替代這項保護。</p>
+<h3 id="7-5-第三方視角複測"><a href="#7-5-第三方視角複測" class="headerlink" title="7.5 第三方視角複測"></a>7.5 第三方視角複測</h3><p>第三方同步的卡頓優化完成後，與策劃在此前出現問題的設備上重新體驗，確認旁觀視角下的移動連續性有所改善。</p>
+<p>複測關注的是旁觀者能否連續地看到兩個人一起移動。發起方本地的位置和手臂需要算得穩定，遠端的快照播放也要承受住到包抖動，才能把同樣的跟隨感傳遞給旁觀者。</p>
+<h2 id="8-運行邊界與調參關係"><a href="#8-運行邊界與調參關係" class="headerlink" title="8. 運行邊界與調參關係"></a>8. 運行邊界與調參關係</h2><h3 id="8-1-異常與降級行為"><a href="#8-1-異常與降級行為" class="headerlink" title="8.1 異常與降級行為"></a>8.1 異常與降級行為</h3><table>
+<thead>
+<tr>
+<th>場景</th>
+<th>處理方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>雙方狀態尚未同時到達</td>
+<td>本地可以先初始化，完整配對的接收校驗和 IK 等待互指完成</td>
+</tr>
+<tr>
+<td>夥伴實體或 Avatar 未加載</td>
+<td>相關位移驅動暫緩，IK 釋放，準備完成後繼續</td>
+</tr>
+<tr>
+<td>位姿亂序或屬於其他互動</td>
+<td>按採樣時間和互動版本拒絕</td>
+</tr>
+<tr>
+<td>短時缺少位姿包</td>
+<td>限時水平外推，達到上限後停止預測</td>
+</tr>
+<tr>
+<td>傳送、大跨度變化或長時間樣本中斷</td>
+<td>清理軌跡與修正量，重建播放基線</td>
+</tr>
+<tr>
+<td>貼地射線命中超限地面</td>
+<td>保留投影前位置，不跨越最大高度差</td>
+</tr>
+<tr>
+<td>共享點不可達</td>
+<td>保留折中目標繼續求解，以關節硬限制保護姿態</td>
+</tr>
+<tr>
+<td>滑翔或受支持的個人動作</td>
+<td>暫停相應 IK，恢復時保留穩定參考</td>
+</tr>
+<tr>
+<td>接收方操作佔用右手</td>
+<td>該側 IK 讓位於操作動畫</td>
+</tr>
+<tr>
+<td>夥伴離開房間或切房</td>
+<td>停止牽手並清理狀態</td>
+</tr>
+</tbody></table>
+<p>射線貼地只處理高度，沒有提供繞牆和完整的路徑規劃；手臂限角也沒有實現身體、衣服的碰撞約束。這些邊界決定了玩法適用範圍，以及調試時應允許的手部間隙和姿態變化。</p>
+<h3 id="8-2-各類平滑的作用範圍"><a href="#8-2-各類平滑的作用範圍" class="headerlink" title="8.2 各類平滑的作用範圍"></a>8.2 各類平滑的作用範圍</h3><table>
+<thead>
+<tr>
+<th>平滑或約束</th>
+<th>作用對象</th>
+<th>調參時關注的關係</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>距離比例速度與停止區減速</td>
+<td>接收方權威位置</td>
+<td>追趕速度與接近目標時的穩定性</td>
+</tr>
+<tr>
+<td>繞行旋轉平滑與限速</td>
+<td>跟隨站位的偏移方向</td>
+<td>急轉表現與繞行滯後</td>
+</tr>
+<tr>
+<td>接地防抖與落點限高</td>
+<td>地面跟隨狀態及高度</td>
+<td>臺階邊緣穩定性與狀態切換速度</td>
+</tr>
+<tr>
+<td>動畫速度濾波與起停閾值</td>
+<td>接收方移動參數</td>
+<td>步態穩定性與起停響應</td>
+</tr>
+<tr>
+<td>局部接觸點平滑</td>
+<td>雙人共享 IK 目標</td>
+<td>手部相對抖動與接觸響應</td>
+</tr>
+<tr>
+<td>關節旋轉平滑與硬限制</td>
+<td>肩、肘、腕骨骼輸出</td>
+<td>姿態自然度與掌心接觸精度</td>
+</tr>
+<tr>
+<td>快照插值、有限外推、誤差消退</td>
+<td>遠端雙人位姿</td>
+<td>網絡抖動容忍度與顯示延遲</td>
+</tr>
+<tr>
+<td>遠端局部 IK 目標平滑</td>
+<td>收到的手部目標和權重</td>
+<td>目標發送頻率與視覺連續性</td>
+</tr>
+</tbody></table>
+<p>這些處理發生在不同數據和參考系中。調試時先確定抖動來自權威運動、動畫參數、骨骼求解還是網絡播放，再調整對應參數，避免用多層平滑掩蓋更新順序或控制權衝突。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zh-TW/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/zh-TW/tags/%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5/" rel="tag"># 網絡同步</a>
+              <a href="/zh-TW/tags/IK/" rel="tag"># IK</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-08-12-%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/" rel="prev" title="自動測試工具Unity-Autorun-Tool的演進(2026)">
+                  <i class="fa fa-angle-left"></i> 自動測試工具Unity-Autorun-Tool的演進(2026)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-09-06-%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/" rel="next" title="掛機即可使用的延時攝影All-In-One工作流">
+                  掛機即可使用的延時攝影All-In-One工作流 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

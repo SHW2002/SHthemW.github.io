@@ -150,12 +150,16 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/" selected>
+        <option value="zh-CN" data-href="/zh-CN/2024/%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/">
+        <option value="en" data-href="/en/2024/en-2024-03-09-Creating-a-2D-Top-Down-Game-with-a-Y-Axis/">
           English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2024/zh-TW-2024-03-09-%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/">
+          繁體中文
         </option>
       
     </select>
@@ -338,7 +342,7 @@
 </ul>
 <h3 id="妥协"><a href="#妥协" class="headerlink" title="妥协"></a>妥协</h3><p>对多数top-down的2D游戏来说, 这个问题的解决方案也比想象中的更简单粗暴 –要么直接禁止玩家前往这些区域, 要么将产生冲突的两个区域中的一个设置为不可达, 只为另一个区域配置碰撞盒. </p>
 <p>例如在这款示例游戏中, 玩家角色只能向下跑动到如下图所示的位置 –显然开发者是按照岩壁顶面配置的碰撞区域. 同样显然的是, 一部分本该可达的区域(被岩石遮挡的后方)由于这种妥协变的不再可达了.</p>
-<p><img src="/zh-CN/2024/%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/ref3.jpg" alt="已经过不去了!&gt;_&lt;"></p>
+<p><img src="/zh-CN/2024/打造具有-Y轴-的2D-top-down游戏/ref3.jpg" alt="已经过不去了!&gt;_&lt;"></p>
 <p>另外一种常用的解决方案是直接使用3D模型, 而后使用三渲二的方式实现视觉上的2D效果. 不过这种情况实际属于3D游戏的范畴, 不在本文的讨论范围之内, 在此不进行详细论述.</p>
 <p>2D top-down游戏的这种特性一定程度上降低了地图的可交互能力. 实际上, 一些早期的此类游戏往往将地图中的实体设计的卡通而矮小, 将游戏性中心更多放在战斗&#x2F;特效&#x2F;机制等层面, 以此来扬长避短. 久而久之, 玩家在面对这种游戏时甚至都不会产生对地形交互的期许 –大家只会想: “哦, 这里有一个城堡啊, 我们绕过去吧” 而不是”从狗洞钻进去跟阳台上的哥们打个招呼再从二楼绕道出来”.</p>
 <p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref4.gif" alt="ref4"></p>

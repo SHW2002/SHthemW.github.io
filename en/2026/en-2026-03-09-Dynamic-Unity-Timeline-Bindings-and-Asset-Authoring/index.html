@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/en/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="As Timelines grew, the main scene referenced more animation and presentation assets. Assigning them to a PlayableDirector is convenient for artists, but retaining those references makes the scene">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dynamic Unity Timeline Bindings and Asset Authoring">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="As Timelines grew, the main scene referenced more animation and presentation assets. Assigning them to a PlayableDirector is convenient for artists, but retaining those references makes the scene">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/timeline-binding.svg">
+<meta property="article:published_time" content="2026-03-09T11:58:53.000Z">
+<meta property="article:modified_time" content="2026-03-09T11:58:53.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Timeline">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="资源管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/timeline-binding.svg">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/","path":"en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/","title":"Dynamic Unity Timeline Bindings and Asset Authoring"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Dynamic Unity Timeline Bindings and Asset Authoring | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/en/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/en/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/en/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/en/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-categories"><a href="/en/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-游戏开发"><a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>Game Development</a></li><li class="menu-item menu-item-摄影技术"><a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>Photography</a></li><li class="menu-item menu-item-ai技术"><a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI Technology</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>English</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/" selected>
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-03-09-Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/">
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#TimelineAsset-and-bindings-are-separate"><span class="nav-number">1.</span> <span class="nav-text">TimelineAsset and bindings are separate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-to-save-on-export"><span class="nav-number">2.</span> <span class="nav-text">What to save on export</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Recovering-references-at-runtime"><span class="nav-number">3.</span> <span class="nav-text">Recovering references at runtime</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Build-a-scene-object-index"><span class="nav-number">4.</span> <span class="nav-text">Build a scene object index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Preserve-the-artists%E2%80%99-authoring-flow"><span class="nav-number">5.</span> <span class="nav-text">Preserve the artists’ authoring flow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Return-control-after-playback"><span class="nav-number">6.</span> <span class="nav-text">Return control after playback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Verify-the-whole-round-trip"><span class="nav-number">7.</span> <span class="nav-text">Verify the whole round trip</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/en/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/en/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/en/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Dynamic Unity Timeline Bindings and Asset Authoring | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Dynamic Unity Timeline Bindings and Asset Authoring
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-03-09 19:58:53" itemprop="dateCreated datePublished" datetime="2026-03-09T19:58:53+08:00">2026-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">游戏开发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>As Timelines grew, the main scene referenced more animation and presentation assets. Assigning them to a PlayableDirector is convenient for artists, but retaining those references makes the scene carry the dependencies at runtime.</p>
+<p>I saved Timeline bindings separately, then loaded and restored them on demand. Artists still author and preview in the scene, with an export step before delivery.</p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<h2 id="TimelineAsset-and-bindings-are-separate"><a href="#TimelineAsset-and-bindings-are-separate" class="headerlink" title="TimelineAsset and bindings are separate"></a>TimelineAsset and bindings are separate</h2><p>A TimelineAsset stores tracks, clips, and timing. A PlayableDirector normally stores which scene object each track controls.</p>
+<p>An AnimationTrack needs an Animator; an ActivationTrack needs a GameObject. Detaching and dynamically reloading the TimelineAsset does not automatically recover the scene objects previously assigned to it.</p>
+<p>Two problems therefore need solving together: loading assets on demand and restoring track targets afterward.</p>
+<img src="/zh-CN/2026/Unity-Timeline动态绑定与资源制作流程/timeline-binding.svg" alt="Export Timeline bindings during authoring, then load assets and restore references using a scene index at runtime" width="550" style="display:block;width:550px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p>Dynamic binding can break direct reference chains from the scene to some assets, but cannot guarantee a specific initial package reduction. Asset grouping and other remaining references still affect packaging; an empty Inspector alone does not establish the benefit.</p>
+<h2 id="What-to-save-on-export"><a href="#What-to-save-on-export" class="headerlink" title="What to save on export"></a>What to save on export</h2><p>Each Timeline gets a binding description containing resource information and track targets:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Timeline asset path and GUID</td>
+<td>Locate it in the editor and check correspondence</td>
+</tr>
+<tr>
+<td>Track name and type</td>
+<td>Find the track to bind</td>
+</tr>
+<tr>
+<td>Target hierarchy path</td>
+<td>Locate the object in the scene or under a specified root</td>
+</tr>
+<tr>
+<td>Target object name</td>
+<td>Aid diagnostics and constrained lookups</td>
+</tr>
+<tr>
+<td>Object and component types</td>
+<td>Distinguish a GameObject binding from a component binding</td>
+</tr>
+</tbody></table>
+<p>The data is stored as XML. What matters is recoverable location information without retaining direct references to the original scene objects, rather than XML itself.</p>
+<p>A simplified entry looks like this:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">TrackBindingData</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">TrackName</span>&gt;</span>Character<span class="tag">&lt;/<span class="name">TrackName</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">TrackType</span>&gt;</span>AnimationTrack<span class="tag">&lt;/<span class="name">TrackType</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">BoundObjectPath</span>&gt;</span>Stage/Actor<span class="tag">&lt;/<span class="name">BoundObjectPath</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">BoundComponentType</span>&gt;</span>Animator<span class="tag">&lt;/<span class="name">BoundComponentType</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">TrackBindingData</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>The exporter traverses <code>timeline.outputs</code> and reads current targets through <code>director.GetGenericBinding(output.sourceObject)</code>. For components it stores the containing object’s path and component type; for GameObjects it stores the object’s own type.</p>
+<p>Only after writing the file successfully does it clear the Director’s track bindings and <code>playableAsset</code>. The editor also records Undo and marks changes, so clearing scene references remains reversible.</p>
+<h2 id="Recovering-references-at-runtime"><a href="#Recovering-references-at-runtime" class="headerlink" title="Recovering references at runtime"></a>Recovering references at runtime</h2><p>Before playback, load the TimelineAsset and description, assign the asset to the Director, then resolve targets back into object references. The core call remains Unity’s own API:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">director.playableAsset = timeline;</span><br><span class="line"></span><br><span class="line"><span class="keyword">foreach</span> (TrackAsset track <span class="keyword">in</span> timeline.GetOutputTracks())</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!bindings.TryGetValue(track.name, <span class="keyword">out</span> <span class="keyword">var</span> binding))</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">    UnityEngine.Object target = ResolveTarget(binding, sceneRoot);</span><br><span class="line">    <span class="keyword">if</span> (target == <span class="literal">null</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ReportMissingBinding(track.name, binding);</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    director.SetGenericBinding(track, target);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This sketches binding; the outer layer handles loading, aggregates failures, and decides whether playback is allowed. Logging a missing critical track does not make preparation successful.</p>
+<p>The current implementation indexes tracks by name. Output track names must therefore be unique within an asset, and renaming requires re-export. Supporting duplicate names would require a more stable identifier instead of overwriting same-name entries.</p>
+<p>This tool handles track Generic Binding. References inside clips, including <code>ExposedReference</code>, have their own resolution mechanisms; exporting track bindings does not cover every Timeline dependency.</p>
+<h2 id="Build-a-scene-object-index"><a href="#Build-a-scene-object-index" class="headerlink" title="Build a scene object index"></a>Build a scene object index</h2><p>Searching from the scene root separately for every track repeatedly traverses the same hierarchy when several Timelines play. I index scene objects by path and use direct lookups for later bindings. A name index retains collections of duplicate names for auxiliary queries.</p>
+<p>The search can be limited to one root or cover loaded scenes. Its scope must match the export convention, especially whether paths are full scene paths or relative paths.</p>
+<p>Caches need invalidation. Scene or root changes can rebuild the index, but spawning, destroying, and renaming objects within the same scene can also make it stale. Scene names and handles alone cannot detect these changes; the relevant flows must explicitly clear or refresh the index.</p>
+<p>Path binding is readable and easy to diagnose, but relies on a stable hierarchy. Moving a node can leave editor previews working while an old binding file fails. Resaving bindings must become part of asset modification.</p>
+<h2 id="Preserve-the-artists’-authoring-flow"><a href="#Preserve-the-artists’-authoring-flow" class="headerlink" title="Preserve the artists’ authoring flow"></a>Preserve the artists’ authoring flow</h2><p>The basic Timeline editing process stays the same; export and readback are added between saving and integration:</p>
+<ol>
+<li>Assign the TimelineAsset to an authoring Director in an appropriate scene.</li>
+<li>Select the scene Director, bind targets, and record animation.</li>
+<li>Preview the result and save modified animation assets first.</li>
+<li>Export bindings through the Director’s menu.</li>
+<li>Confirm the file exists and the Director’s references are cleared, then save the scene.</li>
+<li>To edit again, reassign the Timeline and read the bindings to restore the authoring state.</li>
+</ol>
+<p>Clicking a TimelineAsset in Project and selecting a Director in the scene are different entry points. Recording scene objects requires the latter; otherwise binding or recording may be unavailable.</p>
+<p>Not every Timeline needs an extra file. If a complete sequence lives inside one prefab with no references to external scene objects, retain its internal bindings and load the prefab directly. Extra descriptions mainly address resource-to-scene boundaries.</p>
+<h2 id="Return-control-after-playback"><a href="#Return-control-after-playback" class="headerlink" title="Return control after playback"></a>Return control after playback</h2><p>Loading and binding only establish that a sequence can start. Restoring objects such as cameras afterward also belongs in authoring acceptance checks.</p>
+<p>The camera convention then required Timeline-specific cameras to be inactive on the final frame, preventing them from retaining the view after normal completion. Projects should also check ActivationTrack end settings and camera-system priority rules.</p>
+<p>For interruption, the last frame is insufficient. The outer stop flow must restore the camera, clean up the Director, and release dynamic assets. Natural completion is only one exit path.</p>
+<h2 id="Verify-the-whole-round-trip"><a href="#Verify-the-whole-round-trip" class="headerlink" title="Verify the whole round trip"></a>Verify the whole round trip</h2><p>After implementing the tool, I documented saving, readback, and runtime loading together and required regression testing of existing Timeline playback entry points. New sequences playing successfully do not prove old assets survive reference separation intact.</p>
+<p>For a deliverable asset, I would at least test “author → export → read back → play at runtime → complete or interrupt.” This finds mismatched paths and track names, unsaved animation, and cameras that are not released.</p>
+<p>Dynamic binding keeps assets visible and editable during authoring while allowing independent runtime loading. Code and authoring conventions must be delivered together to sustain that workflow.</p>
+<p>References: <a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Playables.PlayableDirector.GetGenericBinding.html">PlayableDirector.GetGenericBinding</a>, <a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Playables.PlayableDirector.SetGenericBinding.html">PlayableDirector.SetGenericBinding</a>.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/en/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/en/tags/Timeline/" rel="tag"># Timeline</a>
+              <a href="/en/tags/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" rel="tag"># 资源管理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-03-04-Implementing-Animation-Synchronization-with-Pass-Through-States-in-Unity-Mecanim/" rel="prev" title="Implementing Action Synchronization with Pass-Through States in Unity Mecanim">
+                  <i class="fa fa-angle-left"></i> Implementing Action Synchronization with Pass-Through States in Unity Mecanim
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-06-18-Unity-Skinned-Bounds-and-Adaptive-Display-Model-Scaling/" rel="next" title="Unity Skinned Bounds and Adaptive Display Model Scaling">
+                  Unity Skinned Bounds and Adaptive Display Model Scaling <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

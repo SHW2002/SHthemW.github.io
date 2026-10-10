@@ -193,12 +193,16 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/" selected>
+        <option value="zh-CN" data-href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/">
+        <option value="en" data-href="/en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/">
           English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/">
+          繁體中文
         </option>
       
     </select>
@@ -349,7 +353,7 @@
 
 <div class="post-intro-media">
 
-<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp" alt="双人牵手联调画面，左侧为接收方，右侧为发起方"></p>
+<p><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/cover.webp" alt="双人牵手联调画面，左侧为接收方，右侧为发起方"></p>
 </div>
 
 </div>
@@ -490,11 +494,11 @@ stateDiagram-v2
 <p>没有跟随控制时，发起方往前走，接收方仍留在原地：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="没有跟随控制时的两个人">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-before.svg" alt="起初：两个人站在彼此身边。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-before.svg" alt="起初：两个人站在彼此身边。" width="900" height="490" loading="lazy"></a>
     <figcaption>起初：两个人站在彼此身边。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-after.svg" alt="发起方向前移动，接收方仍留在原地，两个人逐渐拉开。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-after.svg" alt="发起方向前移动，接收方仍留在原地，两个人逐渐拉开。" width="900" height="490" loading="lazy"></a>
     <figcaption>发起方向前移动，接收方仍留在原地，两个人逐渐拉开。</figcaption>
   </figure>
 </div>
@@ -503,11 +507,11 @@ stateDiagram-v2
 <p><strong>再增加一个站位点。</strong> 在发起方身边选一个位置，比如左侧略靠后，用十字表示这个希望接收方站到的位置。发起方前进时，站位点一起前进；每帧直接把接收方放到这里，就有了最基本的跟随：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="直接设置接收方位置">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-before.svg" alt="移动前：接收方与站位点重合，保持在发起方左后侧。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-before.svg" alt="移动前：接收方与站位点重合，保持在发起方左后侧。" width="900" height="490" loading="lazy"></a>
     <figcaption>移动前：接收方与站位点重合，保持在发起方左后侧。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-after.svg" alt="移动后：站位点随发起方前移，接收方也被直接放到新的位置。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-after.svg" alt="移动后：站位点随发起方前移，接收方也被直接放到新的位置。" width="900" height="490" loading="lazy"></a>
     <figcaption>移动后：站位点随发起方前移，接收方也被直接放到新的位置。</figcaption>
   </figure>
 </div>
@@ -552,11 +556,11 @@ stateDiagram-v2
 <h4 id="4-2-2-弹簧模型"><a href="#4-2-2-弹簧模型" class="headerlink" title="4.2.2 弹簧模型"></a>4.2.2 弹簧模型</h4><p><strong>让接收方逐帧追赶。</strong> 不再每帧直接对齐站位点，而是从接收方自己的位置向它走一小段。离得越远，追得越快；离得越近，追得越慢。可以把它想象成两者之间连着一根弹簧：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="距离决定追赶力度">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-start.svg" alt="站位点已经前移，接收方还在后面，剩余距离较大，本帧前进得较多。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-start.svg" alt="站位点已经前移，接收方还在后面，剩余距离较大，本帧前进得较多。" width="900" height="490" loading="lazy"></a>
     <figcaption>站位点已经前移，接收方还在后面，剩余距离较大，本帧前进得较多。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-closer.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-closer.svg" alt="接收方逐渐追近，剩余距离缩小，本帧前进的距离也随之减小。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-closer.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-closer.svg" alt="接收方逐渐追近，剩余距离缩小，本帧前进的距离也随之减小。" width="900" height="490" loading="lazy"></a>
     <figcaption>接收方逐渐追近，剩余距离缩小，本帧前进的距离也随之减小。</figcaption>
   </figure>
 </div>
@@ -566,11 +570,11 @@ stateDiagram-v2
 <p><strong>给速度加上最低值和最高值。</strong> 小距离也保持足够的跟随力度，大距离则不会让速度无限增加：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="给弹簧追赶增加速度范围">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-small-gap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-small-gap.svg" alt="距离较小时，最低速度让接收方仍能积极追赶。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-small-gap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-small-gap.svg" alt="距离较小时，最低速度让接收方仍能积极追赶。" width="900" height="490" loading="lazy"></a>
     <figcaption>距离较小时，最低速度让接收方仍能积极追赶。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-large-gap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-large-gap.svg" alt="距离较大时，最高速度限制本帧位移，避免接收方突然高速冲过去。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-large-gap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-large-gap.svg" alt="距离较大时，最高速度限制本帧位移，避免接收方突然高速冲过去。" width="900" height="490" loading="lazy"></a>
     <figcaption>距离较大时，最高速度限制本帧位移，避免接收方突然高速冲过去。</figcaption>
   </figure>
 </div>
@@ -657,11 +661,11 @@ stateDiagram-v2
 <p><strong>先看目标直接转动的情况。</strong> “站在左后方”是相对发起方的朝向而言的。如果发起方突然向右转，站位点立即采用这个朝向，就会一下换到另一侧：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="直接改变朝向对弹簧追赶的影响">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-before.svg" alt="转身前：接收方就在左后方的站位点。" width="900" height="570" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-before.svg" alt="转身前：接收方就在左后方的站位点。" width="900" height="570" loading="lazy"></a>
     <figcaption>转身前：接收方就在左后方的站位点。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-after.svg" alt="发起方突然向右转，左后方的站位点立即换到另一侧；接收方尚未移动，追赶距离突然变大。" width="900" height="570" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-after.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-after.svg" alt="发起方突然向右转，左后方的站位点立即换到另一侧；接收方尚未移动，追赶距离突然变大。" width="900" height="570" loading="lazy"></a>
     <figcaption>发起方突然向右转，左后方的站位点立即换到另一侧；接收方尚未移动，追赶距离突然变大。</figcaption>
   </figure>
 </div>
@@ -671,19 +675,19 @@ stateDiagram-v2
 <p>黑色虚线表示站位点已经走过的轨迹，蓝色实线表示接收方实际走过的轨迹。蓝色虚线箭头指向本帧尚未追到的站位点：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="从弹簧追赶叠加目标绕行得到完整模型">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-before.svg" alt="转身前：接收方与站位点重合，两者都还没有开始绕行。" width="900" height="580" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-before.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-before.svg" alt="转身前：接收方与站位点重合，两者都还没有开始绕行。" width="900" height="580" loading="lazy"></a>
     <figcaption>转身前：接收方与站位点重合，两者都还没有开始绕行。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-target.svg" alt="转身过程中，站位点先沿圆弧移动，接收方逐帧朝它追赶，此时还没有追上本帧的站位点。" width="900" height="580" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-target.svg" alt="转身过程中，站位点先沿圆弧移动，接收方逐帧朝它追赶，此时还没有追上本帧的站位点。" width="900" height="580" loading="lazy"></a>
     <figcaption>转身过程中，站位点先沿圆弧移动，接收方逐帧朝它追赶，此时还没有追上本帧的站位点。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-chase.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-chase.svg" alt="后续每帧先更新站位点，再让接收方从上一次的位置继续追赶。接收方走过的路线由这些短位移连接而成。" width="900" height="580" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-chase.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-chase.svg" alt="后续每帧先更新站位点，再让接收方从上一次的位置继续追赶。接收方走过的路线由这些短位移连接而成。" width="900" height="580" loading="lazy"></a>
     <figcaption>后续每帧先更新站位点，再让接收方从上一次的位置继续追赶。接收方走过的路线由这些短位移连接而成。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-settled.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-settled.svg" alt="站位点逐渐到达转身后的左后方，接收方追完剩余距离，重新稳定在身边。" width="900" height="580" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-settled.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-settled.svg" alt="站位点逐渐到达转身后的左后方，接收方追完剩余距离，重新稳定在身边。" width="900" height="580" loading="lazy"></a>
     <figcaption>站位点逐渐到达转身后的左后方，接收方追完剩余距离，重新稳定在身边。</figcaption>
   </figure>
 </div>
@@ -693,11 +697,11 @@ stateDiagram-v2
 <p><strong>再将高度单独交给地面处理。</strong> 前面的图只看平地。角色带有俯仰或侧倾时，旋转后的偏移可能包含高度，直接使用会把接收方带离地面。因此先保留水平方向的偏移，让跟随目标落在发起方所在高度；之后再处理贴地或空中跟随：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="4.4 分开计算水平跟随与绕行旋转的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg" alt="状态一：旋转后的偏移仍在水平面内，“投影前目标”与水平目标重合。两名角色的位置使用同一组图标标出。" width="1040" height="570" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls.svg" alt="状态一：旋转后的偏移仍在水平面内，“投影前目标”与水平目标重合。两名角色的位置使用同一组图标标出。" width="1040" height="570" loading="lazy"></a>
     <figcaption>状态一：旋转后的偏移仍在水平面内，“投影前目标”与水平目标重合。两名角色的位置使用同一组图标标出。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg" alt="状态二：朝向带入俯仰，蓝色偏移产生垂直分量；代码去掉这部分高度，红色目标仍落在发起方所在水平面。" width="1040" height="570" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls-tilted.svg" alt="状态二：朝向带入俯仰，蓝色偏移产生垂直分量；代码去掉这部分高度，红色目标仍落在发起方所在水平面。" width="1040" height="570" loading="lazy"></a>
     <figcaption>状态二：朝向带入俯仰，蓝色偏移产生垂直分量；代码去掉这部分高度，红色目标仍落在发起方所在水平面。</figcaption>
   </figure>
 </div>
@@ -779,11 +783,11 @@ stateDiagram-v2
 <p>于是只增加一个减速区：接收方进入站位点周围的这片区域后，剩余距离越小，追赶速度就越低，最后一小段也逐帧完成：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="让接近目标的过程连续减速">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-edge.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-edge.svg" alt="接收方接近减速区，仍按正常追赶速度前进。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-edge.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-edge.svg" alt="接收方接近减速区，仍按正常追赶速度前进。" width="900" height="490" loading="lazy"></a>
     <figcaption>接收方接近减速区，仍按正常追赶速度前进。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-inside.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-inside.svg" alt="接收方进入减速区后，下一步变小，逐渐收敛到站位点。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-inside.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-inside.svg" alt="接收方进入减速区后，下一步变小，逐渐收敛到站位点。" width="900" height="490" loading="lazy"></a>
     <figcaption>接收方进入减速区后，下一步变小，逐渐收敛到站位点。</figcaption>
   </figure>
 </div>
@@ -794,11 +798,11 @@ stateDiagram-v2
 <h4 id="4-6-2-绕行旋转滞后与限速"><a href="#4-6-2-绕行旋转滞后与限速" class="headerlink" title="4.6.2 绕行旋转滞后与限速"></a>4.6.2 绕行旋转滞后与限速</h4><p>4.4 已经把站位点的绕行与接收方的追赶分开。现在先补清一个容易混淆的关系：走向哪里和身体朝哪里是两件事。接收方的位置继续追赶站位点，身体朝向却直接跟随发起方，所以转身时二者可能不同：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="绕行时身体朝向与移动方向的区别">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-start.svg" alt="发起方转身后，接收方身体也朝向右方，但本帧位移仍沿黑色虚线指向站位点。" width="900" height="580" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-start.svg" alt="发起方转身后，接收方身体也朝向右方，但本帧位移仍沿黑色虚线指向站位点。" width="900" height="580" loading="lazy"></a>
     <figcaption>发起方转身后，接收方身体也朝向右方，但本帧位移仍沿黑色虚线指向站位点。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-later.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-later.svg" alt="站位点继续绕行，接收方的追赶方向随之变化；身体朝向仍与发起方一致。" width="900" height="580" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-later.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-later.svg" alt="站位点继续绕行，接收方的追赶方向随之变化；身体朝向仍与发起方一致。" width="900" height="580" loading="lazy"></a>
     <figcaption>站位点继续绕行，接收方的追赶方向随之变化；身体朝向仍与发起方一致。</figcaption>
   </figure>
 </div>
@@ -859,11 +863,11 @@ stateDiagram-v2
 <p>因此从接收方上方向下发出射线，用命中的地面高度修正它的位置；水平方向继续沿用弹簧跟随：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="从固定高度到最基本的射线贴地">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-floating.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-floating.svg" alt="沿用发起方高度时，坡下的接收方可能悬空；反过来走到更高地面时，也可能陷入地面。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-floating.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-floating.svg" alt="沿用发起方高度时，坡下的接收方可能悬空；反过来走到更高地面时，也可能陷入地面。" width="900" height="490" loading="lazy"></a>
     <figcaption>沿用发起方高度时，坡下的接收方可能悬空；反过来走到更高地面时，也可能陷入地面。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-projected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-projected.svg" alt="向下探测地面后，将接收方放到落点的高度，水平方向继续由弹簧控制。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-projected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-projected.svg" alt="向下探测地面后，将接收方放到落点的高度，水平方向继续由弹簧控制。" width="900" height="490" loading="lazy"></a>
     <figcaption>向下探测地面后，将接收方放到落点的高度，水平方向继续由弹簧控制。</figcaption>
   </figure>
 </div>
@@ -874,15 +878,15 @@ stateDiagram-v2
 <p>射线命中后还要检查落点与发起方的高度差。这个检查是硬限制，防止已开启的贴地状态把接收方吸到过高的平台或过深的地面。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="4.6.3 贴地防抖与落点限高的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg" alt="状态一：候选接地状态变为真，但持续时间尚未达到防抖门槛；接收方保持原有高度，尚未开启本次地面投影。" width="1040" height="590" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap.svg" alt="状态一：候选接地状态变为真，但持续时间尚未达到防抖门槛；接收方保持原有高度，尚未开启本次地面投影。" width="1040" height="590" loading="lazy"></a>
     <figcaption>状态一：候选接地状态变为真，但持续时间尚未达到防抖门槛；接收方保持原有高度，尚未开启本次地面投影。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg" alt="状态二：状态持续达到门槛，开启贴地；射线命中的“地面候选” 位于高度限制内，接收方沿垂直方向落到该地面。" width="1040" height="590" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-active.svg" alt="状态二：状态持续达到门槛，开启贴地；射线命中的“地面候选” 位于高度限制内，接收方沿垂直方向落到该地面。" width="1040" height="590" loading="lazy"></a>
     <figcaption>状态二：状态持续达到门槛，开启贴地；射线命中的“地面候选” 位于高度限制内，接收方沿垂直方向落到该地面。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg" alt="状态三：更低的地面进入探测位置，命中点超过高度边界；即使贴地模式仍开启，也拒绝此次落点，角色保留投影前高度。" width="1040" height="590" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-rejected.svg" alt="状态三：更低的地面进入探测位置，命中点超过高度边界；即使贴地模式仍开启，也拒绝此次落点，角色保留投影前高度。" width="1040" height="590" loading="lazy"></a>
     <figcaption>状态三：更低的地面进入探测位置，命中点超过高度边界；即使贴地模式仍开启，也拒绝此次落点，角色保留投影前高度。</figcaption>
   </figure>
 </div>
@@ -933,11 +937,11 @@ stateDiagram-v2
 <p>发起方本地的接收方实体直接应用逐帧计算结果，避免将本地跟随平滑与网络播放平滑叠加。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="4.6.4 对齐 KCC 与相机的采样阶段的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg" alt="状态一：本帧 KCC 显示更新尚未完成，双方与相机锚点仍对应之前的显示状态。" width="1040" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order.svg" alt="状态一：本帧 KCC 显示更新尚未完成，双方与相机锚点仍对应之前的显示状态。" width="1040" height="490" loading="lazy"></a>
     <figcaption>状态一：本帧 KCC 显示更新尚未完成，双方与相机锚点仍对应之前的显示状态。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg" alt="状态二：先完成 KCC 显示更新，再应用双人位姿，随后才采样相机锚点；三个时间标记说明它们的先后关系。" width="1040" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order-applied.svg" alt="状态二：先完成 KCC 显示更新，再应用双人位姿，随后才采样相机锚点；三个时间标记说明它们的先后关系。" width="1040" height="490" loading="lazy"></a>
     <figcaption>状态二：先完成 KCC 显示更新，再应用双人位姿，随后才采样相机锚点；三个时间标记说明它们的先后关系。</figcaption>
   </figure>
 </div>
@@ -945,11 +949,11 @@ stateDiagram-v2
 <h4 id="4-6-5-传送时重置平滑状态"><a href="#4-6-5-传送时重置平滑状态" class="headerlink" title="4.6.5 传送时重置平滑状态"></a>4.6.5 传送时重置平滑状态</h4><p>普通移动可以继续用弹簧追赶，但传送会让两个人突然相距很远，缓慢追过去就不合适了。因此增加一个距离阈值：超过阈值时直接对齐新的站位，并从这里重新开始跟随。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="4.6.5 传送时重置平滑状态的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg" alt="状态一：红色主体已经到达传送位置，蓝色接收方仍在原位置；新目标位于阈值球之外，高度差同样计入距离。" width="1040" height="595" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport.svg" alt="状态一：红色主体已经到达传送位置，蓝色接收方仍在原位置；新目标位于阈值球之外，高度差同样计入距离。" width="1040" height="595" loading="lazy"></a>
     <figcaption>状态一：红色主体已经到达传送位置，蓝色接收方仍在原位置；新目标位于阈值球之外，高度差同样计入距离。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg" alt="状态二：接收方直接对齐重算后的站位，驱动位置和平滑状态从这里重新开始；虚线边界随新的驱动位置更新。" width="1040" height="595" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport-reset.svg" alt="状态二：接收方直接对齐重算后的站位，驱动位置和平滑状态从这里重新开始；虚线边界随新的驱动位置更新。" width="1040" height="595" loading="lazy"></a>
     <figcaption>状态二：接收方直接对齐重算后的站位，驱动位置和平滑状态从这里重新开始；虚线边界随新的驱动位置更新。</figcaption>
   </figure>
 </div>
@@ -1045,11 +1049,11 @@ stateDiagram-v2
 <h4 id="6-2-1-从两个接触-Pose-得到共享-Pose"><a href="#6-2-1-从两个接触-Pose-得到共享-Pose" class="headerlink" title="6.2.1 从两个接触 Pose 得到共享 Pose"></a>6.2.1 从两个接触 Pose 得到共享 Pose</h4><p>先只看两条手臂和一个共同握点。每条手臂由肩、肘、腕三个节点组成，暂时把手腕末端当作接触位置：固定肩的位置，只调整肘和腕，让双方末端靠向同一个目标。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="两条手臂向同一握点求解">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg" alt="求解前：双方手臂各自摆动，肩、肘、腕组成两条骨链；黑色十字指定一个共同握点。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-input.svg" alt="求解前：双方手臂各自摆动，肩、肘、腕组成两条骨链；黑色十字指定一个共同握点。" width="1040" height="650" loading="lazy"></a>
     <figcaption>求解前：双方手臂各自摆动，肩、肘、腕组成两条骨链；黑色十字指定一个共同握点。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg" alt="求解后：肩的位置不动，肘和腕围绕目标调整，骨长不变；红、蓝两个腕节点在握点处重合。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-solved.svg" alt="求解后：肩的位置不动，肘和腕围绕目标调整，骨长不变；红、蓝两个腕节点在握点处重合。" width="1040" height="650" loading="lazy"></a>
     <figcaption>求解后：肩的位置不动，肘和腕围绕目标调整，骨长不变；红、蓝两个腕节点在握点处重合。</figcaption>
   </figure>
 </div>
@@ -1062,11 +1066,11 @@ stateDiagram-v2
 <p>先只增加“两段骨长”这个约束，再用它们能覆盖的范围近似可达球体。图中画出球体截面，比较弯曲与展开两种状态：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="6.2.2 用可达球体近似两段手臂的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg" alt="状态一：两条手臂弯曲，腕部位于可达范围内部。圆形节点仍是肩、肘、腕，“球心”与“肩”节点 分开标记。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-bent.svg" alt="状态一：两条手臂弯曲，腕部位于可达范围内部。圆形节点仍是肩、肘、腕，“球心”与“肩”节点 分开标记。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态一：两条手臂弯曲，腕部位于可达范围内部。圆形节点仍是肩、肘、腕，“球心”与“肩”节点 分开标记。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg" alt="状态二：接触目标向外移动，肘部展开；上臂、前臂的长度与对应可达圆保持不变，变化的是骨骼夹角。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-extended.svg" alt="状态二：接触目标向外移动，肘部展开；上臂、前臂的长度与对应可达圆保持不变，变化的是骨骼夹角。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态二：接触目标向外移动，肘部展开；上臂、前臂的长度与对应可达圆保持不变，变化的是骨骼夹角。</figcaption>
   </figure>
 </div>
@@ -1076,11 +1080,11 @@ stateDiagram-v2
 <h4 id="6-2-3-球体交集约束算法"><a href="#6-2-3-球体交集约束算法" class="headerlink" title="6.2.3 球体交集约束算法"></a>6.2.3 球体交集约束算法</h4><p>单侧可达范围确定了，还不能保证两只手碰到一起：两个人相距太远时，范围可能完全分离。先观察两人从远处靠近、范围逐渐相交的过程：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="球体交集约束算法的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg" alt="范围分离：两人相距较远，即使手臂伸直也有间隙；中间的目标只能作为折中位置，双方不能同时够到。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact.svg" alt="范围分离：两人相距较远，即使手臂伸直也有间隙；中间的目标只能作为折中位置，双方不能同时够到。" width="1040" height="650" loading="lazy"></a>
     <figcaption>范围分离：两人相距较远，即使手臂伸直也有间隙；中间的目标只能作为折中位置，双方不能同时够到。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg" alt="范围相交：双方靠近后出现共同区域，将范围外的原握点移到这里，两条骨链便能朝同一个位置求解。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact-overlap.svg" alt="范围相交：双方靠近后出现共同区域，将范围外的原握点移到这里，两条骨链便能朝同一个位置求解。" width="1040" height="650" loading="lazy"></a>
     <figcaption>范围相交：双方靠近后出现共同区域，将范围外的原握点移到这里，两条骨链便能朝同一个位置求解。</figcaption>
   </figure>
 </div>
@@ -1101,11 +1105,11 @@ stateDiagram-v2
 <p>连接状态决定目标权重是 1 还是 0，实际权重再逐帧靠近这个目标，避免整条手臂立即跳到另一个姿态：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="6.2.4 连接状态和权重过渡的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg" alt="状态一：准备阶段或存在暂停原因时，目标权重为零；完成淡出后，六个节点回到各自动画姿态。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-released.svg" alt="状态一：准备阶段或存在暂停原因时，目标权重为零；完成淡出后，六个节点回到各自动画姿态。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态一：准备阶段或存在暂停原因时，目标权重为零；完成淡出后，六个节点回到各自动画姿态。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg" alt="状态二：准备帧结束且没有暂停原因时，目标权重逐帧升高；完成淡入后，肩、肘、腕朝共同目标排列。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-connected.svg" alt="状态二：准备帧结束且没有暂停原因时，目标权重逐帧升高；完成淡入后，肩、肘、腕朝共同目标排列。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态二：准备帧结束且没有暂停原因时，目标权重逐帧升高；完成淡入后，肩、肘、腕朝共同目标排列。</figcaption>
   </figure>
 </div>
@@ -1123,18 +1127,18 @@ stateDiagram-v2
 <h3 id="6-3-运动中的手部姿态问题"><a href="#6-3-运动中的手部姿态问题" class="headerlink" title="6.3 运动中的手部姿态问题"></a>6.3 运动中的手部姿态问题</h3><p>球体只表达“能不能够到”，没有表达肘部偏好、肩部关节限位、碰撞体和衣服约束，某些姿势会出现肘部翻转或穿模。两球分离时也只能返回折中目标，不能保证双方同时够到；接触目标、骨骼动画和根节点运动同时变化时，还容易把手部摆动带进求解。</p>
 <p>跑测中，静止状态下能把两只手调到一起，还不足以保证运动中的表现。接触处可能折起来，移动时有明显卡顿和手部摆动，手腕偶尔会弯到不自然的角度，大跳下落时手臂还会往上拉。接触点对齐之外，还需要控制动画变化对求解的影响。</p>
 <p>一个比较明确的复现是：跑步中被碰撞卡住后，IK 位置会一直不对，要断开再连接才能恢复；小跳和大跳结束后的手部表现也不自然。针对这些现象，优化集中在两个方向：固定接触点和骨骼的参考，避免它们不断被当前动画改写；再为肩、肘、腕分别加上姿态限制。</p>
-<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-comparison.webp" alt="联调中的接触点异常与重新连接后的手部状态对比"></p>
+<p><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-comparison.webp" alt="联调中的接触点异常与重新连接后的手部状态对比"></p>
 <p><em>参考姿态稳定性的问题复现：左侧为接触异常，右侧为重新建立连接后的姿态。</em></p>
 <h3 id="6-4-稳定参考与受约束的共享目标"><a href="#6-4-稳定参考与受约束的共享目标" class="headerlink" title="6.4 稳定参考与受约束的共享目标"></a>6.4 稳定参考与受约束的共享目标</h3><p>为了让基本的手部接触在跑步、跳跃和暂停恢复时也保持稳定，我保留共享接触点与球体约束，并将求解输入固定到稳定参考姿态。目标只随角色之间的相对关系变化，骨骼结果再经过独立的关节限制和平滑处理。</p>
 <h4 id="6-4-1-发起方计算共享接触目标"><a href="#6-4-1-发起方计算共享接触目标" class="headerlink" title="6.4.1 发起方计算共享接触目标"></a>6.4.1 发起方计算共享接触目标</h4><p>每帧从当前手部动画取接触点，容易把摆臂或一次异常姿态带进后续目标。于是先保存一份参考：牵手建立时，记录两只手相对各自角色的位置与旋转。</p>
 <p>这就是局部空间：参考记录的是“相对这个角色在哪里”，而不是地图上的绝对位置。角色整体移动时，参考点跟着移动；动画中的手腕可以摆动，却不重新定义参考：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="保存手部相对角色的参考点">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg" alt="保存参考：记录此时手部相对角色的位置。红、蓝十字各自绑定到对应角色，虚线表示它们之间保存的相对关系。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-capture.svg" alt="保存参考：记录此时手部相对角色的位置。红、蓝十字各自绑定到对应角色，虚线表示它们之间保存的相对关系。" width="1040" height="650" loading="lazy"></a>
     <figcaption>保存参考：记录此时手部相对角色的位置。红、蓝十字各自绑定到对应角色，虚线表示它们之间保存的相对关系。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg" alt="角色移动后：参考点随角色整体移动，当前动画中的手腕却可以摆到别处；后续仍从保存的参考点形成握点。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-moved.svg" alt="角色移动后：参考点随角色整体移动，当前动画中的手腕却可以摆到别处；后续仍从保存的参考点形成握点。" width="1040" height="650" loading="lazy"></a>
     <figcaption>角色移动后：参考点随角色整体移动，当前动画中的手腕却可以摆到别处；后续仍从保存的参考点形成握点。</figcaption>
   </figure>
 </div>
@@ -1145,11 +1149,11 @@ stateDiagram-v2
 <p>因此保持球心在肩部，从半径中预留掌心挂点的偏移；需要额外掌心间距时，再预留这段接触距离。图中每次只改变一项预留：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="6.4.2 两侧可达球体的交集的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg" alt="状态一：骨长固定，半径先为“掌心偏移” 预留空间；共同目标位于双方都能接受的区域。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-reserved.svg" alt="状态一：骨长固定，半径先为“掌心偏移” 预留空间；共同目标位于双方都能接受的区域。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态一：骨长固定，半径先为“掌心偏移” 预留空间；共同目标位于双方都能接受的区域。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg" alt="状态二：“接触间距” 增大，保守可达范围缩小，“偏好握点”重新约束到“目标握点”；两侧还沿各自肩部到目标的方向调整掌心距离。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-palm-distance.svg" alt="状态二：“接触间距” 增大，保守可达范围缩小，“偏好握点”重新约束到“目标握点”；两侧还沿各自肩部到目标的方向调整掌心距离。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态二：“接触间距” 增大，保守可达范围缩小，“偏好握点”重新约束到“目标握点”；两侧还沿各自肩部到目标的方向调整掌心距离。</figcaption>
   </figure>
 </div>
@@ -1170,11 +1174,11 @@ stateDiagram-v2
 <p>先把掌心目标固定住，再观察握持朝向改变时的情况：偏移方向旋转后，手腕也必须换一个位置，掌心才能仍然停在目标上。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="把掌心目标转换为手腕目标的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg" alt="状态一：“掌心目标”固定，红、蓝两侧的“腕”节点通过各自“掌心偏移”连接到它；六个骨骼节点围绕手腕目标求解。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-target.svg" alt="状态一：“掌心目标”固定，红、蓝两侧的“腕”节点通过各自“掌心偏移”连接到它；六个骨骼节点围绕手腕目标求解。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态一：“掌心目标”固定，红、蓝两侧的“腕”节点通过各自“掌心偏移”连接到它；六个骨骼节点围绕手腕目标求解。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg" alt="状态二：握持朝向改变，挂点偏移的世界方向随之旋转，手腕位置也必须改变，掌心目标才能保持不动。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-rotated.svg" alt="状态二：握持朝向改变，挂点偏移的世界方向随之旋转，手腕位置也必须改变，掌心目标才能保持不动。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态二：握持朝向改变，挂点偏移的世界方向随之旋转，手腕位置也必须改变，掌心目标才能保持不动。</figcaption>
   </figure>
 </div>
@@ -1223,11 +1227,11 @@ stateDiagram-v2
 <p>因此只平滑目标相对发起方的变化：整体位移立即带动目标，相对变化再逐帧追近。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="在角色局部空间平滑接触点的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg" alt="相对位置稳定：平滑握点已经追上目标，两条手臂共同伸向这个位置。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-start.svg" alt="相对位置稳定：平滑握点已经追上目标，两条手臂共同伸向这个位置。" width="1040" height="650" loading="lazy"></a>
     <figcaption>相对位置稳定：平滑握点已经追上目标，两条手臂共同伸向这个位置。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg" alt="相对位置变化：角色整体位移直接带动局部参考；两人之间的变化让目标稍有移动，平滑握点再逐帧追近它。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-step.svg" alt="相对位置变化：角色整体位移直接带动局部参考；两人之间的变化让目标稍有移动，平滑握点再逐帧追近它。" width="1040" height="650" loading="lazy"></a>
     <figcaption>相对位置变化：角色整体位移直接带动局部参考；两人之间的变化让目标稍有移动，平滑握点再逐帧追近它。</figcaption>
   </figure>
 </div>
@@ -1239,18 +1243,18 @@ stateDiagram-v2
 <h4 id="6-6-3-肩、肘、腕三轴限制与防反折"><a href="#6-6-3-肩、肘、腕三轴限制与防反折" class="headerlink" title="6.6.3 肩、肘、腕三轴限制与防反折"></a>6.6.3 肩、肘、腕三轴限制与防反折</h4><p>共享握点解决了“手到哪里”，可达范围解决了“够不够得到”，仍不能保证关节弯得自然。接下来只给肩、肘、腕增加各自的旋转范围，并防止肘部反折：先得到 IK 姿态，再让最终骨骼服从这些限制。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="肩、肘、腕三轴限制与防反折的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg" alt="状态一：LimbIK 得到朝向共同目标的姿态，但各关节旋转还需要经过自身约束。六个圆点是本次骨链输出。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-input.svg" alt="状态一：LimbIK 得到朝向共同目标的姿态，但各关节旋转还需要经过自身约束。六个圆点是本次骨链输出。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态一：LimbIK 得到朝向共同目标的姿态，但各关节旋转还需要经过自身约束。六个圆点是本次骨链输出。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg" alt="状态二：肩、肘、腕经过旋转平滑与硬限制，骨长保持不变，实际接触位置可以偏离“目标握点”；黑色虚线只对照前一个姿态。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-output.svg" alt="状态二：肩、肘、腕经过旋转平滑与硬限制，骨长保持不变，实际接触位置可以偏离“目标握点”；黑色虚线只对照前一个姿态。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态二：肩、肘、腕经过旋转平滑与硬限制，骨长保持不变，实际接触位置可以偏离“目标握点”；黑色虚线只对照前一个姿态。</figcaption>
   </figure>
 </div>
 
 <p><code>HoldHandArmRotationLimits</code> 为上臂、肘部、手腕分别提供偏航、俯仰和横滚范围。上臂相对角色建立参考系，肘部相对上臂，手腕相对前臂；骨骼轴在初始化时标定，运行时参考系跟随角色或父骨旋转。</p>
 <p>“肩部限角”“肘部限角”“腕部限角”弧线标出旋转约束的位置，实际实现分别限制偏航、俯仰、横滚三个轴。图中用二维姿态说明处理顺序，不作为资源角度的实测结果。</p>
-<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/joint-limits.webp" alt="上臂、肘部、手腕分别配置三轴旋转范围的编辑器界面"></p>
+<p><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/joint-limits.webp" alt="上臂、肘部、手腕分别配置三轴旋转范围的编辑器界面"></p>
 <p><em>三关节配置入口与参考系说明，实际使用值见下表。</em></p>
 <table>
 <thead>
@@ -1298,15 +1302,15 @@ stateDiagram-v2
 <p>因此增加暂停与恢复：暂停期间让动画接管，保留这段牵手的参考；动作结束后，再朝同一套参考逐帧恢复权重。</p>
 <div class="holdhand-state-gallery" role="group" aria-label="权重过渡与操作让位的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg" alt="状态一：双方正常牵手，六个节点围绕接触目标排列，参考握点属于本次配对。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-connected.svg" alt="状态一：双方正常牵手，六个节点围绕接触目标排列，参考握点属于本次配对。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态一：双方正常牵手，六个节点围绕接触目标排列，参考握点属于本次配对。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg" alt="状态二：个人动作等原因暂停 IK，完成淡出后由动画控制手臂；保留参考握点，不把释放时的姿态重新记为基准。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-released.svg" alt="状态二：个人动作等原因暂停 IK，完成淡出后由动画控制手臂；保留参考握点，不把释放时的姿态重新记为基准。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态二：个人动作等原因暂停 IK，完成淡出后由动画控制手臂；保留参考握点，不把释放时的姿态重新记为基准。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg" alt="状态三：暂停原因全部解除，权重逐帧恢复，骨链重新求向同一套参考目标。三幅图只画过渡端点，过程并非瞬间切换。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-resumed.svg" alt="状态三：暂停原因全部解除，权重逐帧恢复，骨链重新求向同一套参考目标。三幅图只画过渡端点，过程并非瞬间切换。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态三：暂停原因全部解除，权重逐帧恢复，骨链重新求向同一套参考目标。三幅图只画过渡端点，过程并非瞬间切换。</figcaption>
   </figure>
 </div>
@@ -1438,11 +1442,11 @@ stateDiagram-v2
 <h3 id="7-4-网络与平滑优化"><a href="#7-4-网络与平滑优化" class="headerlink" title="7.4 网络与平滑优化"></a>7.4 网络与平滑优化</h3><h4 id="7-4-1-双人共用采样时刻"><a href="#7-4-1-双人共用采样时刻" class="headerlink" title="7.4.1 双人共用采样时刻"></a>7.4.1 双人共用采样时刻</h4><p><strong>先看收到位置就直接显示。</strong> 发起方发来的位置是一份份离散消息；两次消息之间没有更新，画面会停一下，下一份消息到达后又跳过去：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="收到网络位置后直接显示的局限">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-0.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-0.svg" alt="收到一份双人位置后，显示两名角色。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-0.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-0.svg" alt="收到一份双人位置后，显示两名角色。" width="900" height="490" loading="lazy"></a>
     <figcaption>收到一份双人位置后，显示两名角色。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-1.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-1.svg" alt="下一份消息到达，角色直接跳到新位置，两次到包之间缺少连续运动。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-1.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-1.svg" alt="下一份消息到达，角色直接跳到新位置，两次到包之间缺少连续运动。" width="900" height="490" loading="lazy"></a>
     <figcaption>下一份消息到达，角色直接跳到新位置，两次到包之间缺少连续运动。</figcaption>
   </figure>
 </div>
@@ -1450,11 +1454,11 @@ stateDiagram-v2
 <p><strong>在相邻位置之间补出中间状态。</strong> 保存前后两份位置，显示时逐帧取它们之间的中间值，这就是插值。为了知道下一份位置，需要稍微延后播放，代价是增加一点显示延迟：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="网络位置之间的连续播放">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-0.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-0.svg" alt="已经知道下一份位置，先显示较早的状态。十字是收到的位置，角色图标是当前显示位置。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-0.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-0.svg" alt="已经知道下一份位置，先显示较早的状态。十字是收到的位置，角色图标是当前显示位置。" width="900" height="490" loading="lazy"></a>
     <figcaption>已经知道下一份位置，先显示较早的状态。十字是收到的位置，角色图标是当前显示位置。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-1.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-1.svg" alt="每帧向下一份位置推进一点，两名角色一起更新，画面不必等到下次收包才移动。" width="900" height="490" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-1.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-1.svg" alt="每帧向下一份位置推进一点，两名角色一起更新，画面不必等到下次收包才移动。" width="900" height="490" loading="lazy"></a>
     <figcaption>每帧向下一份位置推进一点，两名角色一起更新，画面不必等到下次收包才移动。</figcaption>
   </figure>
 </div>
@@ -1463,11 +1467,11 @@ stateDiagram-v2
 <p>下图中，采样时间表示发起方何时记录位置，到包时间表示消息何时抵达，播放指针表示当前显示哪一刻；两个人共用最后这个指针：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="双人共用采样时刻的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg" alt="状态一：播放指针位于 200 ms 与 300 ms 样本之间，双方都取 240 ms 对应的位姿。" width="1040" height="540" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline.svg" alt="状态一：播放指针位于 200 ms 与 300 ms 样本之间，双方都取 240 ms 对应的位姿。" width="1040" height="540" loading="lazy"></a>
     <figcaption>状态一：播放指针位于 200 ms 与 300 ms 样本之间，双方都取 240 ms 对应的位姿。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg" alt="状态二：指针推进到 280 ms，双方一起推进，不因各自的到包时刻分叉。" width="1040" height="540" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline-next.svg" alt="状态二：指针推进到 280 ms，双方一起推进，不因各自的到包时刻分叉。" width="1040" height="540" loading="lazy"></a>
     <figcaption>状态二：指针推进到 280 ms，双方一起推进，不因各自的到包时刻分叉。</figcaption>
   </figure>
 </div>
@@ -1541,11 +1545,11 @@ stateDiagram-v2
 <p>因此沿用局部空间，把目标记录为“相对发起方的位置与旋转”。远端先处理这份相对变化，再按自己当前显示的角色位置还原目标：</p>
 <div class="holdhand-state-gallery" role="group" aria-label="IK 局部目标同步与重建的连续状态图">
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg" alt="状态一：目标相对发起方根节点记录为“局部目标”，双方骨链使用还原后的共同位置。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-local.svg" alt="状态一：目标相对发起方根节点记录为“局部目标”，双方骨链使用还原后的共同位置。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态一：目标相对发起方根节点记录为“局部目标”，双方骨链使用还原后的共同位置。</figcaption>
   </figure>
   <figure>
-    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg" alt="状态二：本地显示的根节点移动，相同局部目标随之还原到新的世界位置；六个骨骼节点跟随更新，局部关系保持一致。" width="1040" height="650" loading="lazy"></a>
+    <a href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg" target="_blank" rel="noopener" title="查看原尺寸示意图"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-rebuilt.svg" alt="状态二：本地显示的根节点移动，相同局部目标随之还原到新的世界位置；六个骨骼节点跟随更新，局部关系保持一致。" width="1040" height="650" loading="lazy"></a>
     <figcaption>状态二：本地显示的根节点移动，相同局部目标随之还原到新的世界位置；六个骨骼节点跟随更新，局部关系保持一致。</figcaption>
   </figure>
 </div>

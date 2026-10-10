@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/en/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Calling C# from Unity’s Lua code works at runtime, yet the editor may lose field hints through singletons, delegates, or the CS table. I extended an open-source generator to restore them.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Improving the EmmyLua (LuaLS) Unity API Annotation Generator">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2025/en-2025-03-27-Improving-the-EmmyLua-LuaLS-Unity-API-Annotation-Generator/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="Calling C# from Unity’s Lua code works at runtime, yet the editor may lose field hints through singletons, delegates, or the CS table. I extended an open-source generator to restore them.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.shenhanwen.top/images/post-covers/lua-type-hints.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/github-cover.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp">
+<meta property="article:published_time" content="2025-03-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-03-26T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="CSharp">
+<meta property="article:tag" content="Lua">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="开源">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/images/post-covers/lua-type-hints.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2025/en-2025-03-27-Improving-the-EmmyLua-LuaLS-Unity-API-Annotation-Generator/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2025/en-2025-03-27-Improving-the-EmmyLua-LuaLS-Unity-API-Annotation-Generator/","path":"en/2025/en-2025-03-27-Improving-the-EmmyLua-LuaLS-Unity-API-Annotation-Generator/","title":"Improving the EmmyLua (LuaLS) Unity API Annotation Generator"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Improving the EmmyLua (LuaLS) Unity API Annotation Generator | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/en/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/en/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/en/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/en/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-categories"><a href="/en/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-游戏开发"><a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>Game Development</a></li><li class="menu-item menu-item-摄影技术"><a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>Photography</a></li><li class="menu-item menu-item-ai技术"><a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI Technology</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>English</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2025/en-2025-03-27-Improving-the-EmmyLua-LuaLS-Unity-API-Annotation-Generator/" selected>
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2025/zh-TW-2025-03-27-%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/">
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Generate-annotations-without-changing-the-runtime"><span class="nav-number">1.</span> <span class="nav-text">Generate annotations without changing the runtime</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Where-generic-inheritance-loses-type-information"><span class="nav-number">2.</span> <span class="nav-text">Where generic inheritance loses type information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Type-names-and-access-paths-through-the-CS-table"><span class="nav-number">3.</span> <span class="nav-text">Type names and access paths through the CS table</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Compatibility-between-C-delegates-and-Lua-functions"><span class="nav-number">4.</span> <span class="nav-text">Compatibility between C# delegates and Lua functions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Keep-static-and-instance-methods-distinct"><span class="nav-number">5.</span> <span class="nav-text">Keep static and instance methods distinct</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Make-generation-suitable-for-repeated-use"><span class="nav-number">6.</span> <span class="nav-text">Make generation suitable for repeated use</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Integrating-it-into-a-project"><span class="nav-number">7.</span> <span class="nav-text">Integrating it into a project</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#From-project-changes-to-an-upstream-merge"><span class="nav-number">8.</span> <span class="nav-text">From project changes to an upstream merge</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/en/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/en/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/en/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2025/en-2025-03-27-Improving-the-EmmyLua-LuaLS-Unity-API-Annotation-Generator/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Improving the EmmyLua (LuaLS) Unity API Annotation Generator | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Improving the EmmyLua (LuaLS) Unity API Annotation Generator
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-03-27 00:00:00" itemprop="dateCreated datePublished" datetime="2025-03-27T00:00:00+08:00">2025-03-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">游戏开发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>Calling C# from Unity’s Lua code works at runtime, yet the editor may lose field hints through singletons, delegates, or the <code>CS</code> table.</p>
+<p>I extended an open-source generator to restore them.</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator"><img src="/images/post-covers/lua-type-hints.webp" alt="The Lua annotation generator and its Unity type completion results"></a></p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<p>These changes ran from January through March 2025 and were eventually merged upstream through a pull request. This article records several of the most useful improvements.</p>
+<p><a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator"><img src="/zh-CN/2025/让Lua看懂CSharp-类型注解生成器的改造实践/github-cover.webp" alt="The EmmyLua-Snippet-Generator README describes its purpose, language server support, and upstream origin" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
+<p><em>The tool’s GitHub README; click the image to open the repository.</em></p>
+<h2 id="Generate-annotations-without-changing-the-runtime"><a href="#Generate-annotations-without-changing-the-runtime" class="headerlink" title="Generate annotations without changing the runtime"></a>Generate annotations without changing the runtime</h2><p>The tool uses reflection in the Unity editor to inspect C# assemblies, then generates type declarations that a Lua language service can understand. These files are for editor analysis and should not be loaded as executable business scripts.</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C# assemblies</span><br><span class="line">    ↓ Reflect types, members, and inheritance</span><br><span class="line">Lua annotation files</span><br><span class="line">    ↓ The language service builds its index</span><br><span class="line">Field completion, parameter hints, and static diagnostics</span><br></pre></td></tr></table></figure>
+
+<p>An ordinary type might produce this declaration:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@class Demo.InventoryService</span></span><br><span class="line"><span class="comment">---@field Capacity integer</span></span><br><span class="line"><span class="keyword">local</span> InventoryService = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">---@param itemId integer</span></span><br><span class="line"><span class="comment">---@return boolean</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">InventoryService:Contains</span><span class="params">(itemId)</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>The method body is empty because it tells the language service that a method exists, rather than reimplementing C# logic. Runtime bridges such as xLua still perform the actual cross-language calls.</p>
+<img src="/zh-CN/2025/让Lua看懂CSharp-类型注解生成器的改造实践/type-completion.webp" alt="Generated annotations let the Lua editor list Unity Transform types and members" width="520" style="display:block;width:520px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>Completion results from that version, cropped to retain only type and member hints.</em></p>
+<h2 id="Where-generic-inheritance-loses-type-information"><a href="#Where-generic-inheritance-loses-type-information" class="headerlink" title="Where generic inheritance loses type information"></a>Where generic inheritance loses type information</h2><p>The most common example is a generic singleton:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Singleton</span>&lt;<span class="title">T</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> T Instance &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">InventoryService</span> : <span class="title">Singleton</span>&lt;<span class="title">InventoryService</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Capacity &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>If the generator only examines the generic definition, it can only declare <code>Instance</code> as <code>T</code>. For <code>InventoryService</code>, however, inheritance already supplies the type argument: the editor could know that <code>Instance</code> is an <code>InventoryService</code>.</p>
+<p>I added a check of the base class’s generic information when generating a concrete derived class, resolving known field and property types into that class’s declaration. The type chain can then continue through <code>InventoryService.Instance.Capacity</code>.</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@class Demo.InventoryService : Demo.Singleton</span></span><br><span class="line"><span class="comment">---@field Instance Demo.InventoryService</span></span><br><span class="line"><span class="comment">---@field Capacity integer</span></span><br><span class="line"><span class="keyword">local</span> InventoryService = &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This is not a complete C# generic inference system. At this stage, the implementation mainly covers <strong>non-generic derived classes, a direct base class with one generic parameter, and inherited fields and properties</strong>. Multiple-parameter mappings, complex nesting, and generic method parameters and return types require separate handling.</p>
+<p>These boundaries matter: improving hints for most call chains does not mean every generic combination is generated correctly.</p>
+<h2 id="Type-names-and-access-paths-through-the-CS-table"><a href="#Type-names-and-access-paths-through-the-CS-table" class="headerlink" title="Type names and access paths through the CS table"></a>Type names and access paths through the CS table</h2><p>xLua often accesses C# types through <code>CS.UnityEngine.Vector3</code>, while existing annotations may use <code>UnityEngine.Vector3</code>. Treating these as unrelated types produces unhelpful assignment and field-access diagnostics.</p>
+<p>The tool generates regular type names by default and offers optional compatibility declarations with a <code>CS.</code> prefix. Both annotation styles should describe the same type, while access through the <code>CS</code> table should also provide member completion.</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@type UnityEngine.Vector3</span></span><br><span class="line"><span class="keyword">local</span> a = CS.UnityEngine.Vector3.zero</span><br><span class="line"></span><br><span class="line"><span class="comment">---@type CS.UnityEngine.Vector3</span></span><br><span class="line"><span class="keyword">local</span> b = CS.UnityEngine.Vector3.zero</span><br></pre></td></tr></table></figure>
+
+<p>Both type aliases and table field declarations matter. A name alias alone does not automatically let a language service resolve members along <code>CS.UnityEngine</code>; this was one of the actual issues fixed during the changes.</p>
+<p>Choose the annotation style during integration so generated files and handwritten annotations do not develop incompatible naming conventions.</p>
+<p>A type alias changes how the editor interprets annotations; it does not create runtime globals. Even with compatibility aliases enabled, xLua must still access the type through <code>CS.UnityEngine.Vector3</code>. Generating annotations does not make <code>UnityEngine.Vector3.zero</code> available at runtime.</p>
+<h2 id="Compatibility-between-C-delegates-and-Lua-functions"><a href="#Compatibility-between-C-delegates-and-Lua-functions" class="headerlink" title="Compatibility between C# delegates and Lua functions"></a>Compatibility between C# delegates and Lua functions</h2><p>The runtime bridge often accepts Lua functions for certain C# delegates, but the language service may not know that conversion rule. For example:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> onDone = <span class="function"><span class="keyword">function</span><span class="params">()</span></span> <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">---@type System.Action</span></span><br><span class="line"><span class="keyword">local</span> callback</span><br><span class="line">callback = onDone</span><br></pre></td></tr></table></figure>
+
+<p>Without more information, it may report that <code>function</code> cannot be assigned to <code>System.Action</code>.</p>
+<p>I added a configurable compatibility type list and represent selected delegates as union types at the relevant declaration sites:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@param callback System.Action | function</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">RunWhenReady</span><span class="params">(callback)</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>This preserves the original C# type while allowing a Lua function. It must also cover method overloads: fixing only ordinary declarations would give the same API different hints depending on whether it entered the overload branch.</p>
+<p>The tradeoff is that <code>function</code> is broad and cannot replace precise parameter and return-value checks. The compatibility list should contain only types the runtime can actually convert. For callbacks requiring strict signatures, generating explicit <code>fun(...)</code> declarations would be more appropriate.</p>
+<h2 id="Keep-static-and-instance-methods-distinct"><a href="#Keep-static-and-instance-methods-distinct" class="headerlink" title="Keep static and instance methods distinct"></a>Keep static and instance methods distinct</h2><p>Lua dot and colon calls have different parameter behavior: a colon implicitly passes <code>self</code>. Generating a C# static method as an instance method misaligns the parameter list seen by the editor.</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Static method</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Demo.Utility.Create</span><span class="params">()</span></span> <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- Instance method</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Demo.Service:Refresh</span><span class="params">()</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>The generator must choose the declaration form using reflection’s <code>IsStatic</code>. I also fixed static functions that still carried instance parameters and cleaned up generic name suffixes, anonymous types, and other names unsuitable for direct exposure.</p>
+<p>These details determine whether users trust the hints. Seeing incorrect warnings every day can train people to ignore real problems too.</p>
+<h2 id="Make-generation-suitable-for-repeated-use"><a href="#Make-generation-suitable-for-repeated-use" class="headerlink" title="Make generation suitable for repeated use"></a>Make generation suitable for repeated use</h2><p>Besides type mapping, I added several usability features:</p>
+<ul>
+<li>Select assembly content by namespace instead of indexing every unrelated type.</li>
+<li>Generate declarations for globals injected from C# and entry points such as <code>typeof</code>.</li>
+<li>Split annotation files using a configurable line count to manage large output.</li>
+<li>Save generation options in an editor window, reducing repeated source-configuration edits.</li>
+</ul>
+<p>Whether splitting files improves analysis speed depends on the language service and project size; I did not run a common performance benchmark across editors. The clearer benefit is control over generation scope and output organization.</p>
+<p>With Lua Language Server, add the generated directory to <code>workspace.library</code>. Wherever the files are stored, index only the needed declarations and avoid leaving both old and new output that defines the same types twice.</p>
+<p>Use a dedicated output directory. This tool cleans old annotations from the destination, so handwritten business scripts must not share that directory.</p>
+<h2 id="Integrating-it-into-a-project"><a href="#Integrating-it-into-a-project" class="headerlink" title="Integrating it into a project"></a>Integrating it into a project</h2><p>Clone the repository into the Unity project and wait for editor compilation. Open settings from the top-level <code>LuaType</code> menu, then run generation. Prepare the README’s settings in this order:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>How to configure it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Configuration directory</td>
+<td>Choose a writable directory. The default comes from <code>AppDomain.CurrentDomain.BaseDirectory</code>, which may point into Unity’s installation directory</td>
+</tr>
+<tr>
+<td>Annotation output directory</td>
+<td>Use a dedicated directory ending in the path separator required by the tool; do not store business files there</td>
+</tr>
+<tr>
+<td>C# namespaces</td>
+<td>Add namespaces used by the project, separated by spaces, such as <code>DG FairyGUI</code></td>
+</tr>
+<tr>
+<td>Global variables</td>
+<td>Use <code>name:type</code>, for example <code>UNITY_EDITOR:boolean DEBUG_LEVEL:number</code></td>
+</tr>
+<tr>
+<td>Lua function compatibility types</td>
+<td>Enter full type names, such as <code>System.Action FairyGUI.EventCallback0</code></td>
+</tr>
+</tbody></table>
+<p>With LuaLS, add output outside the workspace to the language service’s library directories. Here is a simplified <code>.luarc.json</code>; replace the path with your own annotation directory:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;workspace.library&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;../LuaTypeHints&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>After generation, verify a real call chain: types under <code>CS</code>, members after a generic singleton, and hints when a delegate parameter receives a Lua function. Regenerate the relevant declarations after adding assemblies, adjusting options, or changing C# APIs.</p>
+<p>Language services may differ in annotation compatibility. The README’s support for EmmyLua and SumnekoLua &#x2F; LuaLS does not imply identical behavior across every version combination. Testing with the project’s actual editor is more reliable than merely checking that files were generated.</p>
+<h2 id="From-project-changes-to-an-upstream-merge"><a href="#From-project-changes-to-an-upstream-merge" class="headerlink" title="From project changes to an upstream merge"></a>From project changes to an upstream merge</h2><p>This work builds on the original author’s generation logic. I mainly added capabilities and fixes needed by our project. Documenting new options, compatibility boundaries, and usage when submitting upstream makes the changes easier for others to understand than a script that only works in my own project.</p>
+<p><a href="https://github.com/ak47007tiger/EmmyLuaXLuaSnippetGenerator/pull/2">PR #2</a> was merged on March 27, 2025. Tool repository: <a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator">EmmyLua-Snippet-Generator</a>; original project: <a href="https://github.com/ak47007tiger/EmmyLuaXLuaSnippetGenerator">EmmyLuaXLuaSnippetGenerator</a>.</p>
+<p>Cross-language type hints first reduce everyday guesswork. Passing information already known at runtime to the editor exposes call-chain, parameter, and field problems earlier. Whether an operation is valid still depends on the real runtime rules and tests.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/en/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/en/tags/Lua/" rel="tag"># Lua</a>
+              <a href="/en/tags/CSharp/" rel="tag"># CSharp</a>
+              <a href="/en/tags/%E5%BC%80%E6%BA%90/" rel="tag"># 开源</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/2025/en-2025-03-19-Dynamic-Registration-and-Favorites-for-Game-GM-Tools/" rel="prev" title="Dynamic Registration and Favorites for Game GM Tools">
+                  <i class="fa fa-angle-left"></i> Dynamic Registration and Favorites for Game GM Tools
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2025/en-2025-06-12-Organizing-Game-Logs-Starting-with-947-Repeated-Messages/" rel="next" title="Organizing Game Logs, Starting with 947 Repeated Messages">
+                  Organizing Game Logs, Starting with 947 Repeated Messages <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -136,12 +136,16 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/" selected>
+        <option value="zh-CN" data-href="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/">
+        <option value="en" data-href="/en/2025/en-2025-03-27-Improving-the-EmmyLua-LuaLS-Unity-API-Annotation-Generator/">
           English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2025/zh-TW-2025-03-27-%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/">
+          繁體中文
         </option>
       
     </select>
@@ -301,7 +305,7 @@
 <span id="more"></span>
 
 <p>这批改动从 2025 年 1 月持续到 3 月，最终通过 PR 合并回上游。本文记录其中几个最有价值的处理。</p>
-<p><a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator"><img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/github-cover.webp" alt="EmmyLua-Snippet-Generator 的 GitHub README，介绍工具用途、语言服务支持与原项目来源" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
+<p><a href="https://github.com/SHW2002/EmmyLua-Snippet-Generator"><img src="/zh-CN/2025/让Lua看懂CSharp-类型注解生成器的改造实践/github-cover.webp" alt="EmmyLua-Snippet-Generator 的 GitHub README，介绍工具用途、语言服务支持与原项目来源" width="680" style="display:block;width:680px;max-width:70%;height:auto;margin:1.5rem auto;"></a></p>
 <p><em>工具的 GitHub README，点击图片可打开仓库。</em></p>
 <h2 id="生成注解，并不改变运行时"><a href="#生成注解，并不改变运行时" class="headerlink" title="生成注解，并不改变运行时"></a>生成注解，并不改变运行时</h2><p>工具在 Unity 编辑器中通过反射读取 C# 程序集，再生成 Lua 语言服务能够理解的类型声明。注解文件提供给编辑器分析，不应该作为业务脚本被加载执行。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C# 程序集</span><br><span class="line">    ↓ 反射读取类型、成员和继承关系</span><br><span class="line">Lua 注解文件</span><br><span class="line">    ↓ 语言服务建立索引</span><br><span class="line">字段补全、参数提示与静态诊断</span><br></pre></td></tr></table></figure>
@@ -310,7 +314,7 @@
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">---@class Demo.InventoryService</span></span><br><span class="line"><span class="comment">---@field Capacity integer</span></span><br><span class="line"><span class="keyword">local</span> InventoryService = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">---@param itemId integer</span></span><br><span class="line"><span class="comment">---@return boolean</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">InventoryService:Contains</span><span class="params">(itemId)</span></span> <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 
 <p>这里的方法体是空的，因为它的作用是告诉语言服务“存在这个方法”，不是重新实现 C# 逻辑。真正的跨语言调用仍然由 xLua 等运行时桥接完成。</p>
-<img src="/zh-CN/2025/%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/type-completion.webp" alt="生成注解后，Lua 编辑器能够列出 Unity Transform 类型及成员" width="520" style="display:block;width:520px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2025/让Lua看懂CSharp-类型注解生成器的改造实践/type-completion.webp" alt="生成注解后，Lua 编辑器能够列出 Unity Transform 类型及成员" width="520" style="display:block;width:520px;max-width:70%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p><em>当时的补全效果，裁去业务代码，仅保留类型与成员提示。</em></p>
 <h2 id="泛型继承会把类型信息丢在哪"><a href="#泛型继承会把类型信息丢在哪" class="headerlink" title="泛型继承会把类型信息丢在哪"></a>泛型继承会把类型信息丢在哪</h2><p>最常见的情况是泛型单例：</p>

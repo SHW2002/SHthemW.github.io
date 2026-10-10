@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/en/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Frequent logs can obscure production issues. I counted messages from game entry until five seconds after the frame rate stabilized. The top message appeared 947 times; the next few appeared dozens">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Organizing Game Logs, Starting with 947 Repeated Messages">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2025/en-2025-06-12-Organizing-Game-Logs-Starting-with-947-Repeated-Messages/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="Frequent logs can obscure production issues. I counted messages from game entry until five seconds after the frame rate stabilized. The top message appeared 947 times; the next few appeared dozens">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/log-frequency.svg">
+<meta property="article:published_time" content="2025-06-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-30T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Lua">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="日志">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/log-frequency.svg">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2025/en-2025-06-12-Organizing-Game-Logs-Starting-with-947-Repeated-Messages/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2025/en-2025-06-12-Organizing-Game-Logs-Starting-with-947-Repeated-Messages/","path":"en/2025/en-2025-06-12-Organizing-Game-Logs-Starting-with-947-Repeated-Messages/","title":"Organizing Game Logs, Starting with 947 Repeated Messages"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Organizing Game Logs, Starting with 947 Repeated Messages | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/en/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/en/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/en/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/en/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-categories"><a href="/en/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-游戏开发"><a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>Game Development</a></li><li class="menu-item menu-item-摄影技术"><a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>Photography</a></li><li class="menu-item menu-item-ai技术"><a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI Technology</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>English</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2025/en-2025-06-12-Organizing-Game-Logs-Starting-with-947-Repeated-Messages/" selected>
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2025/zh-TW-2025-06-12-%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/">
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Define-the-sampling-window-first"><span class="nav-number">1.</span> <span class="nav-text">Define the sampling window first</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#High-frequency-does-not-always-justify-deletion"><span class="nav-number">2.</span> <span class="nav-text">High frequency does not always justify deletion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hidden-output-can-still-cost-time"><span class="nav-number">3.</span> <span class="nav-text">Hidden output can still cost time</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Levels-and-module-tags-address-different-questions"><span class="nav-number">4.</span> <span class="nav-text">Levels and module tags address different questions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#July-2026-addition-generate-code-for-log-tags"><span class="nav-number">5.</span> <span class="nav-text">July 2026 addition: generate code for log tags</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-this-record-demonstrates"><span class="nav-number">6.</span> <span class="nav-text">What this record demonstrates</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/en/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/en/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/en/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2025/en-2025-06-12-Organizing-Game-Logs-Starting-with-947-Repeated-Messages/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Organizing Game Logs, Starting with 947 Repeated Messages | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Organizing Game Logs, Starting with 947 Repeated Messages
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-06-12 00:00:00" itemprop="dateCreated datePublished" datetime="2025-06-12T00:00:00+08:00">2025-06-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">游戏开发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>Frequent logs can obscure production issues. I counted messages from game entry until five seconds after the frame rate stabilized.</p>
+<p>The top message appeared <strong>947 times</strong>; the next few appeared dozens of times. Removing it noticeably improved perceived smoothness, prompting a review of log frequency, purpose, and switches.</p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<h2 id="Define-the-sampling-window-first"><a href="#Define-the-sampling-window-first" class="headerlink" title="Define the sampling window first"></a>Define the sampling window first</h2><p>The 947 occurrences do not mean “947 per second” or “947 in the five seconds after stabilization.” The sample covered the whole entry process and continued for five seconds after the frame rate stabilized.</p>
+<p>Without a clear window, the same number can suggest different performance conclusions. My question was which messages repeated conspicuously during a common entry flow and deserved investigation first.</p>
+<img src="/zh-CN/2025/从947次重复输出开始整理游戏日志/log-frequency.svg" alt="In one sample, the most frequent message appeared 947 times; four other groups appeared 49, 40, 40, and 35 times" width="530" style="display:block;width:530px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>Redrawn from the original statistics screenshot, retaining counts while replacing internal function and module names with descriptions of their purpose.</em></p>
+<p>Aggregate by a fixed event or log template where possible. If a message embeds a timestamp, object ID, and position, every string differs; grouping by the full text can hide repeated calls.</p>
+<h2 id="High-frequency-does-not-always-justify-deletion"><a href="#High-frequency-does-not-always-justify-deletion" class="headerlink" title="High frequency does not always justify deletion"></a>High frequency does not always justify deletion</h2><p>Counts only identify leads. Network connections, critical resource loading, and exceptional states may remain valuable for production diagnosis even when they appear frequently during entry.</p>
+<p>I checked each message’s purpose, whether a normal flow still needed it, whether it could be enabled by module during investigation, and whether a simpler expression would suffice.</p>
+<p>Repeated process logs left over from early development can be removed or disabled by default. Useful diagnostic details should retain a switch. Logging once per state change is usually easier to read than repeating the same state every frame, but equivalence depends on what needs to be observed.</p>
+<h2 id="Hidden-output-can-still-cost-time"><a href="#Hidden-output-can-still-cost-time" class="headerlink" title="Hidden output can still cost time"></a>Hidden output can still cost time</h2><p>Logging costs can arise from parameter preparation, string formatting, Lua-to-C# calls, stack collection, and subsequent output and display.</p>
+<p>Console collapsing or filtering does not mean those earlier steps never happened. If a string is already built before reaching the logging function, disabling output inside that function cannot eliminate construction costs.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Arguments are still evaluated even if the method ignores Debug output.</span></span><br><span class="line">Log.Debug(<span class="string">$&quot;Preview objects: <span class="subst">&#123;BuildObjectDescription()&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Check the switch before preparing expensive diagnostic information.</span></span><br><span class="line"><span class="keyword">if</span> (LogSettings.PreviewDebugEnabled)</span><br><span class="line">    Log.Debug(<span class="string">$&quot;Preview objects: <span class="subst">&#123;BuildObjectDescription()&#125;</span>&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>Lua concatenation has the same issue. Macros, conditional methods, or lazy construction are other options, but first establish where the project’s logging layer filters messages. Otherwise, you may optimize only presentation.</p>
+<h2 id="Levels-and-module-tags-address-different-questions"><a href="#Levels-and-module-tags-address-different-questions" class="headerlink" title="Levels and module tags address different questions"></a>Levels and module tags address different questions</h2><p>Log levels express importance; module tags identify the source. Use them together: for example, inspect Debug messages from the resource module while retaining Warning and Error messages from other modules.</p>
+<p>For frequently investigated modules, disable detailed logs by default but provide an explicit way to enable them. Normal use stays readable, and integration testing no longer requires adding temporary <code>print</code> calls everywhere.</p>
+<p>Tag design should also be maintainable. Requiring repetitive handwritten wrappers for each new module can lead to inconsistent spelling or callers bypassing the common entry point.</p>
+<h2 id="July-2026-addition-generate-code-for-log-tags"><a href="#July-2026-addition-generate-code-for-log-tags" class="headerlink" title="July 2026 addition: generate code for log tags"></a>July 2026 addition: generate code for log tags</h2><p>In another project, I later organized tag integration: add an entry to a central definition, then generate the corresponding template code through an editor menu.</p>
+<p>This provides a fixed place to add or remove tags and makes filtering frequent output by module easier. It addresses maintenance of logging entry points, but does not automatically fix argument-evaluation costs at every call site. Calls preparing expensive content still need review.</p>
+<h2 id="What-this-record-demonstrates"><a href="#What-this-record-demonstrates" class="headerlink" title="What this record demonstrates"></a>What this record demonstrates</h2><p>The original statistics retain output counts and my experience after removing the frequent message, but lack a complete frame-time comparison on the same device and scene. I therefore cannot turn this record into a claim of a specific percentage performance improvement.</p>
+<p>To quantify the benefit, fix the entry flow and sampling conditions, then compare CPU time, allocations, and frame-time distributions with logging enabled and disabled. Editor Console behavior is not a substitute for results on a real device.</p>
+<p>The most useful outcome was turning “too many logs” into individually actionable items: a defined sampling window, identifiable high-frequency sources, diagnostic information worth keeping, and ways to enable it again later.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/en/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/en/tags/Lua/" rel="tag"># Lua</a>
+              <a href="/en/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag"># 性能优化</a>
+              <a href="/en/tags/%E6%97%A5%E5%BF%97/" rel="tag"># 日志</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/2025/en-2025-03-27-Improving-the-EmmyLua-LuaLS-Unity-API-Annotation-Generator/" rel="prev" title="Improving the EmmyLua (LuaLS) Unity API Annotation Generator">
+                  <i class="fa fa-angle-left"></i> Improving the EmmyLua (LuaLS) Unity API Annotation Generator
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2025/en-2025-10-20-Analyzing-Crash-Causes-with-Android-Studio-Debugging-on-Real-Devices/" rel="next" title="Analyzing Crash Causes with Android Studio Debugging on Real Devices">
+                  Analyzing Crash Causes with Android Studio Debugging on Real Devices <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -134,12 +134,16 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/" selected>
+        <option value="zh-CN" data-href="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/">
+        <option value="en" data-href="/en/2026/en-2026-06-18-Unity-Skinned-Bounds-and-Adaptive-Display-Model-Scaling/">
           English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-06-18-Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/">
+          繁體中文
         </option>
       
     </select>
@@ -325,13 +329,13 @@
 </tr>
 </tbody></table>
 <p>第一次排查时，画出来的包围盒远大于实际人物。尺寸限制逻辑把这个虚大的盒子当成真实模型，只能把角色继续缩小。</p>
-<img src="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/oversized-bounds.webp" alt="编辑器中的人物与明显偏大的包围盒" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2026/Unity蒙皮包围盒与展示模型自适应缩放/oversized-bounds.webp" alt="编辑器中的人物与明显偏大的包围盒" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p><em>裁取自当时的 Scene 视图，只保留人物与包围盒的大小关系。</em></p>
 <p>把相机拉远并不能修正这个问题。相机改变的是画面投影，错误的尺寸测量仍然会让缩放逻辑把角色压到不合适的大小。</p>
 <h2 id="第一次尝试使用-BakeMesh"><a href="#第一次尝试使用-BakeMesh" class="headerlink" title="第一次尝试使用 BakeMesh"></a>第一次尝试使用 BakeMesh</h2><p><code>SkinnedMeshRenderer.BakeMesh</code> 可以得到当前蒙皮姿势的网格快照。当静态包围盒过于保守时，它是一个有用的排查入口：比较烘焙网格与 Renderer 的范围，可以帮助判断差异来自资源包络还是当前姿势。</p>
 <p>不过，烘焙之后不能直接把 <code>mesh.bounds.size</code> 当成世界尺寸。对于一般层级，需要把局部包围盒的八个角转换到同一坐标空间，再合并求得新的 AABB。</p>
-<img src="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/bounds-spaces.svg" alt="局部网格包围盒转换为世界空间包围盒后，再参与统一缩放" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2026/Unity蒙皮包围盒与展示模型自适应缩放/bounds-spaces.svg" alt="局部网格包围盒转换为世界空间包围盒后，再参与统一缩放" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p>这里有两个常见误区：</p>
 <ul>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/zh-TW/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="排查一個線上問題時，日誌本應提供線索，但大量高頻輸出也會讓問題更難看清。後來我專門做了一次統計：從進入遊戲開始，採樣到幀率穩定後的五秒，查看每條日誌分別打印了多少次。 結果排在第一的一條輸出出現了 947 次，後面的幾條則是幾十次。刪掉這條重複日誌後，當時的主觀流暢度已有明顯改善。這讓我開始系統整理日誌頻率、用途和開關。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="從 947 次重複輸出開始整理遊戲日誌">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-TW/2025/zh-TW-2025-06-12-%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="排查一個線上問題時，日誌本應提供線索，但大量高頻輸出也會讓問題更難看清。後來我專門做了一次統計：從進入遊戲開始，採樣到幀率穩定後的五秒，查看每條日誌分別打印了多少次。 結果排在第一的一條輸出出現了 947 次，後面的幾條則是幾十次。刪掉這條重複日誌後，當時的主觀流暢度已有明顯改善。這讓我開始系統整理日誌頻率、用途和開關。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/log-frequency.svg">
+<meta property="article:published_time" content="2025-06-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-30T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Lua">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="日志">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/log-frequency.svg">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-TW/2025/zh-TW-2025-06-12-%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://www.shenhanwen.top/zh-TW/2025/zh-TW-2025-06-12-%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/","path":"zh-TW/2025/zh-TW-2025-06-12-从947次重复输出开始整理游戏日志/","title":"從 947 次重複輸出開始整理遊戲日誌"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>從 947 次重複輸出開始整理遊戲日誌 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zh-TW/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/zh-TW/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/zh-TW/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/zh-TW/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-categories"><a href="/zh-TW/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-游戏开发"><a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>遊戲開發</a></li><li class="menu-item menu-item-摄影技术"><a href="/zh-TW/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>攝影技術</a></li><li class="menu-item menu-item-ai技术"><a href="/zh-TW/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI 技術</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>繁體中文</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical aria-label="選擇語言">
+      
+        <option value="zh-CN" data-href="/zh-CN/2025/%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/">
+          簡體中文
+        </option>
+      
+        <option value="en" data-href="/en/2025/en-2025-06-12-Organizing-Game-Logs-Starting-with-947-Repeated-Messages/">
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2025/zh-TW-2025-06-12-%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/" selected>
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E9%99%90%E5%AE%9A%E6%8E%A1%E6%A8%A3%E7%AA%97%E5%8F%A3"><span class="nav-number">1.</span> <span class="nav-text">先限定採樣窗口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E9%A0%BB%E4%B8%8D%E4%BB%A3%E8%A1%A8%E4%B8%80%E5%AE%9A%E8%A9%B2%E5%88%AA%E9%99%A4"><span class="nav-number">2.</span> <span class="nav-text">高頻不代表一定該刪除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%8F%E5%B9%95%E4%B8%8A%E4%B8%8D%E9%A1%AF%E7%A4%BA%EF%BC%8C%E4%B8%8D%E7%AD%89%E6%96%BC%E6%B2%92%E6%9C%89%E9%96%8B%E9%8A%B7"><span class="nav-number">3.</span> <span class="nav-text">屏幕上不顯示，不等於沒有開銷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%B4%9A%E8%88%87%E6%A8%A1%E5%A1%8A%E6%A8%99%E7%B1%A4%E5%88%86%E5%88%A5%E8%A7%A3%E6%B1%BA%E4%B8%8D%E5%90%8C%E5%95%8F%E9%A1%8C"><span class="nav-number">4.</span> <span class="nav-text">分級與模塊標籤分別解決不同問題</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2026-%E5%B9%B4-7-%E6%9C%88%E8%A3%9C%E5%85%85%EF%BC%9A%E7%82%BA%E6%97%A5%E8%AA%8C%E6%A8%99%E7%B1%A4%E7%94%9F%E6%88%90%E4%BB%A3%E7%A2%BC"><span class="nav-number">5.</span> <span class="nav-text">2026 年 7 月補充：為日誌標籤生成代碼</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%99%E6%AC%A1%E8%A8%98%E9%8C%84%E8%83%BD%E5%A4%A0%E8%AA%AA%E6%98%8E%E4%BB%80%E9%BA%BC"><span class="nav-number">6.</span> <span class="nav-text">這次記錄能夠說明什麼</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen" src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">遊戲客戶端開發工程師, 風光攝影和星空愛好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zh-TW/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zh-TW/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zh-TW/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-TW/2025/zh-TW-2025-06-12-%E4%BB%8E947%E6%AC%A1%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA%E5%BC%80%E5%A7%8B%E6%95%B4%E7%90%86%E6%B8%B8%E6%88%8F%E6%97%A5%E5%BF%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="從 947 次重複輸出開始整理遊戲日誌 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content>
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          從 947 次重複輸出開始整理遊戲日誌
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2025-06-12 00:00:00" itemprop="dateCreated datePublished" datetime="2025-06-12T00:00:00+08:00">2025-06-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">遊戲開發</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>排查一個線上問題時，日誌本應提供線索，但大量高頻輸出也會讓問題更難看清。後來我專門做了一次統計：從進入遊戲開始，採樣到幀率穩定後的五秒，查看每條日誌分別打印了多少次。</p>
+<p>結果排在第一的一條輸出出現了 <strong>947 次</strong>，後面的幾條則是幾十次。刪掉這條重複日誌後，當時的主觀流暢度已有明顯改善。這讓我開始系統整理日誌頻率、用途和開關。</p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<h2 id="先限定採樣窗口"><a href="#先限定採樣窗口" class="headerlink" title="先限定採樣窗口"></a>先限定採樣窗口</h2><p>這裡的 947 次不是“每秒 947 次”，也不是“僅在穩定後的五秒裡打印 947 次”。採樣覆蓋了整個進入過程，並在幀率穩定後繼續了五秒。</p>
+<p>統計窗口必須寫清楚，否則同一個數字很容易被解讀成不同的性能結論。我當時關注的是：在一次常見進入流程裡，哪些輸出明顯重複、值得優先檢查。</p>
+<img src="/zh-CN/2025/从947次重复输出开始整理游戏日志/log-frequency.svg" alt="同一次採樣中，高頻重複日誌為947次，其餘四類輸出為49、40、40和35次" width="530" style="display:block;width:530px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>根據當時的統計截圖重繪，保留計數，將內部函數與模塊名稱替換為用途描述。</em></p>
+<p>聚合時最好按固定事件或日誌模板計數。如果一條日誌把時間、對象 ID 和位置全部拼進文本，每次生成的字符串都不同，按完整內容分組就可能掩蓋重複調用。</p>
+<h2 id="高頻不代表一定該刪除"><a href="#高頻不代表一定該刪除" class="headerlink" title="高頻不代表一定該刪除"></a>高頻不代表一定該刪除</h2><p>計數只是篩選線索。網絡連接、關鍵資源加載和異常狀態等信息，即使在進入階段比較密集，也可能對線上問題有價值。</p>
+<p>我逐條檢查的是：這條輸出用於確認什麼、在正常流程裡是否仍然需要、出現問題時能否按模塊打開，以及有沒有更簡潔的表達方式。</p>
+<p>對於早期開發留下的重複過程日誌，可以移除或默認關閉；有診斷價值的細節則保留開關。一次狀態變化打印一次，通常比每幀重複輸出相同狀態更容易閱讀，但兩者是否等價仍要看需要觀察的內容。</p>
+<h2 id="屏幕上不顯示，不等於沒有開銷"><a href="#屏幕上不顯示，不等於沒有開銷" class="headerlink" title="屏幕上不顯示，不等於沒有開銷"></a>屏幕上不顯示，不等於沒有開銷</h2><p>日誌涉及的成本可能發生在多個位置：準備參數、格式化字符串、Lua 與 C# 之間的調用、堆棧採集，以及後面的輸出與顯示。</p>
+<p>因此 Console 面板裡的摺疊或過濾，不能直接當作前面這些工作沒有發生。尤其是字符串已經拼好才傳入日誌函數時，函數內部判斷關閉也來不及消除拼接成本。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 即使方法内部忽略 Debug，参数求值仍然会发生。</span></span><br><span class="line">Log.Debug(<span class="string">$&quot;Preview objects: <span class="subst">&#123;BuildObjectDescription()&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在准备昂贵诊断信息之前判断开关。</span></span><br><span class="line"><span class="keyword">if</span> (LogSettings.PreviewDebugEnabled)</span><br><span class="line">    Log.Debug(<span class="string">$&quot;Preview objects: <span class="subst">&#123;BuildObjectDescription()&#125;</span>&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>Lua 的拼接表達式也有同樣的問題。宏、條件方法或延遲構造可以作為另一種實現方式，但應該先確認項目的日誌層到底在哪裡過濾，避免只優化顯示端。</p>
+<h2 id="分級與模塊標籤分別解決不同問題"><a href="#分級與模塊標籤分別解決不同問題" class="headerlink" title="分級與模塊標籤分別解決不同問題"></a>分級與模塊標籤分別解決不同問題</h2><p>日誌等級表達重要性，模塊標籤表達來源，兩者可以一起使用。例如只觀察資源模塊的 Debug，同時保留其他模塊的 Warning 和 Error。</p>
+<p>對經常排查的模塊，默認關閉詳細日誌，保留可主動開啟的入口。這樣平時不會被無關信息淹沒，需要聯調時也不用到處臨時加 <code>print</code>。</p>
+<p>標籤設計也應便於維護。如果每加一個模塊都要手寫大量重複包裝，最後很容易出現同一模塊多種拼寫，或者調用者繞過統一入口。</p>
+<h2 id="2026-年-7-月補充：為日誌標籤生成代碼"><a href="#2026-年-7-月補充：為日誌標籤生成代碼" class="headerlink" title="2026 年 7 月補充：為日誌標籤生成代碼"></a>2026 年 7 月補充：為日誌標籤生成代碼</h2><p>後來在另一個項目中，我又整理了日誌標籤的接入方式：在統一定義裡新增條目，再通過編輯器菜單生成對應的模板代碼。</p>
+<p>這讓增刪標籤有了固定入口，也便於按模塊篩選高頻輸出。它解決的是日誌入口的維護問題，並不會自動修復所有調用點上的參數求值開銷；需要昂貴內容的地方仍然要檢查調用方式。</p>
+<h2 id="這次記錄能夠說明什麼"><a href="#這次記錄能夠說明什麼" class="headerlink" title="這次記錄能夠說明什麼"></a>這次記錄能夠說明什麼</h2><p>原始統計保留了輸出次數，也保留了當時刪除高頻日誌後的體驗反饋，但沒有完整的同設備、同場景幀時間對照數據。因此我不會把這次記錄寫成提升了某個百分比的性能結論。</p>
+<p>如果需要量化收益，後續應固定進入流程和採樣條件，對比日誌開啟與關閉時的 CPU 耗時、分配和幀時間分佈。編輯器 Console 的表現也不能直接替代真機結果。</p>
+<p>這次工作最有用的產出，是把“日誌太多”變成可以逐項處理的問題：有明確的採樣窗口，有高頻來源，有需要保留的診斷信息，也有以後重新開啟它們的入口。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zh-TW/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/zh-TW/tags/Lua/" rel="tag"># Lua</a>
+              <a href="/zh-TW/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag"># 性能優化</a>
+              <a href="/zh-TW/tags/%E6%97%A5%E5%BF%97/" rel="tag"># 日誌</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-TW/2025/zh-TW-2025-03-27-%E8%AE%A9Lua%E7%9C%8B%E6%87%82CSharp-%E7%B1%BB%E5%9E%8B%E6%B3%A8%E8%A7%A3%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E6%94%B9%E9%80%A0%E5%AE%9E%E8%B7%B5/" rel="prev" title="改造EmmyLua(LuaLS)的UnityAPI註解生成器">
+                  <i class="fa fa-angle-left"></i> 改造EmmyLua(LuaLS)的UnityAPI註解生成器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-TW/2025/zh-TW-2025-10-20-%E4%BD%BF%E7%94%A8Android-Studio%E7%9C%9F%E6%9C%BA%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90%E9%97%AA%E9%80%80%E5%8E%9F%E5%9B%A0/" rel="next" title="使用Android Studio真機調試分析閃退原因">
+                  使用Android Studio真機調試分析閃退原因 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -136,12 +136,16 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/" selected>
+        <option value="zh-CN" data-href="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/">
+        <option value="en" data-href="/en/2025/en-2025-12-04-Refactoring-Unity-Character-Animation-through-Composition/">
           English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2025/zh-TW-2025-12-04-Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/">
+          繁體中文
         </option>
       
     </select>
@@ -322,10 +326,10 @@
 </tr>
 </tbody></table>
 <p>本地玩家需要 <code>SetFloat</code>、<code>SetBool</code> 等接口；远端玩家需要直接切换状态，却不应该重新执行一遍本地输入决策。把两条路线放进同一个类之后，每种角色都会看到一些自己根本不需要的方法。</p>
-<img src="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/parameter-controller.webp" alt="通过过渡条件驱动的 Animator 状态机" width="560" style="display:block;width:560px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2025/Unity角色动画模块的组合式重构/parameter-controller.webp" alt="通过过渡条件驱动的 Animator 状态机" width="560" style="display:block;width:560px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p><em>参数驱动的控制器保留过渡条件，状态切换由 Animator 完成。</em></p>
-<img src="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/state-controller.webp" alt="用于状态直驱的 Animator 状态布局" width="560" style="display:block;width:560px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2025/Unity角色动画模块的组合式重构/state-controller.webp" alt="用于状态直驱的 Animator 状态布局" width="560" style="display:block;width:560px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p><em>状态驱动的控制器主要接收明确的播放目标，两者需要的控制接口不同。</em></p>
 <h3 id="通用行为需要在外部补特例"><a href="#通用行为需要在外部补特例" class="headerlink" title="通用行为需要在外部补特例"></a>通用行为需要在外部补特例</h3><p>手持物更新是一个很直观的例子。业务层只是想表达“现在进入手持状态”，但原来的接口主要按本地玩家设计，内部设置了 Animator 参数。</p>
@@ -335,7 +339,7 @@
 
 <p>本地与远端的手持更新流程不同，已经引发过动作不一致的问题。当时通过补特殊处理解决了表现，但如果继续沿这个方向扩展，后面的每个新行为都有可能再复制一遍分支。</p>
 <h3 id="组件存在，不代表组件已经可用"><a href="#组件存在，不代表组件已经可用" class="headerlink" title="组件存在，不代表组件已经可用"></a>组件存在，不代表组件已经可用</h3><p>旧动画组件会随角色一起实例化，但它依赖的模型、Animator 和骨架要等后续加载完成才真正有效。</p>
-<img src="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/old-animation-component.webp" alt="旧版动画业务组件挂在角色模型上" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2025/Unity角色动画模块的组合式重构/old-animation-component.webp" alt="旧版动画业务组件挂在角色模型上" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p><em>旧结构把动画业务组件直接挂在模型上，组件的存在时间早于业务就绪时间。</em></p>
 <p>为了避免空引用，方法内部经常写成“Animator 还没有就返回”。这种做法不会立即崩溃，却可能悄悄丢掉一次必要的状态更新。调用成功返回，并不能说明动作真的已经应用。</p>
@@ -363,7 +367,7 @@
 </tr>
 </tbody></table>
 <p>这里按<strong>驱动方式</strong>区分动画实现，而不是为每一种玩家类型复制完整的动画模块。AI 与本地玩家的决策来源不同，但如果都使用同一套参数状态机，就可以复用参数驱动这一层。</p>
-<img src="/zh-CN/2025/Unity%E8%A7%92%E8%89%B2%E5%8A%A8%E7%94%BB%E6%A8%A1%E5%9D%97%E7%9A%84%E7%BB%84%E5%90%88%E5%BC%8F%E9%87%8D%E6%9E%84/driver-composition.svg" alt="角色实体分别持有移动控制器和动画驱动器的组合关系" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2025/Unity角色动画模块的组合式重构/driver-composition.svg" alt="角色实体分别持有移动控制器和动画驱动器的组合关系" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p>实体负责把合适的对象组装起来；业务层面向行为接口调用，不再逐个判断玩家类型。</p>
 <h3 id="同一个业务接口采用不同实现"><a href="#同一个业务接口采用不同实现" class="headerlink" title="同一个业务接口采用不同实现"></a>同一个业务接口采用不同实现</h3><p>以手持动作为例，对外保留一个“设置手持状态”的接口。参数驱动器设置布尔参数，状态驱动器直接切换对应动画层的状态。</p>

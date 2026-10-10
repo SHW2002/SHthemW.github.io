@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/en/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="I developed hand-holding for our social game’s 3C system: the initiator leads and the recipient follows. Both must adapt to terrain, keep their hands together, and work with personal actions and o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Implementing Network-Synchronized Two-Player Hand-Holding in a Game">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="I developed hand-holding for our social game’s 3C system: the initiator leads and the recipient follows. Both must adapt to terrain, keep their hands together, and work with personal actions and o">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-independent-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-placement-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-start.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-spring-closer.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-small-gap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-speed-large-gap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-turn-direct-after.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-before.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-target.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-chase.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-orbit-settled.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-controls-tilted.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-edge.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-slowdown-inside.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-start.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-facing-later.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-floating.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-ground-projected.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-active.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ground-snap-rejected.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/kcc-order-applied.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/follow-teleport-reset.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-input.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-solved.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-bent.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-extended.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/shared-contact-overlap.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-released.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-blend-connected.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-comparison.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-capture.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reference-moved.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-reserved.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-reach-palm-distance.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-target.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-wrist-rotated.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-start.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-smooth-step.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-input.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-limits-output.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/joint-limits.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-connected.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-released.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-pause-resumed.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-0.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-snap-1.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-0.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/model-network-interpolate-1.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/snapshot-timeline-next.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-local.svg">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-sync-rebuilt.svg">
+<meta property="article:published_time" content="2026-09-01T03:07:19.000Z">
+<meta property="article:modified_time" content="2026-09-01T03:07:19.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="IK">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="网络同步">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/","path":"en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/","title":"Implementing Network-Synchronized Two-Player Hand-Holding in a Game"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Implementing Network-Synchronized Two-Player Hand-Holding in a Game | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/en/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/en/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/en/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/en/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-categories"><a href="/en/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-游戏开发"><a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>Game Development</a></li><li class="menu-item menu-item-摄影技术"><a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>Photography</a></li><li class="menu-item menu-item-ai技术"><a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI Technology</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>English</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/" selected>
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/">
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Design-goals-and-control-model"><span class="nav-number">1.</span> <span class="nav-text">1. Design goals and control model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Architecture-and-data-flow"><span class="nav-number">2.</span> <span class="nav-text">2. Architecture and data flow</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Components-and-update-timing"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Components and update timing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-A-complete-interaction-sequence"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 A complete interaction sequence</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Interaction-state-and-lifecycle"><span class="nav-number">3.</span> <span class="nav-text">3. Interaction state and lifecycle</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Request-and-acceptance"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Request and acceptance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Preparation-and-active-following"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Preparation and active following</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Exit-and-room-changes"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Exit and room changes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Positional-following-and-movement-smoothing"><span class="nav-number">4.</span> <span class="nav-text">4. Positional following and movement smoothing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Design-goals"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Design goals</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Local-offsets-and-distance-proportional-following"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Local offsets and distance-proportional following</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-The-active-follow-target"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.1 The active follow target</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-2-A-spring-model"><span class="nav-number">4.2.2.</span> <span class="nav-text">4.2.2 A spring model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-3-Basic-behavior-and-tradeoffs"><span class="nav-number">4.2.3.</span> <span class="nav-text">4.2.3 Basic behavior and tradeoffs</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Speed-and-height-problems-in-playtests"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 Speed and height problems in playtests</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Separate-horizontal-pursuit-from-orbital-rotation"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 Separate horizontal pursuit from orbital rotation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-KCC-integration-and-modules"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 KCC integration and modules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-Movement-and-smoothing-improvements"><span class="nav-number">4.6.</span> <span class="nav-text">4.6 Movement and smoothing improvements</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-1-Continuous-deceleration-in-the-stop-region"><span class="nav-number">4.6.1.</span> <span class="nav-text">4.6.1 Continuous deceleration in the stop region</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-2-Orbital-lag-and-angular-speed-limits"><span class="nav-number">4.6.2.</span> <span class="nav-text">4.6.2 Orbital lag and angular speed limits</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-3-Grounding-debounce-and-landing-height-limits"><span class="nav-number">4.6.3.</span> <span class="nav-text">4.6.3 Grounding debounce and landing-height limits</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-4-Align-KCC-and-camera-sampling-phases"><span class="nav-number">4.6.4.</span> <span class="nav-text">4.6.4 Align KCC and camera sampling phases</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-5-Reset-smoothing-after-teleportation"><span class="nav-number">4.6.5.</span> <span class="nav-text">4.6.5 Reset smoothing after teleportation</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-Connecting-actions-during-integration"><span class="nav-number">4.7.</span> <span class="nav-text">4.7 Connecting actions during integration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-Comparing-both-follow-designs"><span class="nav-number">4.8.</span> <span class="nav-text">4.8 Comparing both follow designs</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Animation-synchronization-and-parameter-smoothing"><span class="nav-number">5.</span> <span class="nav-text">5. Animation synchronization and parameter smoothing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Design-goals"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 Design goals</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-Design-and-principles"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 Design and principles</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-Animator-integration-and-modules"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 Animator integration and modules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-Animation-smoothing-and-compatibility"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 Animation smoothing and compatibility</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-1-Advance-velocity-filtering-only-once"><span class="nav-number">5.4.1.</span> <span class="nav-text">5.4.1 Advance velocity filtering only once</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-2-Start-stop-hysteresis-and-teleport-reset"><span class="nav-number">5.4.2.</span> <span class="nav-text">5.4.2 Start&#x2F;stop hysteresis and teleport reset</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-3-Yield-to-operation-layers-and-personal-actions"><span class="nav-number">5.4.3.</span> <span class="nav-text">5.4.3 Yield to operation layers and personal actions</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Hand-IK"><span class="nav-number">6.</span> <span class="nav-text">6. Hand IK</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-Design-goals"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 Design goals</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-Shared-contact-and-reachability"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 Shared contact and reachability</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-1-Derive-a-shared-Pose-from-two-contact-Poses"><span class="nav-number">6.2.1.</span> <span class="nav-text">6.2.1 Derive a shared Pose from two contact Poses</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-2-Approximate-two-segment-arms-with-reach-spheres"><span class="nav-number">6.2.2.</span> <span class="nav-text">6.2.2 Approximate two-segment arms with reach spheres</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-3-Sphere-intersection-constraints"><span class="nav-number">6.2.3.</span> <span class="nav-text">6.2.3 Sphere-intersection constraints</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-4-Smoothing-connection-state-and-weights"><span class="nav-number">6.2.4.</span> <span class="nav-text">6.2.4 Smoothing, connection state, and weights</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-5-Basic-behavior-and-tradeoffs"><span class="nav-number">6.2.5.</span> <span class="nav-text">6.2.5 Basic behavior and tradeoffs</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-Hand-pose-problems-during-movement"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 Hand-pose problems during movement</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-Stable-references-and-constrained-shared-targets"><span class="nav-number">6.4.</span> <span class="nav-text">6.4 Stable references and constrained shared targets</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-4-1-The-initiator-computes-shared-contact"><span class="nav-number">6.4.1.</span> <span class="nav-text">6.4.1 The initiator computes shared contact</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-4-2-Intersecting-both-reach-spheres"><span class="nav-number">6.4.2.</span> <span class="nav-text">6.4.2 Intersecting both reach spheres</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-4-3-Pair-validity-and-connection-state"><span class="nav-number">6.4.3.</span> <span class="nav-text">6.4.3 Pair validity and connection state</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-Applying-Final-IK-and-dividing-modules"><span class="nav-number">6.5.</span> <span class="nav-text">6.5 Applying Final IK and dividing modules</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-1-Solve-each-arm-with-LimbIK"><span class="nav-number">6.5.1.</span> <span class="nav-text">6.5.1 Solve each arm with LimbIK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-2-Bind-chains-and-update-manually"><span class="nav-number">6.5.2.</span> <span class="nav-text">6.5.2 Bind chains and update manually</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-3-Convert-palm-targets-into-wrist-targets"><span class="nav-number">6.5.3.</span> <span class="nav-text">6.5.3 Convert palm targets into wrist targets</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-5-4-Project-plugin-boundaries"><span class="nav-number">6.5.4.</span> <span class="nav-text">6.5.4 Project&#x2F;plugin boundaries</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-6-IK-stability-and-smoothing-improvements"><span class="nav-number">6.6.</span> <span class="nav-text">6.6 IK stability and smoothing improvements</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-1-Fix-reference-poses-to-isolate-animation-disturbance"><span class="nav-number">6.6.1.</span> <span class="nav-text">6.6.1 Fix reference poses to isolate animation disturbance</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-2-Smooth-contact-in-character-local-space"><span class="nav-number">6.6.2.</span> <span class="nav-text">6.6.2 Smooth contact in character-local space</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-3-Three-axis-limits-and-preventing-reverse-elbow-bending"><span class="nav-number">6.6.3.</span> <span class="nav-text">6.6.3 Three-axis limits and preventing reverse elbow bending</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-4-Joint-rotation-smoothing-and-solve-order"><span class="nav-number">6.6.4.</span> <span class="nav-text">6.6.4 Joint rotation smoothing and solve order</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-6-5-Weight-transitions-and-yielding-to-operations"><span class="nav-number">6.6.5.</span> <span class="nav-text">6.6.5 Weight transitions and yielding to operations</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-7-Pose-adjustments-and-retesting"><span class="nav-number">6.7.</span> <span class="nav-text">6.7 Pose adjustments and retesting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-8-Comparing-both-hand-solving-approaches"><span class="nav-number">6.8.</span> <span class="nav-text">6.8 Comparing both hand-solving approaches</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Network-synchronization-and-playback-smoothing"><span class="nav-number">7.</span> <span class="nav-text">7. Network synchronization and playback smoothing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-Design-goals"><span class="nav-number">7.1.</span> <span class="nav-text">7.1 Design goals</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-Design-and-data-model"><span class="nav-number">7.2.</span> <span class="nav-text">7.2 Design and data model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-Synchronization-modules"><span class="nav-number">7.3.</span> <span class="nav-text">7.3 Synchronization modules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-Networking-and-smoothing-improvements"><span class="nav-number">7.4.</span> <span class="nav-text">7.4 Networking and smoothing improvements</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-1-Share-one-sample-time-for-both-players"><span class="nav-number">7.4.1.</span> <span class="nav-text">7.4.1 Share one sample time for both players</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-2-Continuous-playback-time-and-small-speed-corrections"><span class="nav-number">7.4.2.</span> <span class="nav-text">7.4.2 Continuous playback time and small speed corrections</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-3-Bounded-extrapolation-and-prediction-error-decay"><span class="nav-number">7.4.3.</span> <span class="nav-text">7.4.3 Bounded extrapolation and prediction-error decay</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-4-Tune-the-three-streams-independently"><span class="nav-number">7.4.4.</span> <span class="nav-text">7.4.4 Tune the three streams independently</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-5-Reject-stale-data-and-duplicate-driving"><span class="nav-number">7.4.5.</span> <span class="nav-text">7.4.5 Reject stale data and duplicate driving</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-6-Synchronize-and-reconstruct-local-IK-targets"><span class="nav-number">7.4.6.</span> <span class="nav-text">7.4.6 Synchronize and reconstruct local IK targets</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-5-Retesting-observer-views"><span class="nav-number">7.5.</span> <span class="nav-text">7.5 Retesting observer views</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Runtime-boundaries-and-tuning-relationships"><span class="nav-number">8.</span> <span class="nav-text">8. Runtime boundaries and tuning relationships</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-Exceptions-and-fallback-behavior"><span class="nav-number">8.1.</span> <span class="nav-text">8.1 Exceptions and fallback behavior</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-What-each-smoothing-mechanism-controls"><span class="nav-number">8.2.</span> <span class="nav-text">8.2 What each smoothing mechanism controls</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/en/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/en/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/en/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Implementing Network-Synchronized Two-Player Hand-Holding in a Game | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Implementing Network-Synchronized Two-Player Hand-Holding in a Game
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-09-01 11:07:19" itemprop="dateCreated datePublished" datetime="2026-09-01T11:07:19+08:00">2026-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">游戏开发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>I developed hand-holding for our social game’s 3C system: the initiator leads and the recipient follows. Both must adapt to terrain, keep their hands together, and work with personal actions and other gameplay.</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/cover.webp" alt="Hand-holding integration test: recipient on the left, initiator on the right"></p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<p><em>Hand-holding integration test, cropped to remove the surrounding interface.</em></p>
+<p>This article builds from basic following and hand contact to improvements in turning, hand poses, and network synchronization, guided by debugging and feedback.</p>
+<h2 id="1-Design-goals-and-control-model"><a href="#1-Design-goals-and-control-model" class="headerlink" title="1. Design goals and control model"></a>1. Design goals and control model</h2><p>Hand-holding appears to mean simply bringing two players’ hands together, but requires coordinating four systems:</p>
+<ol>
+<li>Interaction state: who invites, who accepts, when it starts, and when it ends.</li>
+<li>Root movement: the recipient follows the initiator across terrain, turns, and teleports.</li>
+<li>Animation: major actions stay aligned, while the recipient’s gait reflects its own actual movement.</li>
+<li>Hand IK: arms of different lengths and orientations approach a shared contact point within joint limits.</li>
+</ol>
+<p>The results must also agree across initiator, recipient, and observer views. The project uses a single-authority model on the initiator:</p>
+<ul>
+<li>The initiator owns local movement and calculates the recipient’s follow position, movement animation parameters, and shared IK target.</li>
+<li>The recipient freezes local movement input and its KCC Motor, consuming the initiator’s results.</li>
+<li>Observers consume the same paired snapshots and display both players at a common playback time.</li>
+</ul>
+<p>Authority here identifies the source of client presentation calculations. The server maintains interaction relationships and business data; clients establish or remove control from room state. Body movement, arm targets, and animation states are managed separately so several systems do not write the same presentation result.</p>
+<h2 id="2-Architecture-and-data-flow"><a href="#2-Architecture-and-data-flow" class="headerlink" title="2. Architecture and data flow"></a>2. Architecture and data flow</h2><h3 id="2-1-Components-and-update-timing"><a href="#2-1-Components-and-update-timing" class="headerlink" title="2.1 Components and update timing"></a>2.1 Components and update timing</h3><p><code>HoldHandComponent</code> composes three controllers, dispatched externally by <code>PlayerInteractionRuntimeComponent</code> according to room interaction state:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsibility and update timing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HoldHandRuntimeController</code></td>
+<td>Maintain local interaction, freeze&#x2F;restore control; calculate or consume poses after KCC updates, drive recipient animation, and broadcast</td>
+</tr>
+<tr>
+<td><code>HoldHandObserverSyncController</code></td>
+<td>Manage observed pairs and sample a snapshot buffer shared by both players each frame</td>
+</tr>
+<tr>
+<td><code>HoldHandIKRuntimeController</code></td>
+<td>Manage skeleton registration, shared contact, IK pauses&#x2F;weights, and sending&#x2F;consuming targets</td>
+</tr>
+<tr>
+<td><code>HoldHandIKLateUpdateDriver</code></td>
+<td>Run IK in <code>LateUpdate</code> with execution order <code>10000</code>, after animation and root updates</td>
+</tr>
+</tbody></table>
+<p>Movement, remote playback, and bone solving need different update times. Separating them allows personal actions to release hand IK temporarily while preserving the relationship and positional following.</p>
+<pre>
+<code class="mermaid">
+
+flowchart TB
+    UI[Intimate interaction entry] --&gt;|Request, accept, cancel| Room[Room PlayerData]
+    Room --&gt; Dispatch[Interaction state dispatch]
+    Dispatch --&gt; Runtime[Local hand-holding runtime]
+    Runtime --&gt;|Calculate after KCC| Pair[Paired poses and recipient animation]
+    Pair --&gt; Recipient[Recipient snapshot buffer]
+    Pair --&gt; Observer[Observer snapshot buffer]
+    Room --&gt; IK[Hand IK controller]
+    IK --&gt;|Solve in LateUpdate| Targets[Initiator-local IK targets]
+    Targets --&gt; RemoteIK[Remote LimbIK solving and joint limits]
+</code>
+</pre>
+
+<h3 id="2-2-A-complete-interaction-sequence"><a href="#2-2-A-complete-interaction-sequence" class="headerlink" title="2.2 A complete interaction sequence"></a>2.2 A complete interaction sequence</h3><p>A successful response only confirms protocol handling. Clients drive hand-holding from the <code>IntimacyInteractState</code> actually active in room data:</p>
+<pre>
+<code class="mermaid">
+
+sequenceDiagram
+    participant A as Initiator
+    participant S as Server and room data
+    participant B as Recipient
+    participant V as Observer
+    A-&gt;&gt;S: IntimacyInteractReq
+    S--&gt;&gt;B: PendingIntimacyRequest
+    B-&gt;&gt;S: IntimacyInteractReplyReq(Accept&#x3D;true)
+    S--&gt;&gt;A: Initiator、OtherUid、Revision
+    S--&gt;&gt;B: Recipient、OtherUid、Revision
+    A-&gt;&gt;A: Initialize; start following next frame
+    B-&gt;&gt;B: Freeze Motor; prepare position and animation
+    A--&gt;&gt;B: Paired poses, SampleTime, Revision
+    A--&gt;&gt;V: The same paired poses
+    A--&gt;&gt;B: Recipient animation parameters and IK targets
+    A--&gt;&gt;V: Animation and IK targets
+    A-&gt;&gt;S: IntimacyInteractCancelReq
+    S--&gt;&gt;A: Clear interaction state
+    S--&gt;&gt;B: Clear interaction state
+</code>
+</pre>
+
+<h2 id="3-Interaction-state-and-lifecycle"><a href="#3-Interaction-state-and-lifecycle" class="headerlink" title="3. Interaction state and lifecycle"></a>3. Interaction state and lifecycle</h2><h3 id="3-1-Request-and-acceptance"><a href="#3-1-Request-and-acceptance" class="headerlink" title="3.1 Request and acceptance"></a>3.1 Request and acceptance</h3><p>Entry points send requests through <code>IntimacyComponent.RequestInteractionAsync</code>, <code>ReplyInteractionAsync</code>, and related interfaces. Before requesting, check the target, shared room, busy states, and restrictions such as transformations. End conflicting personal actions before inviting.</p>
+<p>The core request fields are:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IntimacyInteractReq</span><br><span class="line">  Category  = Continuous</span><br><span class="line">  Type      = DataHoldHandControl.HoldHandInteractionType</span><br><span class="line">  TargetUid = Target player UID</span><br><span class="line">  Source    = Interaction source</span><br></pre></td></tr></table></figure>
+
+<p><code>Type</code> corresponds to <code>ItemId.IntimacyAction_QianShou</code>, currently <code>7030001</code>. After server-confirmed acceptance, both players receive states pointing to each other:</p>
+<table>
+<thead>
+<tr>
+<th>Player</th>
+<th>Role</th>
+<th>OtherUid</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Initiator</td>
+<td>Initiator</td>
+<td>Recipient UID</td>
+</tr>
+<tr>
+<td>Recipient</td>
+<td>Recipient</td>
+<td>Initiator UID</td>
+</tr>
+</tbody></table>
+<p>Pair validation requires matching roles, type, and partner UIDs. A pose packet’s <code>InteractionRevision</code> must also match the current interaction, preventing late data from another relationship from affecting this one.</p>
+<h3 id="3-2-Preparation-and-active-following"><a href="#3-2-Preparation-and-active-following" class="headerlink" title="3.2 Preparation and active following"></a>3.2 Preparation and active following</h3><p>State and configuration determine whether the runtime must <code>Begin</code> again. The diagram shows presentation phases; the start frame controls initialization:</p>
+<pre>
+<code class="mermaid">
+
+stateDiagram-v2
+    [*] --&gt; Inactive
+    Inactive --&gt; Initializing: Room hand-holding state becomes active
+    Initializing --&gt; Following: Initiator reaches the next frame
+    Following --&gt; Initializing: Identity or configuration changes
+    Initializing --&gt; Inactive: State becomes invalid
+    Following --&gt; Inactive: Cancel, leave, or invalid state
+</code>
+</pre>
+
+<p>The initiator sets <code>m_FollowStartFrame</code> to the current frame plus one and initializes orbit direction and broadcast timers. The recipient immediately freezes movement, disables its Motor, clears animation requests, and switches to the remote animation controller. If the partner entity is loaded, it aligns to the preparation offset and plays the teleport effect.</p>
+<p>This one-frame gap distinguishes initialization from continuous driving. IK pairing likewise waits until the frame after first observation before entering the connected phase.</p>
+<h3 id="3-3-Exit-and-room-changes"><a href="#3-3-Exit-and-room-changes" class="headerlink" title="3.3 Exit and room changes"></a>3.3 Exit and room changes</h3><p>Normal cancellation uses the cancel request and state cleanup. <code>Stop</code> unfreezes control, restores the original Motor-enabled state and Animator, and clears snapshots, drive position, turning state, and cached animation speed. Invalid pairs also release IK.</p>
+<p>Before changing rooms, dissolve the relationship; a failed cancellation blocks the change. On success, clear local state before stopping presentation to avoid re-entering hand-holding next frame. The outer dispatcher also stops the local runtime when a partner leaves. Large teleports within the same room are handled by positional following.</p>
+<h2 id="4-Positional-following-and-movement-smoothing"><a href="#4-Positional-following-and-movement-smoothing" class="headerlink" title="4. Positional following and movement smoothing"></a>4. Positional following and movement smoothing</h2><h3 id="4-1-Design-goals"><a href="#4-1-Design-goals" class="headerlink" title="4.1 Design goals"></a>4.1 Design goals</h3><p>The recipient should maintain suitable formation while visibly catching up naturally. It must keep up on straight runs, orbit at a controlled speed during stationary turns, use sensible heights on slopes and steps, and arrive promptly after teleportation.</p>
+<p>These goals involve horizontal motion, orbital rotation, vertical height, and discontinuous position changes, which need separate calculations and tuning. Network buffering handles remote playback; this section explains the initiator’s authoritative position calculation each frame.</p>
+<p>Throughout the diagrams, <strong>a red round-headed triangle represents the initiator, and a blue round-headed diamond represents the recipient</strong>. The midpoint at each icon’s feet is the character root. Crosses or hollow markers are calculated targets, not actual positions. Each group keeps its scene and scale consistent, labels before&#x2F;after states as “State 1,” “State 2,” and so on, and places explanations outside the diagram.</p>
+<h3 id="4-2-Local-offsets-and-distance-proportional-following"><a href="#4-2-Local-offsets-and-distance-proportional-following" class="headerlink" title="4.2 Local offsets and distance-proportional following"></a>4.2 Local offsets and distance-proportional following</h3><p>Start with a simple design: place a target beside the initiator that rotates with its facing, and let the recipient approach it according to distance. This produces basic formation and following with controls concentrated in offset and catch-up speed.</p>
+<h4 id="4-2-1-The-active-follow-target"><a href="#4-2-1-The-active-follow-target" class="headerlink" title="4.2.1 The active follow target"></a>4.2.1 The active follow target</h4><p><strong>Start with just two people.</strong> The initiator leads; the recipient is led. The red triangle and blue diamond identify them, with foot midpoints indicating positions.</p>
+<p>Without follow control, the initiator walks ahead while the recipient stays put:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Two players without follow control">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-before.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-before.svg" alt="Initially, both players stand beside each other." width="900" height="490" loading="lazy"></a>
+    <figcaption>Initially, both players stand beside each other.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-after.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-independent-after.svg" alt="The initiator moves forward while the recipient remains, gradually separating them." width="900" height="490" loading="lazy"></a>
+    <figcaption>The initiator moves forward while the recipient remains, gradually separating them.</figcaption>
+  </figure>
+</div>
+
+<p>They drift apart, so first define where the recipient should stand.</p>
+<p><strong>Add a formation point.</strong> Choose a position beside the initiator, such as slightly behind on the left, and mark it with a cross. The point moves with the initiator. Placing the recipient directly there every frame gives the simplest following:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Set the recipient position directly">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-before.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-before.svg" alt="Before moving: the recipient coincides with the formation point, behind and left of the initiator." width="900" height="490" loading="lazy"></a>
+    <figcaption>Before moving: the recipient coincides with the formation point, behind and left of the initiator.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-after.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-placement-after.svg" alt="After moving: the formation point advances with the initiator, and the recipient is placed directly at the new point." width="900" height="490" loading="lazy"></a>
+    <figcaption>After moving: the formation point advances with the initiator, and the recipient is placed directly at the new point.</figcaption>
+  </figure>
+</div>
+
+<p>This preserves formation but makes the recipient feel attached rigidly to the initiator, without a natural catch-up motion. A sudden target change also causes an immediate jump. The next subsection keeps the same point and changes only how the recipient reaches it.</p>
+<p><strong>Express formation as a character-relative offset.</strong> Lateral and forward&#x2F;back distances define the point and follow the initiator’s position and facing. <code>FollowOffset</code> describes this: about 0.82 m left and 0.17 m behind creates a slightly staggered side-by-side formation, consistent across facing directions.</p>
+<p>Entry also uses <code>PreparationOffset</code> for a one-time alignment; active following uses <code>FollowOffset</code>. Preparation and continuous pursuit serve different purposes:</p>
+<table>
+<thead>
+<tr>
+<th>Object or direction</th>
+<th>Code</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Initiator</td>
+<td><code>initiator.RootTransform.position</code></td>
+<td>World position for the formation</td>
+</tr>
+<tr>
+<td>Character right, forward, and facing</td>
+<td><code>initiator.RootTransform.rotation</code></td>
+<td>Define character axes and rotate local offsets into world space</td>
+</tr>
+<tr>
+<td>Lateral and longitudinal formation offsets</td>
+<td><code>FollowOffset</code></td>
+<td>Distance from the character along local X&#x2F;Z for the horizontal configuration</td>
+</tr>
+<tr>
+<td>Preparation offset and position</td>
+<td><code>PreparationOffset</code>, preparation position</td>
+<td>Align once when entering interaction</td>
+</tr>
+<tr>
+<td>Formation point</td>
+<td><code>targetPosition</code></td>
+<td>Follow target relative to the root after transforming the offset into world space</td>
+</tr>
+</tbody></table>
+<h4 id="4-2-2-A-spring-model"><a href="#4-2-2-A-spring-model" class="headerlink" title="4.2.2 A spring model"></a>4.2.2 A spring model</h4><p><strong>Let the recipient catch up frame by frame.</strong> Instead of directly aligning each frame, advance a small distance from its own position. Farther means faster; nearer means slower, as if a spring connected it to the target.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Distance determines catch-up strength">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-start.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-start.svg" alt="The formation point has moved ahead; a large remaining gap gives the recipient a larger step this frame." width="900" height="490" loading="lazy"></a>
+    <figcaption>The formation point has moved ahead; a large remaining gap gives the recipient a larger step this frame.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-closer.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-spring-closer.svg" alt="As the recipient gets closer, the remaining distance and this frame's step both shrink." width="900" height="490" loading="lazy"></a>
+    <figcaption>As the recipient gets closer, the remaining distance and this frame's step both shrink.</figcaption>
+  </figure>
+</div>
+
+<p>The spring coefficient sets catch-up strength at a given distance. The blue arrow is this frame’s step, also dependent on elapsed time: at the same speed, a shorter frame produces a smaller step. Each result becomes the next frame’s drive position.</p>
+<p>Distance-only speed has two limits: a large gap can produce excessive speed, while a small gap can converge too slowly.</p>
+<p><strong>Add minimum and maximum speeds.</strong> Small gaps still get sufficient pursuit, while large gaps cannot increase speed without bound:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Add a speed range to spring following">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-small-gap.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-small-gap.svg" alt="At a small gap, minimum speed keeps the recipient catching up actively." width="900" height="490" loading="lazy"></a>
+    <figcaption>At a small gap, minimum speed keeps the recipient catching up actively.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-large-gap.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-speed-large-gap.svg" alt="At a large gap, maximum speed limits displacement so the recipient does not suddenly rush across." width="900" height="490" loading="lazy"></a>
+    <figcaption>At a large gap, maximum speed limits displacement so the recipient does not suddenly rush across.</figcaption>
+  </figure>
+</div>
+
+<p>Limits make pursuit easier to configure, but minimum speed can still produce oversized steps near the target. A basic implementation snaps within a stop radius to finish alignment; section 4.6.1 addresses the resulting fixed-distance discontinuity.</p>
+<p><code>MoveTowards</code> advances using speed and frame duration, stopping at the target when the frame budget reaches it rather than overshooting. The diagrams explain distance and steps, not a scale simulation of the example values below.</p>
+<table>
+<thead>
+<tr>
+<th>Geometric marker</th>
+<th>Code</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Recipient at the start of pursuit</td>
+<td><code>m_DrivenPosition</code> &#x2F; <code>drivenPosition</code></td>
+<td>Use the initiator’s previous calculated result as this frame’s starting point</td>
+</tr>
+<tr>
+<td>Remaining distance</td>
+<td><code>Vector3.Distance(drivenPosition, targetPosition)</code></td>
+<td>Distance to pursue, used to calculate speed</td>
+</tr>
+<tr>
+<td>Recipient after advancement</td>
+<td><code>nextPosition</code></td>
+<td>Save this frame’s result for the next frame</td>
+</tr>
+<tr>
+<td>This frame’s step</td>
+<td>Speed and nonnegative <code>elapseSeconds</code></td>
+<td>At equal speed, shorter frames produce less movement; never advance backward</td>
+</tr>
+</tbody></table>
+<p><code>DataHoldHandControl.CalculateFollowSpeed</code> and <code>Vector3.MoveTowards</code> perform this calculation. Example basic-follow parameters are:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Control</th>
+<th align="right">Example</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SpringCoefficient</td>
+<td>Spring coefficient</td>
+<td align="right">16</td>
+<td>Catch-up strength at a given distance</td>
+</tr>
+<tr>
+<td>MinFollowSpeed</td>
+<td>Minimum speed</td>
+<td align="right">12 m&#x2F;s</td>
+<td>Minimum pursuit speed outside the stop radius</td>
+</tr>
+<tr>
+<td>MaxFollowSpeed</td>
+<td>Maximum speed</td>
+<td align="right">24 m&#x2F;s</td>
+<td>Limit pursuit across large gaps</td>
+</tr>
+<tr>
+<td>StopRadius</td>
+<td>Stop radius</td>
+<td align="right">0.02 m</td>
+<td>Error radius for snapping directly to the target</td>
+</tr>
+</tbody></table>
+<p>This spring is not a strict second-order physical spring. It is an engineering model of distance-proportional speed, limits, and bounded movement, without mass or damping parameters, making stable behavior easier for designers to tune.</p>
+<p>Crucially, <code>m_DrivenPosition</code> does not read the remote recipient entity’s interpolated position. Packet delay can leave that entity behind; reusing it as the next starting point feeds network jitter back into authoritative calculation and creates an increasingly unstable feedback loop.</p>
+<h4 id="4-2-3-Basic-behavior-and-tradeoffs"><a href="#4-2-3-Basic-behavior-and-tradeoffs" class="headerlink" title="4.2.3 Basic behavior and tradeoffs"></a>4.2.3 Basic behavior and tradeoffs</h4><p>The recipient can now remain near the initiator and catch up during movement. This has two immediate benefits:</p>
+<ul>
+<li>Local offsets naturally preserve relative formation with simple rotation and movement logic.</li>
+<li>A bounded spring avoids teleporting for one snapshot error, with independently tunable speed limits.</li>
+</ul>
+<p>Sharp turns, rapidly crossing obstacles, or server corrections inevitably create pursuit lag. (That is not necessarily a drawback: rigid positional motion would not feel like one person leading another.)</p>
+<p>Basic following therefore does not require the recipient to be pinned to the target at every moment. Some lag conveys being led. The next improvements concern sharp-turn speed and terrain adaptation, keeping pursuit natural.</p>
+<h3 id="4-3-Speed-and-height-problems-in-playtests"><a href="#4-3-Speed-and-height-problems-in-playtests" class="headerlink" title="4.3 Speed and height problems in playtests"></a>4.3 Speed and height problems in playtests</h3><p>Local offsets and distance-proportional speed preserve formation, but the initiator’s turn rotates the entire offset immediately. A sharp stationary turn sends the target quickly to the other side and can make pursuit feel like being flung around. Simply reducing follow speed also affects ordinary walking and running.</p>
+<p>Tuning could not easily satisfy both running and sharp turns. Speed sufficient to keep up with walking&#x2F;running produced overly fast orbiting. Lower speed softened turns but eventually failed to keep up with runs. Straight pursuit and turning shared one speed constraint; they needed separate handling rather than repeated adjustment of one number.</p>
+<p>Further playtesting revealed two related problems: fixed height offsets could bury the recipient in the ground, and stationary turns could leave it in Idle while sliding sideways. Orbit targets, ground height, and animation from actual movement all needed adjustment together.</p>
+<h3 id="4-4-Separate-horizontal-pursuit-from-orbital-rotation"><a href="#4-4-Separate-horizontal-pursuit-from-orbital-rotation" class="headerlink" title="4.4 Separate horizontal pursuit from orbital rotation"></a>4.4 Separate horizontal pursuit from orbital rotation</h3><p>To preserve pursuit while independently tuning turns, I split horizontal following, orbital rotation, and ground height. Distance-proportional following still approaches the target; independent rotation state determines its orbit; ground probing handles height.</p>
+<p><strong>First consider an instantly rotated target.</strong> Behind-left is relative to the initiator’s facing. If the initiator suddenly turns right and the target immediately adopts that direction, it jumps to the other side:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="How an instant facing change affects spring pursuit">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-before.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-before.svg" alt="Before turning, the recipient is at the behind-left formation point." width="900" height="570" loading="lazy"></a>
+    <figcaption>Before turning, the recipient is at the behind-left formation point.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-after.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-turn-direct-after.svg" alt="The initiator suddenly turns right and the behind-left point immediately shifts to the other side. The recipient has not moved, so its pursuit distance suddenly grows." width="900" height="570" loading="lazy"></a>
+    <figcaption>The initiator suddenly turns right and the behind-left point immediately shifts to the other side. The recipient has not moved, so its pursuit distance suddenly grows.</figcaption>
+  </figure>
+</div>
+
+<p>The spring sees a larger gap and accelerates the recipient. Lowering pursuit speed softens turns but can undermine normal running.</p>
+<p><strong>Let the formation point orbit frame by frame too.</strong> Keep spring pursuit but change target motion: after the turn, the point gradually moves around the initiator. Each frame updates the target first, then advances the recipient from its previous position.</p>
+<p>The black dashed line is the target’s traveled path, and the blue solid line the recipient’s actual path. The blue dashed arrow points toward this frame’s not-yet-reached target:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Combine spring pursuit with orbital target movement">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-before.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-before.svg" alt="Before turning, the recipient and formation point coincide and neither has started orbiting." width="900" height="580" loading="lazy"></a>
+    <figcaption>Before turning, the recipient and formation point coincide and neither has started orbiting.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-target.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-target.svg" alt="During the turn, the formation point moves along an arc first; the recipient pursues it each frame without yet reaching this frame's point." width="900" height="580" loading="lazy"></a>
+    <figcaption>During the turn, the formation point moves along an arc first; the recipient pursues it each frame without yet reaching this frame's point.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-chase.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-chase.svg" alt="Each later frame updates the point before advancing the recipient from its previous result. These short displacements form its path." width="900" height="580" loading="lazy"></a>
+    <figcaption>Each later frame updates the point before advancing the recipient from its previous result. These short displacements form its path.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-settled.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-orbit-settled.svg" alt="The formation point reaches the new behind-left position, and the recipient finishes closing the gap and settles beside the initiator." width="900" height="580" loading="lazy"></a>
+    <figcaption>The formation point reaches the new behind-left position, and the recipient finishes closing the gap and settles beside the initiator.</figcaption>
+  </figure>
+</div>
+
+<p>The model has grown from two independent characters into spring pursuit of a smoothly orbiting target. The recipient still advances in bounded straight steps each frame; many small steps form the actual trajectory.</p>
+<p>To distinguish both paths, these flat-ground diagrams use a pursuit coefficient of 8 and speeds of <code>0.2–0.6 m/s</code>. Rotation smoothing stays at <code>0.2 s</code>, angular speed at <code>180°/s</code>, and stop radius at <code>0.05 m</code>. They follow code update order at 60 fps without networking or collision. Actual resource settings pursue more tightly, so the paths usually lie closer together.</p>
+<p><strong>Handle height separately through the ground.</strong> Earlier diagrams show level terrain. Pitch or roll can give the rotated offset a vertical component, pulling the recipient off the ground. Keep only the horizontal offset first, placing the target at the initiator’s height; then handle grounding or airborne following:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Section 4.4: successive states separating horizontal following and orbital rotation">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls.svg" alt="State 1: the rotated offset remains horizontal, so the pre-projection and horizontal targets coincide. The same icons mark both characters." width="1040" height="570" loading="lazy"></a>
+    <figcaption>State 1: the rotated offset remains horizontal, so the pre-projection and horizontal targets coincide. The same icons mark both characters.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls-tilted.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-controls-tilted.svg" alt="State 2: pitch gives the blue offset a vertical component. Removing it leaves the red target on the initiator's horizontal plane." width="1040" height="570" loading="lazy"></a>
+    <figcaption>State 2: pitch gives the blue offset a vertical component. Removing it leaves the red target on the initiator's horizontal plane.</figcaption>
+  </figure>
+</div>
+
+<p>The blue rotated offset comes from transforming the local offset by the formation-reference rotation. Removing its vertical component gives the red horizontal offset. This reference is specifically for the formation point and smoothly catches up with the initiator’s turn; section 4.6.2 distinguishes it from recipient body facing.</p>
+<p><code>PreparationOffset</code> and <code>FollowOffset</code> use two horizontal components for lateral and longitudinal distances. Preparation places the recipient one meter behind; active following targets about 0.55 m left and 0.22 m behind. The direction is orbit-smoothed, projected horizontally, then given grounded or airborne height. The recipient’s body faces the initiator’s direction.</p>
+<p>Movement still begins from the initiator’s stored drive position. Distance selects a speed within limits, the stop region gradually reduces it, and frame duration determines the step. Stop when reaching the target; a zero stop radius omits this extra deceleration.</p>
+<p>Distinguish when distance is measured: <strong>with grounding allowed, temporarily set target height to drive height, advance using horizontal distance, then probe the ground. Without grounding, pursue using three-dimensional distance including height.</strong> Excess-distance teleport checks occur before this height adjustment and always include height difference.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Diagram label</th>
+<th align="right">Current resource value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SpringCoefficient</code></td>
+<td>Spring coefficient</td>
+<td align="right">40</td>
+<td>Unclamped growth of speed with distance</td>
+</tr>
+<tr>
+<td><code>MinFollowSpeed</code></td>
+<td>Minimum speed</td>
+<td align="right">2.5 m&#x2F;s</td>
+<td>Lower bound before stop-region deceleration</td>
+</tr>
+<tr>
+<td><code>MaxFollowSpeed</code></td>
+<td>Maximum speed</td>
+<td align="right">8 m&#x2F;s</td>
+<td>Upper pursuit speed</td>
+</tr>
+<tr>
+<td><code>StopRadius</code></td>
+<td>Deceleration radius</td>
+<td align="right">0.05 m</td>
+<td>Distance range for continuous deceleration</td>
+</tr>
+<tr>
+<td><code>FollowTeleportDistance</code></td>
+<td>Teleport threshold</td>
+<td align="right">8 m</td>
+<td>Rebuild the position baseline when 3D distance exceeds it</td>
+</tr>
+</tbody></table>
+<h3 id="4-5-KCC-integration-and-modules"><a href="#4-5-KCC-integration-and-modules" class="headerlink" title="4.5 KCC integration and modules"></a>4.5 KCC integration and modules</h3><p>KCC drives character movement in the project. The initiator continues ordinary KCC motion. During hand-holding, the recipient disables its local Motor and clears movement, jump, gravity input, and base velocity. Exit restores its saved enabled state.</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HoldHandRuntimeController</code></td>
+<td>Maintain drive position and calculate following, grounding, and teleportation</td>
+</tr>
+<tr>
+<td><code>HoldHandRotationFollowState</code></td>
+<td>Maintain orbital lag angle and angular velocity</td>
+</tr>
+<tr>
+<td><code>HoldHandGroundSnapDebouncer</code></td>
+<td>Debounce grounding-state changes</td>
+</tr>
+<tr>
+<td><code>ControllerSelfPlayer.OnKccUpdateDone</code></td>
+<td>Apply hand-holding poses after KCC updates, before camera sampling</td>
+</tr>
+<tr>
+<td><code>DataHoldHandControl</code></td>
+<td>Centralize offsets, speed, height, and smoothing parameters</td>
+</tr>
+</tbody></table>
+<h3 id="4-6-Movement-and-smoothing-improvements"><a href="#4-6-Movement-and-smoothing-improvements" class="headerlink" title="4.6 Movement and smoothing improvements"></a>4.6 Movement and smoothing improvements</h3><h4 id="4-6-1-Continuous-deceleration-in-the-stop-region"><a href="#4-6-1-Continuous-deceleration-in-the-stop-region" class="headerlink" title="4.6.1 Continuous deceleration in the stop region"></a>4.6.1 Continuous deceleration in the stop region</h4><p>Minimum speed preserves pursuit strength but can still overshoot the desired step near the target. Snapping when close finishes alignment but creates a jump that does not shrink with frame duration.</p>
+<p>Add only a deceleration region: once inside, a smaller remaining gap means lower speed, so the final approach also completes frame by frame:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Continuously decelerate near the target">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-edge.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-edge.svg" alt="Approaching the deceleration region, the recipient still advances at normal pursuit speed." width="900" height="490" loading="lazy"></a>
+    <figcaption>Approaching the deceleration region, the recipient still advances at normal pursuit speed.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-inside.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-slowdown-inside.svg" alt="Inside the region, the next step shrinks and gradually converges to the formation point." width="900" height="490" loading="lazy"></a>
+    <figcaption>Inside the region, the next step shrinks and gradually converges to the formation point.</figcaption>
+  </figure>
+</div>
+
+<p>A larger <code>StopRadius</code> starts extra deceleration earlier. Minimum speed applies before this reduction, so actual speed inside can fall below it. Spring coefficient, speed bounds, and radius together determine pursuit and settling. Zero radius omits extra deceleration.</p>
+<p><code>MoveTowards</code> combines speed with frame duration. It reaches the target only when this frame’s step can cover the gap, keeping small-distance movement time-bounded even at high frame rates.</p>
+<p>The drive position comes only from the authority’s own calculation, never the already-interpolated remote entity, preventing network jitter from feeding back into pursuit.</p>
+<h4 id="4-6-2-Orbital-lag-and-angular-speed-limits"><a href="#4-6-2-Orbital-lag-and-angular-speed-limits" class="headerlink" title="4.6.2 Orbital lag and angular speed limits"></a>4.6.2 Orbital lag and angular speed limits</h4><p>Section 4.4 separated target orbit from recipient pursuit. One distinction deserves clarification: movement direction and body facing are different. Position pursues the target, while body facing directly follows the initiator, so they can differ during turns:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Body facing versus movement direction during orbiting">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-start.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-start.svg" alt="After the initiator turns, the recipient also faces right, but this frame's displacement still follows the black dashed line toward the target." width="900" height="580" loading="lazy"></a>
+    <figcaption>After the initiator turns, the recipient also faces right, but this frame's displacement still follows the black dashed line toward the target.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-later.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-facing-later.svg" alt="As the formation point continues orbiting, pursuit direction changes while the body remains aligned with the initiator." width="900" height="580" loading="lazy"></a>
+    <figcaption>As the formation point continues orbiting, pursuit direction changes while the body remains aligned with the initiator.</figcaption>
+  </figure>
+</div>
+
+<p><code>followRotation</code> determines where the formation point orbits. It is a reference for calculating formation: when the initiator has already turned but this reference is still catching up, the point moves gradually around it. It does not directly set recipient body rotation.</p>
+<p>Gradual turning alone is insufficient; sharp turns still need response control. Rotation smoothing shapes catch-up, and maximum angular speed caps each frame’s actual turn. Current <code>RotationFollowSmoothTime</code> is <code>0.2 s</code> and <code>MaxRotationFollowSpeed</code> is <code>180°/s</code>.</p>
+<p>Each frame follows this order:</p>
+<ol>
+<li>Read this frame’s initiator yaw change and accumulate the unconsumed angle.</li>
+<li>Consume it with <code>SmoothDamp</code>, then bound the actual angle by frame duration to obtain formation-reference rotation.</li>
+<li>Transform <code>FollowOffset</code> with that reference to produce this frame’s formation point.</li>
+<li>Measure from the stored drive position to the target, determine the step from distance-proportional speed, limits, and stop-region deceleration, then call <code>MoveTowards</code>.</li>
+<li>Correct height according to grounding conditions and apply recipient position; use initiator rotation directly for body facing.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th>Code</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Initiator body facing</td>
+<td><code>initiatorRotation</code> and its yaw</td>
+<td>Desired facing for this frame</td>
+</tr>
+<tr>
+<td>Formation-reference rotation</td>
+<td>Result of <code>HoldHandRotationFollowState.Update</code>, namely <code>followRotation</code></td>
+<td>Determine where the target orbits</td>
+</tr>
+<tr>
+<td>This frame’s formation point</td>
+<td><code>targetPosition</code></td>
+<td>Pursuit target calculated from reference rotation and offset</td>
+</tr>
+<tr>
+<td>Current recipient position</td>
+<td><code>m_DrivenPosition</code></td>
+<td>Starting point for this frame’s advancement</td>
+</tr>
+<tr>
+<td>Black target trajectory</td>
+<td>Each frame’s <code>targetPosition</code></td>
+<td>Subject to rotation smoothing and angular limits</td>
+</tr>
+<tr>
+<td>Blue recipient trajectory</td>
+<td>Each frame’s <code>nextPosition</code></td>
+<td>Pursue the point frame by frame, bounded by movement speed and stop-region deceleration</td>
+</tr>
+</tbody></table>
+<p>For comparison, simulating the same stationary 90° right turn at 60 fps with current resource settings gives a maximum target–recipient gap of about <code>6 mm</code>. Section 4.4 deliberately slows pursuit to clarify update order. Actual gaps depend on the balance of linear pursuit and angular limits.</p>
+<p><code>m_AngularVelocity</code> stores smoothing velocity; <code>m_LagAngle</code> stores unconsumed angle. Continuous turning retains orbit direction without accumulating full revolutions to catch up. After about <code>0.05 s</code> without turning, it settles by the nearest route. Reversal also limits residual angular velocity pushing the target away. Zero smoothing time or maximum orbit speed uses initiator facing directly.</p>
+<p>This separates linear pursuit speed from target orbit speed. Running retains enough catch-up ability while turning moves the target at a controlled angular speed. Visible lag depends on the relative constraints during the current action.</p>
+<h4 id="4-6-3-Grounding-debounce-and-landing-height-limits"><a href="#4-6-3-Grounding-debounce-and-landing-height-limits" class="headerlink" title="4.6.3 Grounding debounce and landing-height limits"></a>4.6.3 Grounding debounce and landing-height limits</h4><p>The simplest height handling reuses initiator height. On slopes, the ground beneath each player differs, leaving the recipient floating or buried.</p>
+<p>Cast downward from above the recipient and correct its height to the hit ground, while keeping spring-controlled horizontal motion:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="From fixed height to basic raycast grounding">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-floating.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-floating.svg" alt="Using initiator height can leave the downhill recipient floating; walking onto higher ground can bury it instead." width="900" height="490" loading="lazy"></a>
+    <figcaption>Using initiator height can leave the downhill recipient floating; walking onto higher ground can bury it instead.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-projected.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-ground-projected.svg" alt="After a downward probe, place the recipient at ground height while the spring still controls horizontal position." width="900" height="490" loading="lazy"></a>
+    <figcaption>After a downward probe, place the recipient at ground height while the spring still controls horizontal position.</figcaption>
+  </figure>
+</div>
+
+<p>This handles ordinary slopes, but edges can repeatedly change grounded state, and rays can hit high platforms or deep ground. Add state debounce and landing-height limits separately.</p>
+<p>Recipient grounding is allowed when the initiator is stably grounded, KCC permits snapping, and the height difference is within limits. Advance horizontally first, then probe downward.</p>
+<p>At step edges, grounding may alternate. <code>HoldHandGroundSnapDebouncer</code> requires a candidate state to persist before switching. Current debounce is <code>2 s</code> and maximum height difference <code>0.5 m</code>. Exceeding that difference immediately disables grounding without waiting.</p>
+<p>After a ray hit, also check its height relative to the initiator. This hard limit prevents already-enabled grounding from snapping the recipient to a high platform or deep surface.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Section 4.6.3: successive grounding debounce and landing-height states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap.svg" alt="State 1: the grounding candidate becomes true but has not persisted long enough. The recipient retains its height without starting ground projection." width="1040" height="590" loading="lazy"></a>
+    <figcaption>State 1: the grounding candidate becomes true but has not persisted long enough. The recipient retains its height without starting ground projection.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-active.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-active.svg" alt="State 2: the candidate reaches the debounce duration and enables grounding. The hit is within height limits, so the recipient moves vertically onto it." width="1040" height="590" loading="lazy"></a>
+    <figcaption>State 2: the candidate reaches the debounce duration and enables grounding. The hit is within height limits, so the recipient moves vertically onto it.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-rejected.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ground-snap-rejected.svg" alt="State 3: a lower surface enters the probe and exceeds the height boundary. Even with grounding still enabled, this hit is rejected and pre-projection height retained." width="1040" height="590" loading="lazy"></a>
+    <figcaption>State 3: a lower surface enters the probe and exceeds the height boundary. Even with grounding still enabled, this hit is rejected and pre-projection height retained.</figcaption>
+  </figure>
+</div>
+
+<p>On the left, initiator and recipient markers are actual positions. The ray starts above the recipient; the ground candidate, landing-height difference, and blue height boundary determine acceptance. On the right, the red line is candidate grounding, blue is active snapping, and debounce duration marks required persistence. Side-view geometry is not drawn to meter scale.</p>
+<table>
+<thead>
+<tr>
+<th>Geometric marker</th>
+<th>Code</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Probe elevation</td>
+<td><code>RecipientGroundProbeHeight</code></td>
+<td>Cast from <code>10 m</code> above the position being projected</td>
+</tr>
+<tr>
+<td>Ray length</td>
+<td><code>RecipientGroundProbeDistance</code></td>
+<td>Probe at most <code>100 m</code> downward from the ray origin</td>
+</tr>
+<tr>
+<td>Allowed and actual landing-height differences</td>
+<td><code>GroundSnapMaxHeightDifference</code>, measured difference</td>
+<td>A hit may differ from initiator height by at most <code>0.5 m</code>; a ray hit alone does not pass this limit</td>
+</tr>
+<tr>
+<td>Debounce duration</td>
+<td><code>GroundSnapDebounceDuration</code></td>
+<td>Required candidate persistence before switching; currently <code>2 s</code></td>
+</tr>
+<tr>
+<td>Grounding candidate</td>
+<td>Stable grounding with <code>SnappingPrevented</code> false</td>
+<td>Only stable ground eligible for snapping can request grounding</td>
+</tr>
+<tr>
+<td>Ground-snapping state</td>
+<td><code>useGroundSnapping</code></td>
+<td>Choose horizontal advance plus projection or full 3D pursuit</td>
+</tr>
+</tbody></table>
+<p>Rays use the recipient’s stable-ground layer configuration, fall back to the map layer when invalid, and ignore triggers. Debounce retains grounding mode, but excessive height difference disables it immediately, and each landing must independently pass the height check.</p>
+<h4 id="4-6-4-Align-KCC-and-camera-sampling-phases"><a href="#4-6-4-Align-KCC-and-camera-sampling-phases" class="headerlink" title="4.6.4 Align KCC and camera sampling phases"></a>4.6.4 Align KCC and camera sampling phases</h4><p>If following reads physics positions while the camera later reads interpolated display positions, the body and camera use different phases in one frame. Align the order: update character display positions, calculate following, then sample the camera.</p>
+<p>Authoritative calculation and recipient application both happen in <code>OnKccUpdateDone</code>, using KCC-interpolated display positions before camera sampling. Body, target, and camera then share a phase, avoiding jitter from mixing fixed-step motion with render frames.</p>
+<p>On the initiator’s client, the recipient entity directly applies per-frame results, avoiding stacked local-follow and network-playback smoothing.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Section 4.6.4: successive KCC and camera sampling phases">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order.svg" alt="State 1: this frame's KCC display update is unfinished; both characters and the camera anchor still reflect the previous display state." width="1040" height="490" loading="lazy"></a>
+    <figcaption>State 1: this frame's KCC display update is unfinished; both characters and the camera anchor still reflect the previous display state.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order-applied.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/kcc-order-applied.svg" alt="State 2: finish KCC display updating, apply paired poses, then sample the camera anchor. Three time markers show the order." width="1040" height="490" loading="lazy"></a>
+    <figcaption>State 2: finish KCC display updating, apply paired poses, then sample the camera anchor. Three time markers show the order.</figcaption>
+  </figure>
+</div>
+
+<h4 id="4-6-5-Reset-smoothing-after-teleportation"><a href="#4-6-5-Reset-smoothing-after-teleportation" class="headerlink" title="4.6.5 Reset smoothing after teleportation"></a>4.6.5 Reset smoothing after teleportation</h4><p>Spring pursuit suits ordinary movement, but teleportation can suddenly separate the pair too far for slow catch-up. Add a threshold: beyond it, align directly to the new formation and restart following there.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Section 4.6.5: successive teleport smoothing-reset states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport.svg" alt="State 1: the red initiator has reached its teleport destination while the blue recipient remains behind. The new target lies outside the threshold sphere; height contributes to distance too." width="1040" height="595" loading="lazy"></a>
+    <figcaption>State 1: the red initiator has reached its teleport destination while the blue recipient remains behind. The new target lies outside the threshold sphere; height contributes to distance too.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport-reset.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/follow-teleport-reset.svg" alt="State 2: the recipient directly aligns to the recalculated formation. Drive position and smoothing restart there, and the dashed threshold boundary follows the new baseline." width="1040" height="595" loading="lazy"></a>
+    <figcaption>State 2: the recipient directly aligns to the recalculated formation. Drive position and smoothing restart there, and the dashed threshold boundary follows the new baseline.</figcaption>
+  </figure>
+</div>
+
+<p>The dashed circle is a cross-section of the 3D threshold sphere. Teleport threshold is <code>FollowTeleportDistance</code>; pursuit distance is the 3D gap from drive position to target. The height marker emphasizes vertical displacement. Exactly reaching the threshold still uses ordinary following.</p>
+<p>When drive-to-target distance exceeds <code>8 m</code>, use the new formation under the initiator’s current facing, reset orbital angle, grounding debounce, and recipient animation speed, and immediately broadcast a <code>Teleported</code> result.</p>
+<p>Teleportation is discontinuous movement. Clearing smoothing caches prevents drifting along the old direction or slowly crossing a large gap. The networking section describes corresponding remote-buffer resets.</p>
+<h3 id="4-7-Connecting-actions-during-integration"><a href="#4-7-Connecting-actions-during-integration" class="headerlink" title="4.7 Connecting actions during integration"></a>4.7 Connecting actions during integration</h3><p>After adding rotation solving, I used demonstrations and actual play with designers to verify orbit behavior, then checked walking, running, and stationary turns. The focus was whether body facing and gait connected naturally once target motion became steadier.</p>
+<p>Orbiting also turns the recipient’s body. Keeping Idle would make it slide while standing. Body facing therefore still follows the initiator, while movement animation uses the recipient’s own actual velocity, described in section 5.</p>
+<h3 id="4-8-Comparing-both-follow-designs"><a href="#4-8-Comparing-both-follow-designs" class="headerlink" title="4.8 Comparing both follow designs"></a>4.8 Comparing both follow designs</h3><p>Both use the initiator as the calculation source and retain a separate drive position for the recipient. They differ mainly in target generation, speed allocation, near-target behavior, and terrain handling.</p>
+<table>
+<thead>
+<tr>
+<th>Design point</th>
+<th>Local offset and proportional pursuit</th>
+<th>Separate orbit and horizontal pursuit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Target turning</td>
+<td>Offset rotates directly with initiator facing</td>
+<td>Smooth offset direction separately and bound angular speed</td>
+</tr>
+<tr>
+<td>Speed tuning</td>
+<td>One pursuit configuration affects straight motion and orbiting</td>
+<td>Configure linear pursuit and angular orbit speed separately</td>
+</tr>
+<tr>
+<td>Near target</td>
+<td>Snap inside the stop radius</td>
+<td>Continuously decelerate with time-bounded displacement</td>
+</tr>
+<tr>
+<td>Height</td>
+<td>Full 3D root-transformed offset</td>
+<td>Separate horizontal offset and height; debounce grounding and limit landing height</td>
+</tr>
+<tr>
+<td>Large changes</td>
+<td>Pursue at configured speed</td>
+<td>Align beyond a threshold and reset motion&#x2F;smoothing</td>
+</tr>
+<tr>
+<td>Implementation cost</td>
+<td>Few states; easy basic following</td>
+<td>Maintain angular velocity, grounding state, and reset timing</td>
+</tr>
+</tbody></table>
+<p>Local offsets and proportional speed already express paired following. When natural turns, complex terrain, and stable frame-to-frame behavior matter, separating constraints provides clearer tuning control.</p>
+<h2 id="5-Animation-synchronization-and-parameter-smoothing"><a href="#5-Animation-synchronization-and-parameter-smoothing" class="headerlink" title="5. Animation synchronization and parameter smoothing"></a>5. Animation synchronization and parameter smoothing</h2><h3 id="5-1-Design-goals"><a href="#5-1-Design-goals" class="headerlink" title="5.1 Design goals"></a>5.1 Design goals</h3><p>Both players should share major action semantics—walking, jumping, gliding—while recipient gait matches its own displacement. It may orbit while the initiator turns in place or keep catching up after the initiator stops.</p>
+<p>The animation system must reserve control for holding, harvesting, one-handed operations, and personal actions, preventing hand-holding mirroring from overwriting them.</p>
+<h3 id="5-2-Design-and-principles"><a href="#5-2-Design-and-principles" class="headerlink" title="5.2 Design and principles"></a>5.2 Design and principles</h3><p>The initiator supplies snapshots of mirrorable layers and derives recipient velocity from its solved horizontal displacement each frame. Transforming velocity into initiator-root local coordinates produces <code>SpeedPerc_XZ</code>, <code>SpeedPerc_LocalX</code>, and <code>SpeedPerc_LocalZ</code> for the recipient’s movement blend tree.</p>
+<p>Ordinary grounded Move&#x2F;Idle uses recipient speed, while jumping and gliding retain initiator action states. Broadcasts carry recipient-specific snapshots; remote clients consume them directly so all three views use the same speed source.</p>
+<h3 id="5-3-Animator-integration-and-modules"><a href="#5-3-Animator-integration-and-modules" class="headerlink" title="5.3 Animator integration and modules"></a>5.3 Animator integration and modules</h3><table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HoldHandRuntimeController</code></td>
+<td>Generate and smooth recipient velocity once per frame; maintain periodic refreshes</td>
+</tr>
+<tr>
+<td><code>ControllerSelfPlayer.HoldHand</code></td>
+<td>Copy mirrorable snapshots and write recipient movement parameters</td>
+</tr>
+<tr>
+<td><code>HoldHandStateUtility</code></td>
+<td>Determine mirrorable layers, recipient operation layers, and whether the right hand is occupied</td>
+</tr>
+<tr>
+<td>Recipient animation driver</td>
+<td>Consume authoritative states and switch between remote and personal-action controllers</td>
+</tr>
+</tbody></table>
+<p>The recipient normally uses <code>OtherPlayerAnimatorController</code>; local movement input does not decide ordinary gait. Personal actions validate action IDs and load Clips, while holding and harvesting use their own logic.</p>
+<h3 id="5-4-Animation-smoothing-and-compatibility"><a href="#5-4-Animation-smoothing-and-compatibility" class="headerlink" title="5.4 Animation smoothing and compatibility"></a>5.4 Animation smoothing and compatibility</h3><h4 id="5-4-1-Advance-velocity-filtering-only-once"><a href="#5-4-1-Advance-velocity-filtering-only-once" class="headerlink" title="5.4.1 Advance velocity filtering only once"></a>5.4.1 Advance velocity filtering only once</h4><p>Ground-height changes must not count as running. Remove displacement’s Y component, cap velocity at <code>MaxFollowSpeed</code>, then apply exponential smoothing with <code>AnimationVelocitySmoothTime = 0.1 s</code>:</p>
+<div class="math-display">\[\alpha&#x3D;1-e^{-\Delta t&#x2F;\tau},\qquad
+\bar v_{next}&#x3D;\operatorname{Lerp}(\bar v,v_{raw},\alpha)\]</div>
+<p>Update this velocity only once after the initiator solves movement each frame. Animation layers and broadcasts only read it, so layer count and send frequency do not alter filtering speed. This suppresses gait jitter from <code>SpeedPerc</code> fluctuations.</p>
+<h4 id="5-4-2-Start-stop-hysteresis-and-teleport-reset"><a href="#5-4-2-Start-stop-hysteresis-and-teleport-reset" class="headerlink" title="5.4.2 Start&#x2F;stop hysteresis and teleport reset"></a>5.4.2 Start&#x2F;stop hysteresis and teleport reset</h4><p>Start and stop thresholds are <code>0.1 m/s</code> and <code>0.05 m/s</code>. Stopping checks both raw and smoothed velocity to reduce toggling near rest. Teleportation clears velocity and movement flags so a large displacement is not interpreted as fast running.</p>
+<p>The base layer refreshes at an independent interval, allowing recipient pursuit or orbit animation to keep updating even while the initiator is idle.</p>
+<h4 id="5-4-3-Yield-to-operation-layers-and-personal-actions"><a href="#5-4-3-Yield-to-operation-layers-and-personal-actions" class="headerlink" title="5.4.3 Yield to operation layers and personal actions"></a>5.4.3 Yield to operation layers and personal actions</h4><p><code>ShouldMirrorAnimationLayer</code> excludes recipient upper-body, one-hand, two-hand, <code>Base_1</code>, and personal-action display layers, preserving their own driving sources.</p>
+<p>Supported personal actions increment an entry counter, pause hand-holding IK and associated music, and restore the local Animator controller when needed. When the final personal action ends, restore the hand-holding controller and held-item presentation. An operation occupying the recipient’s right hand temporarily zeros that side’s IK weight so the operation animation controls the arm.</p>
+<h2 id="6-Hand-IK"><a href="#6-Hand-IK" class="headerlink" title="6. Hand IK"></a>6. Hand IK</h2><h3 id="6-1-Design-goals"><a href="#6-1-Design-goals" class="headerlink" title="6.1 Design goals"></a>6.1 Design goals</h3><p>Hand IK brings the initiator’s left hand and recipient’s right hand together while maintaining natural shoulders, elbows, and wrists. Different arm lengths, attachment offsets, and body positions require a shared target inside both reach ranges, followed by joint-constrained bone results.</p>
+<p>During running, jumping, and turning, contact should move stably with the pair. Gliding or personal actions that occupy the arms must release and restore it smoothly. IK changes arm presentation only; movement owns root positions.</p>
+<p>IK diagrams retain red initiator and blue recipient icons. Each shows both participating chains: six circular nodes in total. Red and blue shoulder → elbow → wrist chains each map to LimbIK’s <code>bone1 → bone2 → bone3</code>. Crosses mark logical points such as palms and contact targets; dashed reference chains add no actual nodes.</p>
+<p>These are 2D geometric explanations. Successive states preserve upper-arm and forearm lengths to show changing inputs, targets, and constraints; proportions and poses are not real-device parameter calibration.</p>
+<h3 id="6-2-Shared-contact-and-reachability"><a href="#6-2-Shared-contact-and-reachability" class="headerlink" title="6.2 Shared contact and reachability"></a>6.2 Shared contact and reachability</h3><p>Basic hand contact starts by making two arms approach the same point. Derive a preferred point from both hand Poses, constrain it by their reach ranges, and solve through Final IK LimbIK. Connection state and weight transitions complete basic hand-holding.</p>
+<h4 id="6-2-1-Derive-a-shared-Pose-from-two-contact-Poses"><a href="#6-2-1-Derive-a-shared-Pose-from-two-contact-Poses" class="headerlink" title="6.2.1 Derive a shared Pose from two contact Poses"></a>6.2.1 Derive a shared Pose from two contact Poses</h4><p>First consider two arms and one common target. Each arm has shoulder, elbow, and wrist nodes; temporarily treat the wrist endpoint as contact. Keep shoulders fixed and adjust elbows&#x2F;wrists toward one target.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Solve both arms toward one contact point">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-input.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-input.svg" alt="Before solving: each arm swings separately along its shoulder–elbow–wrist chain; the black cross marks shared contact." width="1040" height="650" loading="lazy"></a>
+    <figcaption>Before solving: each arm swings separately along its shoulder–elbow–wrist chain; the black cross marks shared contact.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-solved.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-contact-solved.svg" alt="After solving: shoulders stay fixed while elbows and wrists adjust with unchanged bone lengths. Red and blue wrists coincide at contact." width="1040" height="650" loading="lazy"></a>
+    <figcaption>After solving: shoulders stay fixed while elbows and wrists adjust with unchanged bone lengths. Red and blue wrists coincide at contact.</figcaption>
+  </figure>
+</div>
+
+<p>Adjusting joints backward from a specified endpoint target is inverse kinematics, or IK. This produces basic contact but does not yet establish whether both arms can reach; reachability comes next.</p>
+<p>Place both contact Poses in world space. Average their positions and use <code>Quaternion.Slerp</code> at <code>0.5</code> for rotation. This result, before reach constraints, smoothing, and final offsets, is the <strong>preferred Pose</strong>. Code stores it as <code>preferredContact</code> before constraints to reveal how later processing changes it.</p>
+<p>Currently these inputs come from stable references captured and reconstructed in section 6.4.1, rather than freshly animated hand Poses each frame. Both sides use one contact position, adding <code>InitiatorContactRotationOffset</code> and <code>RecipientContactRotationOffset</code> separately for grip orientation.</p>
+<p>This establishes a shared target. LimbIK’s wrist targets must still be derived from palm attachments, as explained in section 6.5.3.</p>
+<h4 id="6-2-2-Approximate-two-segment-arms-with-reach-spheres"><a href="#6-2-2-Approximate-two-segment-arms-with-reach-spheres" class="headerlink" title="6.2.2 Approximate two-segment arms with reach spheres"></a>6.2.2 Approximate two-segment arms with reach spheres</h4><p>Both chains now pursue a common point. Move that point farther away: elbows can extend, but hands cannot stretch indefinitely because upper-arm and forearm lengths are fixed.</p>
+<p>Add only the two fixed bone lengths, then approximate their coverage with reach spheres. The diagrams show cross-sections comparing bent and extended states:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Section 6.2.2: successive states of two-segment reach spheres">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-bent.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-bent.svg" alt="State 1: both arms bend with wrists inside reach. Circular nodes remain shoulder, elbow, and wrist; sphere center and shoulder are labeled separately." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 1: both arms bend with wrists inside reach. Circular nodes remain shoulder, elbow, and wrist; sphere center and shoulder are labeled separately.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-extended.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-extended.svg" alt="State 2: moving contact outward extends elbows. Bone lengths and reach circles remain unchanged; only joint angles change." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 2: moving contact outward extends elbows. Bone lengths and reach circles remain unchanged; only joint angles change.</figcaption>
+  </figure>
+</div>
+
+<p>The simplest radius sums upper-arm and forearm lengths. Bending brings the hand closer; extension reaches farther, without changing length or coverage. A palm attachment offset can shift the sphere center, so the diagram separates it from the shoulder. Section 6.4.2 describes another approach that reserves reach margin.</p>
+<p>With both spheres, <code>TryConstrainSharedContact</code> limits the preferred point to shared space. Spheres describe reach; elbow bending direction and angular joint limits need separate handling.</p>
+<h4 id="6-2-3-Sphere-intersection-constraints"><a href="#6-2-3-Sphere-intersection-constraints" class="headerlink" title="6.2.3 Sphere-intersection constraints"></a>6.2.3 Sphere-intersection constraints</h4><p>Individual reach still does not guarantee contact: distant players can have disjoint ranges. First consider them approaching until their ranges intersect:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Successive sphere-intersection constraint states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact.svg" alt="Separated ranges: even straight arms leave a gap. The middle target is a compromise that both cannot reach simultaneously." width="1040" height="650" loading="lazy"></a>
+    <figcaption>Separated ranges: even straight arms leave a gap. The middle target is a compromise that both cannot reach simultaneously.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact-overlap.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/shared-contact-overlap.svg" alt="Intersecting ranges: moving closer creates shared space. Move the old external target into it so both chains can solve toward one point." width="1040" height="650" loading="lazy"></a>
+    <figcaption>Intersecting ranges: moving closer creates shared space. Move the old external target into it so both chains can solve toward one point.</figcaption>
+  </figure>
+</div>
+
+<p>Red and blue dashed circles are reach-sphere cross-sections. Once an intersection exists, bring an external target back into shared reach. Without one, a compromise remains and simultaneous contact cannot be guaranteed.</p>
+<p>The implementation selects candidates in this order:</p>
+<ol>
+<li>Use the preferred point directly if it lies inside both spheres.</li>
+<li>For disjoint spheres, choose a compromise along the center line according to both reach capacities and set <code>HasSharedReach</code> false.</li>
+<li>For intersecting spheres with an external preferred point, test projections onto individual spheres; choose the nearest candidate satisfying both ranges.</li>
+<li>If neither projection works, use the spheres’ intersection circle to project and constrain the preferred point to the shared region.</li>
+</ol>
+<p>The intersection circle defines the common boundary; its radius also depends on attachment margins. This establishes geometric reachability, while elbow direction and joint rotation require additional limits.</p>
+<h4 id="6-2-4-Smoothing-connection-state-and-weights"><a href="#6-2-4-Smoothing-connection-state-and-weights" class="headerlink" title="6.2.4 Smoothing, connection state, and weights"></a>6.2.4 Smoothing, connection state, and weights</h4><p>Even with shared reach, target changes and connection switches can look abrupt. Smooth the shared target frame by frame, then handle connection boundaries and arm influence.</p>
+<p>Smooth contact in initiator-root local space using <code>Vector3.SmoothDamp</code>, currently with <code>ContactPositionSmoothTime = 0.01 s</code>. If a shared range exists, constrain the smoothed point back into it to avoid crossing boundaries during transition. Section 6.6.2 covers the full local-space process.</p>
+<p>A newly observed pair first passes a preparation frame. From the next frame, it connects while valid and unpaused. Gliding and personal actions disconnect IK; it resumes when every pause reason disappears.</p>
+<p>Current <code>UpdateConnection</code> does not use player distance. <code>HasSharedReach</code> separately records simultaneous reach and does not directly end the interaction or IK connection.</p>
+<p>Connection selects a target weight of 1 or 0. Actual weight approaches it gradually instead of making the whole arm jump instantly:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Section 6.2.4: connection and weight transition states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-released.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-released.svg" alt="State 1: preparation or a pause sets target weight to zero. After fading out, all six nodes return to their own animation poses." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 1: preparation or a pause sets target weight to zero. After fading out, all six nodes return to their own animation poses.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-connected.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-blend-connected.svg" alt="State 2: after preparation with no pause, weight rises each frame. After fading in, shoulders, elbows, and wrists align toward shared contact." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 2: after preparation with no pause, weight rises each frame. After fading in, shoulders, elbows, and wrists align toward shared contact.</figcaption>
+  </figure>
+</div>
+
+<p>These diagrams show transition endpoints; intermediate weights advance each frame. Connection affects IK without clearing room interaction state. Maximum position and rotation weights are both 1, with <code>0.3 s</code> fade-in and fade-out. Position weight controls pursuit by the chain; rotation weight controls wrist orientation. Targets go to <code>LimbIK.solver</code> each frame before manual solving.</p>
+<h4 id="6-2-5-Basic-behavior-and-tradeoffs"><a href="#6-2-5-Basic-behavior-and-tradeoffs" class="headerlink" title="6.2.5 Basic behavior and tradeoffs"></a>6.2.5 Basic behavior and tradeoffs</h4><p>Shared targets, reach constraints, and weight transitions already connect both hands. Their advantages are:</p>
+<ul>
+<li>One contact point gives both hands a stable visual grip location, rather than independent targets.</li>
+<li>Sphere intersections are inexpensive, have clear boundaries, and explicitly handle unequal arm lengths.</li>
+<li>Preparation, pause state, and fading support continuous entry, release, and recovery.</li>
+<li>Initiator computation and broadcasting keep results consistent without requiring recipients and observers to repeat full reachability logic.</li>
+<li>Final IK LimbIK reuses existing skeletons and bend configurations at low integration cost.</li>
+</ul>
+<p>This is suitable for establishing basic contact before tuning offsets and weights through playtests. Geometric reachability does not eliminate the need to inspect arm poses in motion.</p>
+<h3 id="6-3-Hand-pose-problems-during-movement"><a href="#6-3-Hand-pose-problems-during-movement" class="headerlink" title="6.3 Hand-pose problems during movement"></a>6.3 Hand-pose problems during movement</h3><p>Spheres express reachability, not elbow preferences, shoulder limits, colliders, or clothing constraints. Some poses invert elbows or intersect bodies. Disjoint spheres still only yield a compromise, and changing contact, bone animation, and root motion together can introduce hand swing into solving.</p>
+<p>Aligning hands while stationary proved insufficient. Contact could fold awkwardly, movement showed stutter and hand swing, wrists sometimes bent unnaturally, and arms pulled upward during large-jump descent. Animation’s influence on solving needed control beyond contact alignment.</p>
+<p>One clear reproduction was running into a collision: IK stayed misplaced until disconnecting and reconnecting. Hands also looked unnatural after small and large jumps. Improvements focused on stable contact&#x2F;bone references that current animation could not continually redefine, plus separate shoulder, elbow, and wrist limits.</p>
+<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/ik-contact-comparison.webp" alt="Abnormal contact during integration compared with the pose after reconnecting"></p>
+<p><em>Reference-pose stability reproduction: abnormal contact on the left, re-established connection on the right.</em></p>
+<h3 id="6-4-Stable-references-and-constrained-shared-targets"><a href="#6-4-Stable-references-and-constrained-shared-targets" class="headerlink" title="6.4 Stable references and constrained shared targets"></a>6.4 Stable references and constrained shared targets</h3><p>To preserve contact during running, jumping, and pause recovery, I retained shared targets and sphere constraints but fixed inputs to stable reference poses. Targets change only with the pair’s relative relationship; bone results receive separate joint limits and smoothing.</p>
+<h4 id="6-4-1-The-initiator-computes-shared-contact"><a href="#6-4-1-The-initiator-computes-shared-contact" class="headerlink" title="6.4.1 The initiator computes shared contact"></a>6.4.1 The initiator computes shared contact</h4><p>Reading current animated hand contact every frame can carry arm swing or one bad pose into later targets. Instead, capture both hands’ character-relative positions and rotations when hand-holding is established.</p>
+<p>This is local space: the reference records where the hand is relative to its character, not an absolute map position. Whole-character movement carries it along; animated wrists can swing without redefining it:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Save character-relative hand reference points">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-capture.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-capture.svg" alt="Capture the hand position relative to its character. Red and blue crosses attach to their respective characters; dashed lines show the saved relationship." width="1040" height="650" loading="lazy"></a>
+    <figcaption>Capture the hand position relative to its character. Red and blue crosses attach to their respective characters; dashed lines show the saved relationship.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-moved.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reference-moved.svg" alt="After character movement, references move with the whole character while animated wrists can swing elsewhere. Contact still derives from the saved references." width="1040" height="650" loading="lazy"></a>
+    <figcaption>After character movement, references move with the whole character while animated wrists can swing elsewhere. Contact still derives from the saved references.</figcaption>
+  </figure>
+</div>
+
+<p>When both attachments and chains first become usable, save each contact Pose in its own root’s local space. Each frame reconstruct them from current roots, average position and rotation into the preferred Pose, then apply reach constraints, local smoothing, and final offsets. Current animation never redefines the baseline.</p>
+<p>These diagrams show reference reading; solid chains are animation poses before IK. <code>preferredContact</code> is the newly formed, unprocessed preferred Pose. Reach constraints change its position but retain the intermediate rotation. Local smoothing, re-constraint, and <code>ContactPositionOffset</code> follow, producing shared position and independent rotations. The initiator performs the full calculation; remote clients consume local targets.</p>
+<h4 id="6-4-2-Intersecting-both-reach-spheres"><a href="#6-4-2-Intersecting-both-reach-spheres" class="headerlink" title="6.4.2 Intersecting both reach spheres"></a>6.4.2 Intersecting both reach spheres</h4><p>Using complete arm lengths can still push wrists to full extension. Palm attachments lie beyond the wrist, and orientation&#x2F;contact-distance changes need margin.</p>
+<p>Keep sphere centers at shoulders and reserve palm offsets from their radii; reserve extra contact distance when needed. Each diagram changes only one margin:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Section 6.4.2: successive conservative reach-sphere states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-reserved.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-reserved.svg" alt="State 1: fixed bone lengths with radius reserved for the palm offset; shared contact lies in both acceptable ranges." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 1: fixed bone lengths with radius reserved for the palm offset; shared contact lies in both acceptable ranges.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-palm-distance.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-reach-palm-distance.svg" alt="State 2: larger contact spacing shrinks conservative reach, re-constraining preferred to target contact. Each palm also adjusts along its shoulder-to-target direction." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 2: larger contact spacing shrinks conservative reach, re-constraining preferred to target contact. Each palm also adjusts along its shoulder-to-target direction.</figcaption>
+  </figure>
+</div>
+
+<p>Centers use shoulders. Radius sums both bone lengths minus the palm attachment offset and absolute <code>PalmContactDistance</code>, leaving extension margin for wrist rotation and spacing. A nonpositive remaining radius cannot form a valid reach sphere.</p>
+<p>The diagrams vary contact spacing to explain it; the current resource’s <code>PalmContactDistance</code> is zero. Intersection uses section 6.2.3’s candidates and projections. Without an intersection, keep trying with a compromise target; joint limits still protect the final arms.</p>
+<h4 id="6-4-3-Pair-validity-and-connection-state"><a href="#6-4-3-Pair-validity-and-connection-state" class="headerlink" title="6.4.3 Pair validity and connection state"></a>6.4.3 Pair validity and connection state</h4><p>IK accepts only mutually linked, same-type states with downloaded Avatars and ready skeletons. Connection starts after the first-observation preparation frame when no pause reason remains.</p>
+<p>Gliding and personal actions use a set of pause reasons; recovery waits until all are cleared. <code>HasSharedReach</code> describes geometry, not whether interaction or IK disconnects. Invalid skeletons, weather transformations, and recipient right-hand operations have separate release or yield logic.</p>
+<h3 id="6-5-Applying-Final-IK-and-dividing-modules"><a href="#6-5-Applying-Final-IK-and-dividing-modules" class="headerlink" title="6.5 Applying Final IK and dividing modules"></a>6.5 Applying Final IK and dividing modules</h3><h4 id="6-5-1-Solve-each-arm-with-LimbIK"><a href="#6-5-1-Solve-each-arm-with-LimbIK" class="headerlink" title="6.5.1 Solve each arm with LimbIK"></a>6.5.1 Solve each arm with LimbIK</h4><p>The project uses <strong>Final IK (namespace <code>RootMotion.FinalIK</code>)</strong>. <strong><code>LimbIK</code> solves one limb</strong>. Each character prepares left and right arm solvers; hand-holding uses the initiator’s left and recipient’s right.</p>
+<p>LimbIK uses <code>IKSolverLimb</code>, derived from the law-of-cosines analytic <code>IKSolverTrigonometric</code>. Its three-node upper-arm, forearm, and wrist chain has two bone lengths. Given an endpoint and bend plane, it computes the pose and exposes endpoint rotation and weights.</p>
+<p><code>IKSolverLimb.BendModifier.Arm</code> supplies an arm-suitable bend plane. Project modules own shared targets, network authority, pause state, and three-axis limits; the plugin solves the chain itself.</p>
+<h4 id="6-5-2-Bind-chains-and-update-manually"><a href="#6-5-2-Bind-chains-and-update-manually" class="headerlink" title="6.5.2 Bind chains and update manually"></a>6.5.2 Bind chains and update manually</h4><p><code>EntityBaseHead.InitializeHoldHandIK</code> uses <code>G_LweaponTransform</code> and <code>G_RweaponTransform</code> as contact attachments. Traversing upward yields wrist, forearm, and upper arm; validation precedes solver creation. Core setup is:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">limb.enabled = <span class="literal">false</span>;</span><br><span class="line">limb.fixTransforms = <span class="literal">false</span>;</span><br><span class="line">limb.solver.goal = goal; <span class="comment">// LeftHand or RightHand</span></span><br><span class="line">limb.solver.target = <span class="literal">null</span>;</span><br><span class="line">limb.solver.bendModifier = IKSolverLimb.BendModifier.Arm;</span><br><span class="line">limb.solver.bendModifierWeight = <span class="number">1f</span>;</span><br><span class="line">limb.solver.maintainRotationWeight = <span class="number">0f</span>;</span><br><span class="line">limb.solver.SetIKPositionWeight(<span class="number">0f</span>);</span><br><span class="line">limb.solver.SetIKRotationWeight(<span class="number">0f</span>);</span><br><span class="line">limb.solver.SetChain(upperArm, lowerArm, hand, Transform);</span><br></pre></td></tr></table></figure>
+
+<p>Disable LimbIK’s automatic component update, set targets with <code>SetIKPosition</code> and <code>SetIKRotation</code>, then manually call <code>limb.solver.Update()</code> at the controlled phase. This solves after animation and applies limits afterward, avoiding independently scheduled updates.</p>
+<p><code>fixTransforms = false</code> gives project code control of reference-pose restoration; <code>target = null</code> means writing target Poses directly without a target Transform. An invalid attachment, chain, or LimbIK prevents valid registration.</p>
+<h4 id="6-5-3-Convert-palm-targets-into-wrist-targets"><a href="#6-5-3-Convert-palm-targets-into-wrist-targets" class="headerlink" title="6.5.3 Convert palm targets into wrist targets"></a>6.5.3 Convert palm targets into wrist targets</h4><p>Earlier contact was simplified to one endpoint. In the plugin, the endpoint is the wrist, but gameplay aligns palms. Treating palm contact as a wrist target ignores the attachment offset.</p>
+<p>Keep the palm target fixed and change grip orientation: as the offset rotates, the wrist must move to keep the palm on target.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Successive palm-to-wrist target conversion states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-target.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-target.svg" alt="State 1: fixed palm contact connects to red and blue wrists through their respective offsets. Six bone nodes solve around wrist targets." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 1: fixed palm contact connects to red and blue wrists through their respective offsets. Six bone nodes solve around wrist targets.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-rotated.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-wrist-rotated.svg" alt="State 2: changed grip orientation rotates the world-space offsets; wrist positions must move while palm contact stays fixed." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 2: changed grip orientation rotates the world-space offsets; wrist positions must move while palm contact stays fixed.</figcaption>
+  </figure>
+</div>
+
+<p>First cancel the attachment’s wrist-local rotation to derive wrist orientation. Scale the local attachment position by character scale, rotate it into world space with that orientation, and subtract it from the palm target to obtain the wrist target.</p>
+<p>The diagram enlarges offsets for clarity. <code>ContactTargetToHandTarget</code> takes the contact Pose, <code>contact.localRotation</code>, <code>contact.localPosition</code>, and wrist <code>lossyScale</code>. Only the derived wrist Pose goes into LimbIK. <code>PalmContactDistance</code> is applied beforehand.</p>
+<h4 id="6-5-4-Project-plugin-boundaries"><a href="#6-5-4-Project-plugin-boundaries" class="headerlink" title="6.5.4 Project&#x2F;plugin boundaries"></a>6.5.4 Project&#x2F;plugin boundaries</h4><table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HoldHandIKRuntimeController</code></td>
+<td>Enumerate valid pairs, calculate shared contact, manage weights&#x2F;pauses, and send or consume authoritative targets</td>
+</tr>
+<tr>
+<td><code>HoldHandIKPairState</code></td>
+<td>Store reference contact Poses, position smoothing, network sequences, and remote targets</td>
+</tr>
+<tr>
+<td><code>EntityBaseHead.HoldHandIK</code></td>
+<td>Register skeletons, bind LimbIK, convert palm targets, maintain arm references, and solve</td>
+</tr>
+<tr>
+<td>Final IK <code>LimbIK / IKSolverLimb</code></td>
+<td>Solve a three-node arm from wrist targets and bend mode</td>
+</tr>
+<tr>
+<td><code>HoldHandArmRotationLimits</code></td>
+<td>Smooth and limit shoulder, elbow, and wrist rotations across three axes; prevent reverse elbow bending</td>
+</tr>
+<tr>
+<td><code>HoldHandIKLateUpdateDriver</code></td>
+<td>Coordinate each frame’s IK update phase</td>
+</tr>
+<tr>
+<td><code>DataHoldHandControl</code></td>
+<td>Configure contact offsets, smoothing, weights, and joint ranges</td>
+</tr>
+</tbody></table>
+<h3 id="6-6-IK-stability-and-smoothing-improvements"><a href="#6-6-IK-stability-and-smoothing-improvements" class="headerlink" title="6.6 IK stability and smoothing improvements"></a>6.6 IK stability and smoothing improvements</h3><h4 id="6-6-1-Fix-reference-poses-to-isolate-animation-disturbance"><a href="#6-6-1-Fix-reference-poses-to-isolate-animation-disturbance" class="headerlink" title="6.6.1 Fix reference poses to isolate animation disturbance"></a>6.6.1 Fix reference poses to isolate animation disturbance</h4><p>Running swings and jumps continually change bones. Extracting a new baseline every frame changes targets and limit references, potentially carrying an abnormal pose into the next solve.</p>
+<p>Save local contact Poses per pair and arm reference rotations at the first valid solve separately. Contact follows roots; chains solve from stable references. Temporary pauses such as gliding retain them. Pair rebuilding or invalid skeletons reset them through lifecycle handling.</p>
+<h4 id="6-6-2-Smooth-contact-in-character-local-space"><a href="#6-6-2-Smooth-contact-in-character-local-space" class="headerlink" title="6.6.2 Smooth contact in character-local space"></a>6.6.2 Smooth contact in character-local space</h4><p>Stable references reduce arm-swing disturbance, but relative motion can still make shared contact jump. World-space smoothing would also make targets trail whole-character movement and jumps.</p>
+<p>Smooth only changes relative to the initiator: overall displacement carries the target immediately, while relative changes converge gradually.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Successive local-space contact smoothing states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-start.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-start.svg" alt="Stable relative position: smoothed contact has reached the target, and both arms extend toward it." width="1040" height="650" loading="lazy"></a>
+    <figcaption>Stable relative position: smoothed contact has reached the target, and both arms extend toward it.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-step.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-smooth-step.svg" alt="Relative change: whole-character motion carries local references immediately. Changes between players move the target slightly, and smoothed contact gradually catches up." width="1040" height="650" loading="lazy"></a>
+    <figcaption>Relative change: whole-character motion carries local references immediately. Changes between players move the target slightly, and smoothed contact gradually catches up.</figcaption>
+  </figure>
+</div>
+
+<p>Apply <code>SmoothDamp</code> in initiator-root local space with <code>0.01 s</code> smoothing, then transform back to world space. Only relative changes are smoothed; whole-character movement and jumps carry the target immediately, avoiding world-space lag.</p>
+<p>The diagram initially shows only local target and smoothed contact. Reach constraints and configured offsets add two steps:</p>
+<p>With shared reach, project the smoothed result back into that region. Then add root-rotated <code>ContactPositionOffset</code>, currently <code>(-0.04, -0.31, -0.01)</code>. Do not write the offset into the smoothing cache, preventing accumulation or later smoothing from overwriting it. It may move the target outside reach, so tune it alongside bone limits.</p>
+<p>Remote IK targets are also smoothed in initiator-local space and reconstructed using the locally displayed root. Section 7 explains their consumption.</p>
+<h4 id="6-6-3-Three-axis-limits-and-preventing-reverse-elbow-bending"><a href="#6-6-3-Three-axis-limits-and-preventing-reverse-elbow-bending" class="headerlink" title="6.6.3 Three-axis limits and preventing reverse elbow bending"></a>6.6.3 Three-axis limits and preventing reverse elbow bending</h4><p>Shared contact determines where hands go, and reach determines whether they can arrive. Neither guarantees natural joints. Add separate shoulder, elbow, and wrist ranges and prevent reverse bending: solve IK first, then constrain final bones.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Successive three-axis joint-limit and elbow-protection states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-input.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-input.svg" alt="State 1: LimbIK produces a pose toward shared contact, but each joint still needs its own constraints. Six circles are the solver output." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 1: LimbIK produces a pose toward shared contact, but each joint still needs its own constraints. Six circles are the solver output.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-output.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-limits-output.svg" alt="State 2: smoothing and hard limits constrain shoulder, elbow, and wrist without changing bone lengths. Actual contact may depart from the target; black dashed lines compare the previous pose." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 2: smoothing and hard limits constrain shoulder, elbow, and wrist without changing bone lengths. Actual contact may depart from the target; black dashed lines compare the previous pose.</figcaption>
+  </figure>
+</div>
+
+<p><code>HoldHandArmRotationLimits</code> supplies yaw, pitch, and roll ranges separately. Upper arms reference the character, elbows the upper arm, and wrists the forearm. Bone axes are calibrated at initialization; reference frames follow character or parent-bone rotation at runtime.</p>
+<p>Shoulder, elbow, and wrist limit arcs mark constraint locations. The implementation limits all three axes; the 2D diagram explains order rather than measuring actual resource angles.</p>
+<p><img src="/zh-CN/2026/%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/joint-limits.webp" alt="Editor controls for separate upper-arm, elbow, and wrist rotation ranges"></p>
+<p><em>Joint configuration entry points and reference frames; actual values are listed below.</em></p>
+<table>
+<thead>
+<tr>
+<th>Joint</th>
+<th>Yaw range</th>
+<th>Pitch range</th>
+<th>Roll range</th>
+<th>Rotation smoothing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Upper arm</td>
+<td>-45° to 80°</td>
+<td>-90° to 10°</td>
+<td>-45° to 45°</td>
+<td>0.03 s</td>
+</tr>
+<tr>
+<td>Elbow</td>
+<td>0° to 145°</td>
+<td>-5° to 5°</td>
+<td>-80° to 80°</td>
+<td>0.03 s</td>
+</tr>
+<tr>
+<td>Wrist</td>
+<td>-30° to 20°</td>
+<td>-45° to 45°</td>
+<td>-5° to 5°</td>
+<td>0.03 s</td>
+</tr>
+</tbody></table>
+<p>The elbow must satisfy both angular ranges and the normal-flexion half-space. Calculate them together so limiting angles and then preventing reversal do not overwrite each other. An infeasible intersection must not be solved by reverse bending.</p>
+<h4 id="6-6-4-Joint-rotation-smoothing-and-solve-order"><a href="#6-6-4-Joint-rotation-smoothing-and-solve-order" class="headerlink" title="6.6.4 Joint rotation smoothing and solve order"></a>6.6.4 Joint rotation smoothing and solve order</h4><p>Each joint smooths rotation in its own stable frame, currently over <code>0.03 s</code>. This softens small solver jumps while immediately passing character turns and parent-bone rotations to the arm.</p>
+<p>After smoothing, apply hard three-axis limits and cache the constrained rotation, preventing the filter from accumulating error beyond limits. One arm update follows:</p>
+<ol>
+<li>Save the animated pose, restore stable references, and solve the complete IK pose with LimbIK.</li>
+<li>Apply the overall maximum rotation from the reference pose, then blend with animation using position&#x2F;rotation weights.</li>
+<li>Recompute palm offsets from the blended wrist orientation and run LimbIK to correct contact.</li>
+<li>Smooth and constrain shoulders, elbows, and wrists, including elbow-reversal protection, producing this frame’s bones.</li>
+</ol>
+<p>Do not run IK again after the final limits. When contact precision conflicts with joint ranges, prioritize joint constraints and allow a small palm gap.</p>
+<h4 id="6-6-5-Weight-transitions-and-yielding-to-operations"><a href="#6-6-5-Weight-transitions-and-yielding-to-operations" class="headerlink" title="6.6.5 Weight transitions and yielding to operations"></a>6.6.5 Weight transitions and yielding to operations</h4><p>Connecting and disconnecting alone do not cover personal actions. An operation can temporarily occupy one arm while the relationship remains active; simultaneous bone writers would overwrite each other.</p>
+<p>Add pause&#x2F;recovery: let animation control arms during pauses, retain this interaction’s references, and gradually restore weight toward those same references afterward.</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Successive weight-transition and operation-yield states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-connected.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-connected.svg" alt="State 1: normal hand-holding aligns six nodes around contact, with references belonging to this pair." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 1: normal hand-holding aligns six nodes around contact, with references belonging to this pair.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-released.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-released.svg" alt="State 2: personal actions or other reasons pause IK. After fade-out, animation owns arms, while contact references remain; release poses do not become new baselines." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 2: personal actions or other reasons pause IK. After fade-out, animation owns arms, while contact references remain; release poses do not become new baselines.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-resumed.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-pause-resumed.svg" alt="State 3: all pause reasons clear, weights recover each frame, and chains solve toward the same references. Diagrams show endpoints, not instantaneous switches." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 3: all pause reasons clear, weights recover each frame, and chains solve toward the same references. Diagrams show endpoints, not instantaneous switches.</figcaption>
+  </figure>
+</div>
+
+<p>Connection advances weights through <code>MoveTowards</code>, with <code>0.3 s</code> fade-in&#x2F;out and maximum position&#x2F;rotation weights of 1. Weighted animation&#x2F;IK blending gives continuous entry, pause, and recovery.</p>
+<p>A set of pause reasons prevents one system’s release from overriding another’s occupation. A recipient operation using the right hand temporarily zeros that side’s position and rotation weights. Weather transformations or missing skeletons release IK through their own paths.</p>
+<h3 id="6-7-Pose-adjustments-and-retesting"><a href="#6-7-Pose-adjustments-and-retesting" class="headerlink" title="6.7 Pose adjustments and retesting"></a>6.7 Pose adjustments and retesting</h3><p>Fixing solve references to entry bone poses improved hand swing during movement. Retests with designers continued examining small lateral shakes, jumps, and collision recovery rather than judging only stationary or straight movement.</p>
+<p>Remaining elbow poses and standing slides were handled separately: joint limits and smoothing own bone presentation; actual-speed-driven animation owns gait. Each change corresponds to a specific experience problem.</p>
+<h3 id="6-8-Comparing-both-hand-solving-approaches"><a href="#6-8-Comparing-both-hand-solving-approaches" class="headerlink" title="6.8 Comparing both hand-solving approaches"></a>6.8 Comparing both hand-solving approaches</h3><p>Both let the initiator determine shared contact and use LimbIK for local chain solving. Additional handling concerns reference poses, target smoothing, and bone constraints.</p>
+<table>
+<thead>
+<tr>
+<th>Design point</th>
+<th>Shared contact and reach constraints</th>
+<th>Stable references and joint constraints</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Target reference</td>
+<td>Preferred contact from current hand Poses</td>
+<td>Save root-local reference Poses and reconstruct from roots</td>
+</tr>
+<tr>
+<td>Solve starting pose</td>
+<td>Current animated pose</td>
+<td>Fixed arm reference rotations, then animation blending</td>
+</tr>
+<tr>
+<td>Reach</td>
+<td>Arm-length spheres adjusted for attachments</td>
+<td>Shoulder-centered spheres reserving palm&#x2F;contact-distance margins</td>
+</tr>
+<tr>
+<td>Contact smoothing</td>
+<td>World-space target smoothing</td>
+<td>Initiator-local relative smoothing with immediate overall motion</td>
+</tr>
+<tr>
+<td>Pose limits</td>
+<td>LimbIK bend mode and reach region</td>
+<td>Separate shoulder&#x2F;elbow&#x2F;wrist smoothing and limits plus elbow protection</td>
+</tr>
+<tr>
+<td>Connection and pauses</td>
+<td>Preparation frame and weighted entry&#x2F;release</td>
+<td>Explicit pause reasons; retain references during temporary release</td>
+</tr>
+<tr>
+<td>Presentation tradeoff</td>
+<td>Simpler basic contact</td>
+<td>More controlled moving poses; limits can leave small palm gaps</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Manage contact, reach, and weights</td>
+<td>Also manage references, joint frames, smoothing caches, and solve order</td>
+</tr>
+</tbody></table>
+<p>Shared contact determines where hands meet; stable references and limits control how arms get there. Body proportions, clothing, and body collisions still require dedicated handling rather than simply increasing IK weight.</p>
+<h2 id="7-Network-synchronization-and-playback-smoothing"><a href="#7-Network-synchronization-and-playback-smoothing" class="headerlink" title="7. Network synchronization and playback smoothing"></a>7. Network synchronization and playback smoothing</h2><h3 id="7-1-Design-goals"><a href="#7-1-Design-goals" class="headerlink" title="7.1 Design goals"></a>7.1 Design goals</h3><p>Networking must present the initiator’s paired results stably to recipients and observers, balancing latency against arrival jitter that causes body stutter, stretched player spacing, and jumping hand targets.</p>
+<p>Position, animation, and IK change at different rates. Tune their streams independently; they share interaction identity and authority but retain their own consumption and smoothing.</p>
+<h3 id="7-2-Design-and-data-model"><a href="#7-2-Design-and-data-model" class="headerlink" title="7.2 Design and data model"></a>7.2 Design and data model</h3><p>The initiator sends paired poses, animation snapshots, and IK targets through <code>NetworkServiceComponent</code>. Paired-pose fields include:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Both UIDs and interaction type</td>
+<td>Identify the pair and validate room state</td>
+</tr>
+<tr>
+<td>Both positions and rotations</td>
+<td>Two root Poses from the same sample</td>
+</tr>
+<tr>
+<td><code>SampleTime</code></td>
+<td>Initiator’s monotonic sample time for ordering and velocity estimates</td>
+</tr>
+<tr>
+<td><code>InteractionRevision</code></td>
+<td>Check that the snapshot belongs to this interaction</td>
+</tr>
+<tr>
+<td><code>Teleported</code></td>
+<td>Clear old trajectories and rebuild the buffer baseline</td>
+</tr>
+</tbody></table>
+<p><code>SampleTime</code> compares only differences from one sender and requires no client clock synchronization. Each recipient or observer maintains its own playback time and samples both poses from one paired buffer.</p>
+<p>Independent IK broadcasts carry two local target Poses, <code>Sequence</code>, <code>BlendWeight</code>, <code>Connected</code>, and <code>HasSharedReach</code>. Animation carries initiator-generated recipient movement parameters so remote clients need not infer gait from network displacement.</p>
+<h3 id="7-3-Synchronization-modules"><a href="#7-3-Synchronization-modules" class="headerlink" title="7.3 Synchronization modules"></a>7.3 Synchronization modules</h3><table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>NetworkServiceComponent.HoldHand</code></td>
+<td>Organize and send paired-pose and IK broadcasts</td>
+</tr>
+<tr>
+<td><code>BroadcastHoldHandTransformUpdateHandler</code></td>
+<td>Validate pairing, sample time, and revision, then dispatch poses</td>
+</tr>
+<tr>
+<td><code>HoldHandPairSnapshot</code></td>
+<td>Represent both poses at one sample time</td>
+</tr>
+<tr>
+<td><code>HoldHandSnapshotBuffer</code></td>
+<td>Store the timeline, interpolate, extrapolate within limits, and decay prediction error</td>
+</tr>
+<tr>
+<td><code>HoldHandRuntimeController</code></td>
+<td>Consume the local recipient buffer and apply both poses together</td>
+</tr>
+<tr>
+<td><code>HoldHandObserverSyncController</code></td>
+<td>Manage observer pairs and apply buffered poses to both entities</td>
+</tr>
+<tr>
+<td><code>HoldHandIKRuntimeController / HoldHandIKPairState</code></td>
+<td>Validate IK sequences and smooth&#x2F;reconstruct remote local targets</td>
+</tr>
+</tbody></table>
+<h3 id="7-4-Networking-and-smoothing-improvements"><a href="#7-4-Networking-and-smoothing-improvements" class="headerlink" title="7.4 Networking and smoothing improvements"></a>7.4 Networking and smoothing improvements</h3><h4 id="7-4-1-Share-one-sample-time-for-both-players"><a href="#7-4-1-Share-one-sample-time-for-both-players" class="headerlink" title="7.4.1 Share one sample time for both players"></a>7.4.1 Share one sample time for both players</h4><p><strong>First consider displaying each received position immediately.</strong> Messages are discrete; without updates between them, the view pauses and jumps when the next arrives:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Limits of immediately displaying received network positions">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-0.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-0.svg" alt="Display both characters after receiving a paired position." width="900" height="490" loading="lazy"></a>
+    <figcaption>Display both characters after receiving a paired position.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-1.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-snap-1.svg" alt="The next message makes them jump to new positions, with no continuous motion between arrivals." width="900" height="490" loading="lazy"></a>
+    <figcaption>The next message makes them jump to new positions, with no continuous motion between arrivals.</figcaption>
+  </figure>
+</div>
+
+<p><strong>Fill intermediate states between adjacent positions.</strong> Save previous and next positions and display intermediate values each frame: interpolation. Knowing the next position requires delayed playback, adding a little display latency:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Continuous playback between network positions">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-0.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-0.svg" alt="The next position is known; show an earlier state first. Crosses mark received positions and icons the current display." width="900" height="490" loading="lazy"></a>
+    <figcaption>The next position is known; show an earlier state first. Crosses mark received positions and icons the current display.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-1.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/model-network-interpolate-1.svg" alt="Advance slightly toward the next sample every frame, updating both players together without waiting for another packet." width="900" height="490" loading="lazy"></a>
+    <figcaption>Advance slightly toward the next sample every frame, updating both players together without waiting for another packet.</figcaption>
+  </figure>
+</div>
+
+<p><strong>Give both players the same playback time.</strong> Independent interpolation can still stretch their spacing through different progress. Put poses from one calculation in a paired snapshot and sample both from one timeline.</p>
+<p>Sample time records when the initiator captured positions, arrival time when the packet reached this client, and playback cursor which instant is displayed. Both players share that cursor:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Successive shared-sample-time states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline.svg" alt="State 1: the cursor lies between 200 ms and 300 ms samples; both players use poses at 240 ms." width="1040" height="540" loading="lazy"></a>
+    <figcaption>State 1: the cursor lies between 200 ms and 300 ms samples; both players use poses at 240 ms.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline-next.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/snapshot-timeline-next.svg" alt="State 2: the cursor advances to 280 ms and both advance together, without diverging by separate arrivals." width="1040" height="540" loading="lazy"></a>
+    <figcaption>State 2: the cursor advances to 280 ms and both advance together, without diverging by separate arrivals.</figcaption>
+  </figure>
+</div>
+
+<p><code>HoldHandSnapshotBuffer</code> retains at most 64 paired snapshots. Between samples, positions interpolate linearly and rotations spherically. Both players always use one playback time, preventing independent trajectory errors from accumulating into arm separation.</p>
+<p>Three timelines show sender sampling, local arrival, and buffered playback. Arrivals may be uneven, but the cursor advances continuously and both players sample the same instant. Bottom icons represent sampled results, not map formation. Motion speed and interpolation progress use sender time.</p>
+<table>
+<thead>
+<tr>
+<th>View</th>
+<th>Playback</th>
+<th align="right">Interpolation delay</th>
+<th align="right">Maximum extrapolation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Local initiator</td>
+<td>Apply authoritative per-frame results directly</td>
+<td align="right">No network buffer</td>
+<td align="right">Unneeded</td>
+</tr>
+<tr>
+<td>Local recipient</td>
+<td>Apply both poses at one time after KCC update</td>
+<td align="right">0.06 s</td>
+<td align="right">0.03 s</td>
+</tr>
+<tr>
+<td>Observer</td>
+<td>Pair controller samples&#x2F;applies both each frame</td>
+<td align="right">0.09 s</td>
+<td align="right">0.1 s</td>
+</tr>
+</tbody></table>
+<p>Longer buffering absorbs more jitter but adds latency. Recipients and observers therefore have separate delays and extrapolation limits.</p>
+<h4 id="7-4-2-Continuous-playback-time-and-small-speed-corrections"><a href="#7-4-2-Continuous-playback-time-and-small-speed-corrections" class="headerlink" title="7.4.2 Continuous playback time and small speed corrections"></a>7.4.2 Continuous playback time and small speed corrections</h4><p>Playback advances using continuous local time while targeting a delay behind the latest sample. When buffer depth deviates by more than one position interval, about <code>±5%</code> playback-speed correction reduces drift, instead of repositioning on every packet.</p>
+<p>Even several packets in one frame cannot repeatedly jump playback progress. After long main-thread stalls or excessive lag, realign time to the latest sample minus configured delay and clear corrections.</p>
+<h4 id="7-4-3-Bounded-extrapolation-and-prediction-error-decay"><a href="#7-4-3-Bounded-extrapolation-and-prediction-error-decay" class="headerlink" title="7.4.3 Bounded extrapolation and prediction-error decay"></a>7.4.3 Bounded extrapolation and prediction-error decay</h4><p>During packet gaps, estimate velocity from the last two sender sample times and advance only for the configured duration. Extrapolate horizontally at at most <code>20 m/s</code>; hold latest height and rotation to avoid amplifying ground snaps or guessing turns.</p>
+<p>When a new sample corrects the predicted trajectory, record prediction differences at the same playback time and exponentially decay position&#x2F;rotation error each frame. Correction takes <code>max(0.05 s, interpolation delay)</code>, preserving continuity on arrival while returning gradually to authority.</p>
+<p>Explicit teleportation, large jumps, or sample gaps beyond resynchronization clear old trajectories and errors and rebuild the baseline. The current gap threshold is <code>1 s</code>. If no sample arrives by the extrapolation limit, prediction stops.</p>
+<h4 id="7-4-4-Tune-the-three-streams-independently"><a href="#7-4-4-Tune-the-three-streams-independently" class="headerlink" title="7.4.4 Tune the three streams independently"></a>7.4.4 Tune the three streams independently</h4><p><code>DataHoldHandControl</code> centralizes synchronization parameters. Current periodic settings are:</p>
+<table>
+<thead>
+<tr>
+<th>Stream</th>
+<th>Interval</th>
+<th>Content and strategy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Paired poses</td>
+<td>0.1 s, about 10 Hz</td>
+<td>Both roots, sample time, revision, and teleport flag</td>
+</tr>
+<tr>
+<td>Recipient base-layer refresh</td>
+<td>0.2 s, about 5 Hz</td>
+<td>Continuously update grounded movement parameters; ordinary animation requests may also trigger sends</td>
+</tr>
+<tr>
+<td>IK targets</td>
+<td>0.2 s, about 5 Hz</td>
+<td>Both local targets, weights, and connection state; smooth each frame remotely</td>
+</tr>
+</tbody></table>
+<p>Separate rates balance bandwidth, latency, and precision by responsibility. Teleports trigger immediate pose and animation broadcasts; recipient reporting reuses ordinary player mechanisms. These are periodic settings, not guaranteed arrival intervals.</p>
+<h4 id="7-4-5-Reject-stale-data-and-duplicate-driving"><a href="#7-4-5-Reject-stale-data-and-duplicate-driving" class="headerlink" title="7.4.5 Reject stale data and duplicate driving"></a>7.4.5 Reject stale data and duplicate driving</h4><p>Pose receivers validate mutual linkage, type, sample time, and <code>InteractionRevision</code>; buffers reject non-increasing sample times. IK compares wrap-aware <code>Sequence</code> values to reject duplicates and out-of-order targets.</p>
+<p>Ordinary player packets can update caches but cannot override active paired-pose control. Recipients apply both sampled poses together, and initiators drive their local recipient entities directly, avoiding additional smoothing of the same trajectory.</p>
+<p>Poses without sample times use target smoothing: recipients consume targets through <code>SmoothDamp</code> and use relative anchors for partners; observers smooth both targets separately. Valid <code>SampleTime</code> selects the timeline buffer described here.</p>
+<h4 id="7-4-6-Synchronize-and-reconstruct-local-IK-targets"><a href="#7-4-6-Synchronize-and-reconstruct-local-IK-targets" class="headerlink" title="7.4.6 Synchronize and reconstruct local IK targets"></a>7.4.6 Synchronize and reconstruct local IK targets</h4><p>Sending a world-space grip directly can leave hands at the last received point while interpolated bodies move ahead. Misaligned update timing makes hands appear to trail behind.</p>
+<p>Instead, record position and rotation relative to the initiator. Remote clients smooth relative changes, then reconstruct targets using currently displayed character roots:</p>
+<div class="holdhand-state-gallery" role="group" aria-label="Successive local IK target synchronization and reconstruction states">
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-local.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-local.svg" alt="State 1: record the target relative to the initiator root; both chains use the reconstructed shared position." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 1: record the target relative to the initiator root; both chains use the reconstructed shared position.</figcaption>
+  </figure>
+  <figure>
+    <a href="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-rebuilt.svg" target="_blank" rel="noopener" title="View the full-size diagram"><img src="/zh-CN/2026/在游戏开发中实现网络同步的双人牵手玩法/ik-sync-rebuilt.svg" alt="State 2: the displayed root moves, reconstructing the same local target at a new world position. Six nodes update while the local relationship remains unchanged." width="1040" height="650" loading="lazy"></a>
+    <figcaption>State 2: the displayed root moves, reconstructing the same local target at a new world position. Six nodes update while the local relationship remains unchanged.</figcaption>
+  </figure>
+</div>
+
+<p>The initiator sends root-relative IK positions and rotations. Remote clients smooth locally, reconstruct world targets using displayed roots, and pass them to both LimbIK solvers.</p>
+<p>The diagrams show translation; rotation uses the same root transformation. Remote target&#x2F;weight smoothing takes half the IK interval with a <code>0.01 s</code> minimum, currently <code>0.1 s</code>. Overall root movement passes directly to targets; filters handle relative pose changes.</p>
+<p>Remote clients run their own LimbIK and joint limits, not shared-sphere solving. Arms are released before the first IK packet. A valid pair receiving no further packets keeps consuming the last target. There is currently no independent IK timeout; pose extrapolation limits do not provide that protection.</p>
+<h3 id="7-5-Retesting-observer-views"><a href="#7-5-Retesting-observer-views" class="headerlink" title="7.5 Retesting observer views"></a>7.5 Retesting observer views</h3><p>After improving third-party stutter, designers and I retested on the previously problematic devices and confirmed better movement continuity for observers.</p>
+<p>The question was whether observers continuously see both players moving together. Local authoritative position and arm calculations must be stable, while remote snapshot playback must tolerate arrival jitter to convey the same following experience.</p>
+<h2 id="8-Runtime-boundaries-and-tuning-relationships"><a href="#8-Runtime-boundaries-and-tuning-relationships" class="headerlink" title="8. Runtime boundaries and tuning relationships"></a>8. Runtime boundaries and tuning relationships</h2><h3 id="8-1-Exceptions-and-fallback-behavior"><a href="#8-1-Exceptions-and-fallback-behavior" class="headerlink" title="8.1 Exceptions and fallback behavior"></a>8.1 Exceptions and fallback behavior</h3><table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Handling</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Both states have not arrived</td>
+<td>Local initialization can start; complete-pair receive validation and IK wait for mutual linkage</td>
+</tr>
+<tr>
+<td>Partner entity or Avatar not loaded</td>
+<td>Defer relevant movement and release IK until ready</td>
+</tr>
+<tr>
+<td>Out-of-order poses or another interaction</td>
+<td>Reject by sample time and revision</td>
+</tr>
+<tr>
+<td>Brief pose-packet gaps</td>
+<td>Bounded horizontal extrapolation, then stop prediction</td>
+</tr>
+<tr>
+<td>Teleport, large jump, or long sample interruption</td>
+<td>Clear trajectories&#x2F;corrections and rebuild playback</td>
+</tr>
+<tr>
+<td>Ground ray hits an excessive-height surface</td>
+<td>Retain pre-projection position without crossing height limits</td>
+</tr>
+<tr>
+<td>Shared contact unreachable</td>
+<td>Keep solving a compromise target with hard joint protection</td>
+</tr>
+<tr>
+<td>Gliding or supported personal actions</td>
+<td>Pause relevant IK and preserve stable references for recovery</td>
+</tr>
+<tr>
+<td>Recipient right-hand operation</td>
+<td>Yield that side’s IK to operation animation</td>
+</tr>
+<tr>
+<td>Partner leaves or room changes</td>
+<td>Stop hand-holding and clear state</td>
+</tr>
+</tbody></table>
+<p>Ray grounding handles height only, without wall avoidance or complete pathfinding. Joint limits do not implement body&#x2F;clothing collision constraints. These boundaries define suitable gameplay and acceptable palm gaps or pose changes during debugging.</p>
+<h3 id="8-2-What-each-smoothing-mechanism-controls"><a href="#8-2-What-each-smoothing-mechanism-controls" class="headerlink" title="8.2 What each smoothing mechanism controls"></a>8.2 What each smoothing mechanism controls</h3><table>
+<thead>
+<tr>
+<th>Smoothing or constraint</th>
+<th>Target</th>
+<th>Tuning relationship</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Proportional speed and stop-region deceleration</td>
+<td>Authoritative recipient position</td>
+<td>Pursuit speed versus near-target stability</td>
+</tr>
+<tr>
+<td>Orbital rotation smoothing and limits</td>
+<td>Formation offset direction</td>
+<td>Sharp-turn behavior versus orbit lag</td>
+</tr>
+<tr>
+<td>Grounding debounce and landing-height limits</td>
+<td>Ground-follow state and height</td>
+<td>Step-edge stability versus switching speed</td>
+</tr>
+<tr>
+<td>Velocity filtering and start&#x2F;stop thresholds</td>
+<td>Recipient animation parameters</td>
+<td>Stable gait versus start&#x2F;stop response</td>
+</tr>
+<tr>
+<td>Local contact smoothing</td>
+<td>Shared IK target</td>
+<td>Relative hand jitter versus contact response</td>
+</tr>
+<tr>
+<td>Joint smoothing and hard limits</td>
+<td>Shoulder, elbow, and wrist bones</td>
+<td>Natural poses versus palm precision</td>
+</tr>
+<tr>
+<td>Snapshot interpolation, bounded extrapolation, and error decay</td>
+<td>Remote paired poses</td>
+<td>Jitter tolerance versus display latency</td>
+</tr>
+<tr>
+<td>Remote local IK smoothing</td>
+<td>Received hand targets and weights</td>
+<td>Send rate versus visual continuity</td>
+</tr>
+</tbody></table>
+<p>These mechanisms operate on different data and reference frames. First locate whether jitter originates in authoritative motion, animation parameters, bone solving, or remote playback, then tune that layer. Stacked smoothing should not conceal update-order or control-ownership conflicts.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/en/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/en/tags/%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5/" rel="tag"># 网络同步</a>
+              <a href="/en/tags/IK/" rel="tag"># IK</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-08-12-The-Evolution-of-Unity-Autorun-Tool/" rel="prev" title="The Evolution of Unity-Autorun-Tool (2026)">
+                  <i class="fa fa-angle-left"></i> The Evolution of Unity-Autorun-Tool (2026)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-09-06-An-Unattended-All-in-One-Timelapse-Workflow/" rel="next" title="An Unattended All-in-One Timelapse Workflow">
+                  An Unattended All-in-One Timelapse Workflow <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

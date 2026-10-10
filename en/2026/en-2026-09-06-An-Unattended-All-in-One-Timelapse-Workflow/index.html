@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/en/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="I built an automated workflow around TimelapseManager: configure the camera, dependencies, and schedule, then create a task to capture brackets, download photos, fuse HDR, deflicker, and export vi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="An Unattended All-in-One Timelapse Workflow">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2026/en-2026-09-06-An-Unattended-All-in-One-Timelapse-Workflow/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="I built an automated workflow around TimelapseManager: configure the camera, dependencies, and schedule, then create a task to capture brackets, download photos, fuse HDR, deflicker, and export vi">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/sunset-score-examples.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/nikon-z30-bracketing.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-webhook.webp">
+<meta property="article:published_time" content="2026-09-06T05:10:45.000Z">
+<meta property="article:modified_time" content="2026-09-06T05:10:45.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="延时摄影">
+<meta property="article:tag" content="摄影工具">
+<meta property="article:tag" content="自动化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2026/en-2026-09-06-An-Unattended-All-in-One-Timelapse-Workflow/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2026/en-2026-09-06-An-Unattended-All-in-One-Timelapse-Workflow/","path":"en/2026/en-2026-09-06-An-Unattended-All-in-One-Timelapse-Workflow/","title":"An Unattended All-in-One Timelapse Workflow"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>An Unattended All-in-One Timelapse Workflow | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/en/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/en/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/en/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/en/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-categories"><a href="/en/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-游戏开发"><a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>Game Development</a></li><li class="menu-item menu-item-摄影技术"><a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>Photography</a></li><li class="menu-item menu-item-ai技术"><a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI Technology</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>English</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-09-06-An-Unattended-All-in-One-Timelapse-Workflow/" selected>
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-09-06-%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/">
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-One-task-produces-a-video-and-selectable-source-material"><span class="nav-number">1.</span> <span class="nav-text">1. One task produces a video and selectable source material</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Video-and-album-output"><span class="nav-number">1.1.</span> <span class="nav-text">Video and album output</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sunset-selection-results"><span class="nav-number">1.2.</span> <span class="nav-text">Sunset selection results</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Architecture-one-entry-point-specialized-tools"><span class="nav-number">2.</span> <span class="nav-text">2. Architecture: one entry point, specialized tools</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Task-management-keeping-one-click-startup-running"><span class="nav-number">3.</span> <span class="nav-text">3. Task management: keeping one-click startup running</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Presets-create-explicit-tasks"><span class="nav-number">3.1.</span> <span class="nav-text">Presets create explicit tasks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Separate-the-interface-from-execution"><span class="nav-number">3.2.</span> <span class="nav-text">Separate the interface from execution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Image-processing-from-brackets-to-stable-timelapse-frames"><span class="nav-number">4.</span> <span class="nav-text">4. Image processing: from brackets to stable timelapse frames</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Exposure-groups-connect-capture-and-processing"><span class="nav-number">4.1.</span> <span class="nav-text">Exposure groups connect capture and processing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Include-capture-and-download-time-in-the-interval"><span class="nav-number">4.2.</span> <span class="nav-text">Include capture and download time in the interval</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fusion-deflickering-and-encoding-have-different-roles"><span class="nav-number">4.3.</span> <span class="nav-text">Fusion, deflickering, and encoding have different roles</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-A-parallel-pipeline-capture-fuse-and-score-concurrently"><span class="nav-number">5.</span> <span class="nav-text">5. A parallel pipeline: capture, fuse, and score concurrently</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Progress-comes-from-actual-stage-results"><span class="nav-number">5.1.</span> <span class="nav-text">Progress comes from actual stage results</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Local-visual-scoring-and-material-retention"><span class="nav-number">6.</span> <span class="nav-text">6. Local visual scoring and material retention</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#From-individual-scores-to-sunset-intervals"><span class="nav-number">6.1.</span> <span class="nav-text">From individual scores to sunset intervals</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Make-scores-produce-explainable-archive-decisions"><span class="nav-number">6.2.</span> <span class="nav-text">Make scores produce explainable archive decisions</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Recovery-dependencies-and-notifications-for-long-runs"><span class="nav-number">7.</span> <span class="nav-text">7. Recovery, dependencies, and notifications for long runs</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Keep-captured-material-when-processing-fails"><span class="nav-number">7.1.</span> <span class="nav-text">Keep captured material when processing fails</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Make-task-dependencies-identifiable"><span class="nav-number">7.2.</span> <span class="nav-text">Make task dependencies identifiable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Review-results-away-from-the-computer"><span class="nav-number">7.3.</span> <span class="nav-text">Review results away from the computer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Configure-once-and-reuse"><span class="nav-number">8.</span> <span class="nav-text">8. Configure once and reuse</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-Two-companion-tools-detailed-editing-and-RAW-organization"><span class="nav-number">9.</span> <span class="nav-text">9. Two companion tools: detailed editing and RAW organization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-Evolution-and-version-references"><span class="nav-number">10.</span> <span class="nav-text">10. Evolution and version references</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/en/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/en/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/en/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2026/en-2026-09-06-An-Unattended-All-in-One-Timelapse-Workflow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="An Unattended All-in-One Timelapse Workflow | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          An Unattended All-in-One Timelapse Workflow
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-09-06 13:10:45" itemprop="dateCreated datePublished" datetime="2026-09-06T13:10:45+08:00">2026-09-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">摄影技术</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>I built an automated workflow around <strong>TimelapseManager</strong>: configure the camera, dependencies, and schedule, then create a task to capture brackets, download photos, fuse HDR, deflicker, and export video.</p>
+</div>
+
+<div class="post-intro-media">
+
+<img src="/zh-CN/2026/挂机即可使用的延时摄影All-In-One工作流/timelapse-manager-overview.webp" alt="Timelapse Manager overview showing task status, current stages, and managed processes" style="width:680px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
+
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<p>Optional sunset scoring finds colorful intervals, rates albums, and sends results through WeCom.</p>
+<p>The tools now support one-off, daily recurring, and continuous batch tasks. Capture, HDR fusion, and scoring can run concurrently, and background tasks continue after the management window closes. This article focuses on the outputs and the task model, image processing, and recovery design behind the automation.</p>
+<p><em>The overview puts tasks, states, current stages, and workers in one interface. It comes from the repository’s UI demonstration; task data is illustrative.</em></p>
+<h2 id="1-One-task-produces-a-video-and-selectable-source-material"><a href="#1-One-task-produces-a-video-and-selectable-source-material" class="headerlink" title="1. One task produces a video and selectable source material"></a>1. One task produces a video and selectable source material</h2><p>For a fixed camera recording dusk, I want the program to perform these operations after I set the schedule:</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Scheduled capture and download</td>
+<td>Local photo sequences numbered by exposure group</td>
+</tr>
+<tr>
+<td>Exposure fusion and deflickering</td>
+<td>Fused HDR frames and brightness-smoothed video input</td>
+</tr>
+<tr>
+<td>Video encoding</td>
+<td>An H.265-encoded MP4 timelapse</td>
+</tr>
+<tr>
+<td>Optional sunset analysis</td>
+<td>Scores and reasons per sample, the highest-scoring photo, and sunset intervals</td>
+</tr>
+<tr>
+<td>Archiving and notifications</td>
+<td>Albums organized by date and time, maximum-score directory labels, and text&#x2F;image notifications</td>
+</tr>
+</tbody></table>
+<p>Suppose a task runs from 16:00 to 20:00, capturing a three-photo group every six seconds. Ideally it produces about 2,400 groups and 7,200 JPGs. Fusing each group into one frame and encoding at 30 fps compresses four hours into about 80 seconds. These are material-count and duration estimates; exposure, download time, and interruptions affect the actual frame count.</p>
+<h3 id="Video-and-album-output"><a href="#Video-and-album-output" class="headerlink" title="Video and album output"></a>Video and album output</h3><p>A completed, cleaned, and archived task with a maximum sunset score of 4 might retain:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">AutoTimelapse/</span><br><span class="line">└── 2026-09-06-S4/</span><br><span class="line">    └── 1600-2000-S4/</span><br><span class="line">        ├── hdr_enfuse/</span><br><span class="line">        │   ├── hdr_00001.jpg</span><br><span class="line">        │   ├── ...</span><br><span class="line">        │   └── .sunsetscore-score.json</span><br><span class="line">        └── hdr_video/</span><br><span class="line">            └── hdr_timelapse.mp4</span><br></pre></td></tr></table></figure>
+
+<p>This is an illustrative structure. <code>hdr_enfuse</code> holds fused frames, <code>hdr_video</code> holds the video, and the score file retains analysis. <code>S4</code> on date and time directories makes valuable periods visible in the file manager. When several marked albums share a day, the outer date directory uses their maximum score.</p>
+<p>Processing also produces original exposure groups and intermediate <code>hdr_deflick</code> frames. Task cleanup settings determine whether to retain them, allowing direct video review while keeping HDR sequences worth further editing.</p>
+<h3 id="Sunset-selection-results"><a href="#Sunset-selection-results" class="headerlink" title="Sunset selection results"></a>Sunset selection results</h3><p>These actual SunsetScore examples come from the same timelapse sequence. Ordinary white&#x2F;gray clouds score 1, softer colored clouds score 3, and widespread vivid cloud coloring scores 4.</p>
+<img src="/zh-CN/2026/挂机即可使用的延时摄影All-In-One工作流/sunset-score-examples.webp" alt="SunsetScore examples from one sequence: scores 1, 3, and 4 from left to right" style="width:760px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
+
+<p><em>Original score labels are retained, arranged from low to high. This example set contains no score-5 photo.</em></p>
+<p>For daily fixed-camera recording, selection reduces opening folders and searching frame by frame for sunset color. The video supports a quick review; scores and intervals identify material worth a closer look.</p>
+<h2 id="2-Architecture-one-entry-point-specialized-tools"><a href="#2-Architecture-one-entry-point-specialized-tools" class="headerlink" title="2. Architecture: one entry point, specialized tools"></a>2. Architecture: one entry point, specialized tools</h2><p>All projects live in the GitHub <a href="https://github.com/hanwenphotograph">Hanwen Photograph</a> organization. <a href="https://github.com/hanwenphotograph/Timelapse-Auto-Script">TimelapseManager</a> offers both GUI and CLI; its repository is still named <code>Timelapse-Auto-Script</code>.</p>
+<p>Manager schedules tasks, manages processes, aggregates progress, and handles results. Specialized tools perform image processing, connected through command lines, files, and public event protocols:</p>
+<pre>
+<code class="mermaid">
+
+flowchart TB
+    UI[&quot;TimelapseManager GUI &#x2F; CLI&quot;] --&gt; M[&quot;Task service and background workers&lt;br&#x2F;&gt;Configuration, scheduling, processes, logs&quot;]
+    M --&gt;|Launch and monitor| C[&quot;Camera Timelapse Controller&lt;br&#x2F;&gt;Camera control with gphoto2&quot;]
+    M --&gt;|Launch and monitor| B[&quot;Bracketlapse&lt;br&#x2F;&gt;Optional alignment and enfuse fusion&quot;]
+    C --&gt;|Complete stable exposure groups| B
+    B --&gt;|HDR sequence| D[&quot;Simple Deflicker&lt;br&#x2F;&gt;Brightness deflickering&quot;]
+    D --&gt; V[&quot;FFmpeg&lt;br&#x2F;&gt;H.265 video&quot;]
+    B --&gt;|hdr_ready forwarded by Manager| S[&quot;SunsetScore&lt;br&#x2F;&gt;Persistent local scoring service&quot;]
+    S --&gt; A[&quot;Manager result handling&lt;br&#x2F;&gt;Album labels, HDR retention, notifications&quot;]
+</code>
+</pre>
+
+<p>Bracketlapse organizes exposure fusion, deflickering, and encoding; SunsetScore handles directory sampling, model inference, and score aggregation. Manager coordinates through public interfaces. Each tool can run independently, and its internals can be replaced or improved.</p>
+<p>Lumalapse and NEF Filter provide separate paths for detailed RAW editing and organization after selection. They are currently used independently. The main capture pipeline directly connects camera control, Bracketlapse, and SunsetScore; Simple Deflicker participates as a Bracketlapse post-processing dependency.</p>
+<h2 id="3-Task-management-keeping-one-click-startup-running"><a href="#3-Task-management-keeping-one-click-startup-running" class="headerlink" title="3. Task management: keeping one-click startup running"></a>3. Task management: keeping one-click startup running</h2><h3 id="Presets-create-explicit-tasks"><a href="#Presets-create-explicit-tasks" class="headerlink" title="Presets create explicit tasks"></a>Presets create explicit tasks</h3><p>Manager offers four creation presets for ad hoc capture, daily schedules, and long-term recording:</p>
+<table>
+<thead>
+<tr>
+<th>Preset</th>
+<th>Use case</th>
+<th>Execution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>manual</code></td>
+<td>A specified day and time window</td>
+<td>Set directory, start&#x2F;end dates and times, and capture interval</td>
+</tr>
+<tr>
+<td><code>scheduled_once</code></td>
+<td>The next morning or dusk</td>
+<td>Generate one task from project settings</td>
+</tr>
+<tr>
+<td><code>scheduled_loop</code></td>
+<td>Daily repeated capture</td>
+<td>Automatically create and start a successor after each run</td>
+</tr>
+<tr>
+<td><code>eternal</code></td>
+<td>Continuous recording</td>
+<td>Archive complete exposure groups in batches and process them sequentially in the background</td>
+</tr>
+</tbody></table>
+<p>Scheduled presets expand into explicit <code>manual</code> tasks at creation; looping presets also carry task-chain information. Each run has its own time range, directory, status, and logs, so problems can be traced to one capture.</p>
+<p>Continuous mode divides material into batches of complete exposure groups. Capture keeps producing photos while the background processes archived batches. Group boundaries prevent the three photos of one exposure set from landing in different directories.</p>
+<h3 id="Separate-the-interface-from-execution"><a href="#Separate-the-interface-from-execution" class="headerlink" title="Separate the interface from execution"></a>Separate the interface from execution</h3><p>GUI and CLI share a task service; independent background workers perform capture. Definitions and runtime state are persisted separately:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config/tasks/&lt;task-id&gt;.yaml       Task definition</span><br><span class="line">.timelapse/tasks/&lt;task-id&gt;/</span><br><span class="line">├── state.json                   State, stage, and progress</span><br><span class="line">└── task.log                     Runtime log</span><br></pre></td></tr></table></figure>
+
+<p>Closing the GUI does not stop capture. Reopening restores monitoring and control. Startup validates settings and dependencies; a startup lock and task-state checks prevent duplicate launches.</p>
+<p>Stopping has several meanings: end capture early and process existing material, stop after the current task or batch, or stop immediately. During dusk recording, these choices create different material and processing boundaries; they cannot all be reduced to terminating a process.</p>
+<h2 id="4-Image-processing-from-brackets-to-stable-timelapse-frames"><a href="#4-Image-processing-from-brackets-to-stable-timelapse-frames" class="headerlink" title="4. Image processing: from brackets to stable timelapse frames"></a>4. Image processing: from brackets to stable timelapse frames</h2><h3 id="Exposure-groups-connect-capture-and-processing"><a href="#Exposure-groups-connect-capture-and-processing" class="headerlink" title="Exposure groups connect capture and processing"></a>Exposure groups connect capture and processing</h3><p><a href="https://github.com/hanwenphotograph/Camera-Timelapse-Controller">Camera Timelapse Controller</a> uses <code>gphoto2</code>. By default it captures three brackets using the camera’s configured AEB mode; it also supports manual exposure-compensation changes for individual shots.</p>
+<img src="/zh-CN/2026/挂机即可使用的延时摄影All-In-One工作流/nikon-z30-bracketing.webp" alt="Nikon Z30 interval capture AEB settings: an example of three photos with a 1.0 increment" style="width:500px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
+
+<p><em>The Nikon Z30 settings photo from Bracketlapse shows where to configure three-shot bracketing; values are examples.</em></p>
+<p>Downloads use “group number + member number,” such as <code>0001_01.jpg</code>, <code>0001_02.jpg</code>, and <code>0001_03.jpg</code>. An existing directory can resume from its largest group number. This naming also gives post-processing an explicit grouping protocol.</p>
+<p>Bracketlapse accepts a group only when members <code>01</code> through <code>N</code> are complete and files remain stable across successive scans. Temporary downloads such as <code>captXXXX.jpg</code> and incomplete groups are ignored. A missing photo in one group does not prevent later group numbers from being processed.</p>
+<p><code>processing.group_size</code> defines <code>N</code>, falling back to <code>eternal.images_per_group</code> when not set separately. It must match the actual number of captured photos.</p>
+<h3 id="Include-capture-and-download-time-in-the-interval"><a href="#Include-capture-and-download-time-in-the-interval" class="headerlink" title="Include capture and download time in the interval"></a>Include capture and download time in the interval</h3><p>The capture interval is the target gap between successive group start times. For six seconds, if capture and download take three seconds, wait about three more. If they already exceed six seconds, log a warning and start the next group immediately.</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wait = max(0, target interval - capture and download time for this group)</span><br></pre></td></tr></table></figure>
+
+<p>This avoids waiting an additional fixed six seconds after every capture and drifting from the configured cadence. Camera and transfer speed still limit throughput; a smaller setting does not guarantee equally spaced photos at that interval.</p>
+<h3 id="Fusion-deflickering-and-encoding-have-different-roles"><a href="#Fusion-deflickering-and-encoding-have-different-roles" class="headerlink" title="Fusion, deflickering, and encoding have different roles"></a>Fusion, deflickering, and encoding have different roles</h3><p><a href="https://github.com/hanwenphotograph/Bracketlapse">Bracketlapse</a> uses Hugin’s <code>enfuse</code> to combine exposures into a frame with more suitable highlights and shadows. Optional <code>align_image_stack</code> alignment handles slight camera movement.</p>
+<p>Exposure fusion handles tonal choices within one frame. Timelapse playback also needs inter-frame brightness consistency. <a href="https://github.com/hanwenphotograph/simple-deflicker">Simple Deflicker</a> builds brightness histograms, derives target distributions with a moving average, then uses histogram matching to smooth global flicker while accommodating the gradual change of sunset.</p>
+<p>This work maintains a fork of <a href="https://github.com/struffel/simple-deflicker">struffel&#x2F;simple-deflicker</a>, adding histogram smoothing adjustments, CLI builds, and macOS support. It handles global JPG&#x2F;PNG brightness flicker, not rolling bands from indoor lights.</p>
+<p>FFmpeg finally creates an H.265 MP4 from deflickered frames. “HDR” here describes the fused bracketed imagery. HDR10 or HLG video output depends on the color and encoding pipeline; <code>enfuse</code> and H.265 alone do not establish it.</p>
+<h2 id="5-A-parallel-pipeline-capture-fuse-and-score-concurrently"><a href="#5-A-parallel-pipeline-capture-fuse-and-score-concurrently" class="headerlink" title="5. A parallel pipeline: capture, fuse, and score concurrently"></a>5. A parallel pipeline: capture, fuse, and score concurrently</h2><p>Completed groups can enter processing immediately during long captures. Bracketlapse’s in-place <code>standby</code> mode keeps a listener running and emits a standard-output event after every fusion:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BRACKETLAPSE_EVENT &#123;&quot;event&quot;:&quot;hdr_ready&quot;,&quot;frame_number&quot;:1,&quot;path&quot;:&quot;/photos/hdr_enfuse/hdr_00001.jpg&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This says an HDR frame is available. Manager submits a scan request to SunsetScore’s persistent JSONL service; that service scans the directory and processes only new photos at sampling positions. For example:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;id&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span><span class="attr">&quot;command&quot;</span><span class="punctuation">:</span><span class="string">&quot;scan&quot;</span><span class="punctuation">,</span><span class="attr">&quot;session&quot;</span><span class="punctuation">:</span><span class="string">&quot;dusk-20260906&quot;</span><span class="punctuation">,</span><span class="attr">&quot;directory&quot;</span><span class="punctuation">:</span><span class="string">&quot;/photos/hdr_enfuse&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>Submitting <code>scan</code> does not wait for all scoring to finish, so capture and fusion continue. At task completion, Manager sends <code>finalize</code> and waits for final scanning, aggregation, and score-file writing. Sessions distinguish directories; a task and its continuous batches reuse a persistent model, reducing repeated process startup and model loading.</p>
+<p>There are two processing granularities: complete exposure groups can be fused and scored incrementally, while deflickering and final video encoding finish after HDR production ends. Scoring can overlap processing completion; final material handling uses the complete result.</p>
+<h3 id="Progress-comes-from-actual-stage-results"><a href="#Progress-comes-from-actual-stage-results" class="headerlink" title="Progress comes from actual stage results"></a>Progress comes from actual stage results</h3><p>Capture, HDR, scoring, and video maintain separate progress. Video uses FFmpeg <code>video_started</code>, <code>video_progress</code>, and <code>video_completed</code> events containing finished and total frame counts. Completion is emitted only after a successful exit.</p>
+<p>The interface can therefore show that capture is ongoing, how many HDR groups are done, and how many frames are encoded. Throughput still depends on exposure, downloads, CPU&#x2F;GPU, and disk. Parallelism reduces waiting without promising a fixed real-time processing speed.</p>
+<h2 id="6-Local-visual-scoring-and-material-retention"><a href="#6-Local-visual-scoring-and-material-retention" class="headerlink" title="6. Local visual scoring and material retention"></a>6. Local visual scoring and material retention</h2><h3 id="From-individual-scores-to-sunset-intervals"><a href="#From-individual-scores-to-sunset-intervals" class="headerlink" title="From individual scores to sunset intervals"></a>From individual scores to sunset intervals</h3><p><a href="https://github.com/hanwenphotograph/Sunset-Score">SunsetScore</a> uses a local Qwen3-VL model with llama.cpp. The model selects visual categories; the program maps them to scores from 0 to 5 to keep scores and reasons aligned. After initial resource preparation, scoring can run offline.</p>
+<p>The default interval is ten photos: samples 1, 11, 21, 31, and so on. Scores mainly describe visible cloud coloration. Ordinary white clouds, a sunset alone, or a warm horizon do not meet the colorful-cloud threshold. Clearly colored clouds can reach 3; stronger color or wider coverage scores higher.</p>
+<p>Any sample reaching 3 produces <code>has_sunset = true</code>. Adjacent high-scoring samples form intervals, split by low scores or failures. Average and maximum scores describe the result; the maximum also labels the album.</p>
+<p>Using any clear sample as evidence preserves short-lived color. Hours of ordinary sky should not dilute a few worthwhile minutes. Sampling can still miss shorter changes, so adjust the interval to the capture cadence.</p>
+<p>The score describes visual features, not probability or a photograph’s overall value. The model does not read location or EXIF time, so visually similar dawn clouds can also score highly.</p>
+<h3 id="Make-scores-produce-explainable-archive-decisions"><a href="#Make-scores-produce-explainable-archive-decisions" class="headerlink" title="Make scores produce explainable archive decisions"></a>Make scores produce explainable archive decisions</h3><p>Manager uses analysis to decide HDR retention:</p>
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th>Handling</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Colorful sunset detected</td>
+<td>Retain <code>hdr_enfuse</code>; append the maximum <code>-Sx</code> score to managed date&#x2F;time albums</td>
+</tr>
+<tr>
+<td>Successful scoring without a sunset</td>
+<td>Mark <code>hdr_enfuse</code> and clean it after three days</td>
+</tr>
+<tr>
+<td>Analysis failed, or failed samples exist without a detected sunset</td>
+<td>Retain HDR and report scoring failure</td>
+</tr>
+</tbody></table>
+<p>Directories without a sunset receive <code>.timelapse-hdr-enfuse-delete</code> with a timezone-aware deadline. Manager scans <code>auto_root</code> on service initialization and later task-list checks, at most once a minute. It handles only valid, expired markers on <code>hdr_enfuse</code>. If no checks run during that period, deletion occurs during a later check.</p>
+<p>The three-day window allows review and separate saving. This policy covers only marked HDR directories. Original photos, deflickered intermediate frames, and video follow their respective task cleanup settings.</p>
+<h2 id="7-Recovery-dependencies-and-notifications-for-long-runs"><a href="#7-Recovery-dependencies-and-notifications-for-long-runs" class="headerlink" title="7. Recovery, dependencies, and notifications for long runs"></a>7. Recovery, dependencies, and notifications for long runs</h2><h3 id="Keep-captured-material-when-processing-fails"><a href="#Keep-captured-material-when-processing-fails" class="headerlink" title="Keep captured material when processing fails"></a>Keep captured material when processing fails</h3><p>Capture, processing, and task completion are distinct states. If Bracketlapse exits unexpectedly during a finite capture, Manager records recovery as needed, lets the camera finish, and reruns recovery processing over the final photos with overwrite enabled.</p>
+<p>If the finite task still fails, cleanup is skipped and originals retained. Scoring failure must likewise not count as “no sunset,” or inference faults become deletion criteria. These rules protect material before declaring task success.</p>
+<p>After a successful download, the camera-control tool deletes the corresponding camera copy. The local download directory therefore owns original preservation, making failure and cleanup boundaries particularly important.</p>
+<h3 id="Make-task-dependencies-identifiable"><a href="#Make-task-dependencies-identifiable" class="headerlink" title="Make task dependencies identifiable"></a>Make task dependencies identifiable</h3><p>Manager stores workflow tools, Python environments, and scoring resources under the application’s <code>.timelapse/dependencies/</code>. Tasks resolve commands there, reducing differences from global <code>PATH</code> and other Python environments.</p>
+<p>The Package Management page checks and installs components. For our tools exposing build information, it shows version, source branch, and build time. Camera Timelapse Controller, Bracketlapse, and SunsetScore updates can select branches, helping identify the exact tool versions a task used.</p>
+<p>The GUI supports Windows, macOS, and Linux. Actual camera control depends on <code>gphoto2</code> support for that camera and platform. The current main flow requires Bracketlapse <strong>0.4.1</strong> or later and optional SunsetScore <strong>0.12.0</strong> or later.</p>
+<h3 id="Review-results-away-from-the-computer"><a href="#Review-results-away-from-the-computer" class="headerlink" title="Review results away from the computer"></a>Review results away from the computer</h3><p>A WeCom webhook sends task states, score summaries, and the highest-scoring photo. Logs diagnose the process, while notifications bring completed results to the place where I normally check messages.</p>
+<img src="/zh-CN/2026/挂机即可使用的延时摄影All-In-One工作流/timelapse-manager-webhook.webp" alt="Timelapse Manager webhook settings with text and image test controls" style="width:680px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
+
+<p><em>The page supports text and image tests; the robot address uses a <code>YOUR_KEY</code> placeholder.</em></p>
+<h2 id="8-Configure-once-and-reuse"><a href="#8-Configure-once-and-reuse" class="headerlink" title="8. Configure once and reuse"></a>8. Configure once and reuse</h2><p>First prepare camera-control and processing components in Package Management. For scoring, also prepare SunsetScore and model resources. Confirm directories and schedules in Configuration Center, then use Task Management to create and start tasks.</p>
+<p>Key project settings are shown below; retain other fields from the program’s complete generated configuration:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">auto_root:</span> <span class="string">~/Pictures/AutoTimelapse</span></span><br><span class="line"><span class="attr">capture_interval_seconds:</span> <span class="number">6</span></span><br><span class="line"></span><br><span class="line"><span class="attr">morning:</span></span><br><span class="line">  <span class="attr">start_at:</span> <span class="string">&#x27;03:00&#x27;</span></span><br><span class="line">  <span class="attr">end_at:</span> <span class="string">&#x27;09:00&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">dusk:</span></span><br><span class="line">  <span class="attr">start_at:</span> <span class="string">&#x27;16:00&#x27;</span></span><br><span class="line">  <span class="attr">end_at:</span> <span class="string">&#x27;20:00&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">sunset_score:</span></span><br><span class="line">  <span class="attr">interval:</span> <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="attr">eternal:</span></span><br><span class="line">  <span class="attr">batch_groups:</span> <span class="number">2000</span></span><br><span class="line">  <span class="attr">images_per_group:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>Morning and dusk are fixed configured windows and should be adjusted by season and location. <code>eternal.batch_groups</code> controls continuous batch size; finite scheduled tasks use start&#x2F;end times for their capture range.</p>
+<p>For everyday use, <code>scheduled_loop</code> chains morning and dusk tasks. Use <code>scheduled_once</code> for only the next run and <code>manual</code> for a particular day and time. The CLI can inspect the environment and background status:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python timelapse.py self-test</span><br><span class="line">python timelapse.py task list</span><br><span class="line">python timelapse.py process list</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-Two-companion-tools-detailed-editing-and-RAW-organization"><a href="#9-Two-companion-tools-detailed-editing-and-RAW-organization" class="headerlink" title="9. Two companion tools: detailed editing and RAW organization"></a>9. Two companion tools: detailed editing and RAW organization</h2><p><a href="https://github.com/hanwenphotograph/Lumalapse">Lumalapse</a> provides RAW sequence import, exposure curves, keyframe color grading, and video export for material needing detailed adjustments. It decodes in linear space through LibRaw&#x2F;rawpy, computes curves in the <code>log2</code> brightness domain, and uses the difference between the smoothed target and measured curves as per-frame EV compensation, then adds manual keyframe exposure adjustments.</p>
+<p>This combines deflickering with deliberately designed brightness changes while retaining highlight, shadow, and white-balance controls. Analysis and keyframes are cached in the material directory’s <code>.lumalapse/</code> for reopening and continued editing.</p>
+<p><a href="https://github.com/hanwenphotograph/NEF-Filter">NEF Filter</a> applies JPG selection to Nikon RAW files: it finds NEFs without matching JPGs, displays the proposed deletion list, and waits for confirmation by default. It supports separate JPG and NEF directories and scans non-recursively by default, fitting post-selection organization.</p>
+<p>Both are independent companion tools. The automated main flow handles capture through initial selection; worthwhile material can continue into more detailed editing and organization.</p>
+<h2 id="10-Evolution-and-version-references"><a href="#10-Evolution-and-version-references" class="headerlink" title="10. Evolution and version references"></a>10. Evolution and version references</h2><p>The implementation passed through three main stages: individual camera-control, bracket-fusion, and deflickering capabilities in June; a task manager, GUI, and scoring entry point in July; and incremental processing, persistent models, recovery, and delayed cleanup in August–September. Three choices summarize the resulting design: exchange complete exposure groups, record execution as independent tasks, and base archiving on explicit processing results.</p>
+<p>The following versions correspond to this article and support interface checks and configuration reproduction:</p>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Reference version</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/hanwenphotograph/Timelapse-Auto-Script">TimelapseManager &#x2F; Timelapse-Auto-Script</a></td>
+<td><a href="https://github.com/hanwenphotograph/Timelapse-Auto-Script/tree/134ddef65b9504724b267845c784f5b8512f1a7c">134ddef</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/Camera-Timelapse-Controller">Camera Timelapse Controller</a></td>
+<td><a href="https://github.com/hanwenphotograph/Camera-Timelapse-Controller/tree/510c20023c0d97fb65787a863ad41d687a3d9f6f">510c200</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/Bracketlapse">Bracketlapse</a></td>
+<td><a href="https://github.com/hanwenphotograph/Bracketlapse/tree/3a6bf7dec66ade332fcba50e95e62fddb2053947">3a6bf7d</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/Lumalapse">Lumalapse</a></td>
+<td><a href="https://github.com/hanwenphotograph/Lumalapse/tree/58d51926ee3cefeac1757b74c6d66d88666b104d">58d5192</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/simple-deflicker">Simple Deflicker maintained fork</a></td>
+<td><a href="https://github.com/hanwenphotograph/simple-deflicker/tree/6981a617671fedf29c67f47551a1bd6f4b99ee1a">6981a61</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/NEF-Filter">NEF Filter</a></td>
+<td><a href="https://github.com/hanwenphotograph/NEF-Filter/tree/95ded140366c967e695a700a7ea6b62ddd75c2cb">95ded14</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/Sunset-Score">SunsetScore</a></td>
+<td><a href="https://github.com/hanwenphotograph/Sunset-Score/tree/0cdce29d07a33e98d6e1d25877545ee63c702deb">0cdce29</a></td>
+</tr>
+</tbody></table>
+<p>UI screenshots come from <a href="https://github.com/hanwenphotograph/Timelapse-Auto-Script/tree/134ddef65b9504724b267845c784f5b8512f1a7c/docs/images">TimelapseManager documentation images</a>, the camera photo from <a href="https://github.com/hanwenphotograph/Bracketlapse/tree/3a6bf7dec66ade332fcba50e95e62fddb2053947/res">Bracketlapse resources</a>, and scoring examples from <a href="https://github.com/hanwenphotograph/Sunset-Score/tree/0cdce29d07a33e98d6e1d25877545ee63c702deb/docs/images/score-examples">SunsetScore example images</a>. Local illustrations only undergo format conversion, resizing, and side-by-side layout.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/en/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/" rel="tag"># 自动化</a>
+              <a href="/en/tags/%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1/" rel="tag"># 延时摄影</a>
+              <a href="/en/tags/%E6%91%84%E5%BD%B1%E5%B7%A5%E5%85%B7/" rel="tag"># 摄影工具</a>
+              <a href="/en/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-09-01-Network-Synchronized-Two-Player-Hand-Holding/" rel="prev" title="Implementing Network-Synchronized Two-Player Hand-Holding in a Game">
+                  <i class="fa fa-angle-left"></i> Implementing Network-Synchronized Two-Player Hand-Holding in a Game
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-09-22-Hanwens-WePie-Career-Chronicle/" rel="next" title="Hanwen&#39;s WePie Career Chronicle">
+                  Hanwen's WePie Career Chronicle <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

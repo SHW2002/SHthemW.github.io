@@ -133,12 +133,16 @@
     </label>
     <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="选择语言">
       
-        <option value="zh-CN" data-href="/" selected>
+        <option value="zh-CN" data-href="/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/" selected>
           简体中文
         </option>
       
-        <option value="en" data-href="/en/">
+        <option value="en" data-href="/en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/">
           English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-03-09-Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/">
+          繁體中文
         </option>
       
     </select>
@@ -295,7 +299,7 @@
 <h2 id="TimelineAsset-与绑定信息是两部分"><a href="#TimelineAsset-与绑定信息是两部分" class="headerlink" title="TimelineAsset 与绑定信息是两部分"></a>TimelineAsset 与绑定信息是两部分</h2><p>TimelineAsset 保存轨道、片段和时间等内容，但一条轨道究竟控制场景中的哪个对象，通常由 PlayableDirector 保存。</p>
 <p>例如一个 AnimationTrack 需要绑定 Animator，一个 ActivationTrack 需要绑定 GameObject。把 TimelineAsset 从 Director 上取下来再动态加载回来，并不会凭空知道之前拖进去的是哪一个场景对象。</p>
 <p>因此需要一起解决两件事：资源如何按需加载，以及加载后如何恢复轨道目标。</p>
-<img src="/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/timeline-binding.svg" alt="制作阶段导出 Timeline 绑定，运行时加载资源并通过场景索引恢复轨道引用" width="550" style="display:block;width:550px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+<img src="/zh-CN/2026/Unity-Timeline动态绑定与资源制作流程/timeline-binding.svg" alt="制作阶段导出 Timeline 绑定，运行时加载资源并通过场景索引恢复轨道引用" width="550" style="display:block;width:550px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
 
 <p>动态绑定能够切断场景到部分资源的直接引用链，但不自动保证首包一定减少多少。最终打包结果还取决于资源分组和其他引用是否仍然存在，不能只根据场景 Inspector 已经清空就判断收益。</p>
 <h2 id="导出时保存哪些内容"><a href="#导出时保存哪些内容" class="headerlink" title="导出时保存哪些内容"></a>导出时保存哪些内容</h2><p>我为每个 Timeline 保存一份绑定描述，记录资源信息与各条轨道的目标：</p>

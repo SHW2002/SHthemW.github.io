@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/en/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="For collection and leaderboard displays, characters and held models must fit a fixed space. Clothing and item combinations are too numerous to tune individually, so I limited their overall size us">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity Skinned Bounds and Adaptive Display Model Scaling">
+<meta property="og:url" content="https://www.shenhanwen.top/en/2026/en-2026-06-18-Unity-Skinned-Bounds-and-Adaptive-Display-Model-Scaling/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="For collection and leaderboard displays, characters and held models must fit a fixed space. Clothing and item combinations are too numerous to tune individually, so I limited their overall size us">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/oversized-bounds.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/bounds-spaces.svg">
+<meta property="article:published_time" content="2026-06-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-17T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="SkinnedMeshRenderer">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="问题排查">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/oversized-bounds.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/en/2026/en-2026-06-18-Unity-Skinned-Bounds-and-Adaptive-Display-Model-Scaling/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://www.shenhanwen.top/en/2026/en-2026-06-18-Unity-Skinned-Bounds-and-Adaptive-Display-Model-Scaling/","path":"en/2026/en-2026-06-18-Unity-Skinned-Bounds-and-Adaptive-Display-Model-Scaling/","title":"Unity Skinned Bounds and Adaptive Display Model Scaling"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unity Skinned Bounds and Adaptive Display Model Scaling | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/en/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/en/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/en/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/en/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-categories"><a href="/en/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-游戏开发"><a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>Game Development</a></li><li class="menu-item menu-item-摄影技术"><a href="/en/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>Photography</a></li><li class="menu-item menu-item-ai技术"><a href="/en/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI Technology</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>English</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical="" aria-label="Select language">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/">
+          简体中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-06-18-Unity-Skinned-Bounds-and-Adaptive-Display-Model-Scaling/" selected>
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-06-18-Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/">
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Establish-what-to-measure"><span class="nav-number">1.</span> <span class="nav-text">Establish what to measure</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-first-attempt-BakeMesh"><span class="nav-number">2.</span> <span class="nav-text">The first attempt: BakeMesh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Correct-size-also-requires-correct-timing"><span class="nav-number">3.</span> <span class="nav-text">Correct size also requires correct timing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Offscreen-updating-is-another-measurement-condition"><span class="nav-number">4.</span> <span class="nav-text">Offscreen updating is another measurement condition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Combine-only-objects-actually-displayed"><span class="nav-number">5.</span> <span class="nav-text">Combine only objects actually displayed</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scale-uniformly-using-the-tightest-axis"><span class="nav-number">6.</span> <span class="nav-text">Scale uniformly using the tightest axis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-most-useful-diagnostic-information"><span class="nav-number">7.</span> <span class="nav-text">The most useful diagnostic information</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen"
+      src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">游戏客户端开发工程师, 风光摄影和星空爱好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/en/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/en/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/en/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/en/2026/en-2026-06-18-Unity-Skinned-Bounds-and-Adaptive-Display-Model-Scaling/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Unity Skinned Bounds and Adaptive Display Model Scaling | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unity Skinned Bounds and Adaptive Display Model Scaling
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-06-18 00:00:00" itemprop="dateCreated datePublished" datetime="2026-06-18T00:00:00+08:00">2026-06-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/en/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">游戏开发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>For collection and leaderboard displays, characters and held models must fit a fixed space. Clothing and item combinations are too numerous to tune individually, so I limited their overall size using bounds.</p>
+<p>Some characters then shrank into tiny dots. The scaling formula looked correct; the real problem was the “model size” supplied to it.</p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<h2 id="Establish-what-to-measure"><a href="#Establish-what-to-measure" class="headerlink" title="Establish what to measure"></a>Establish what to measure</h2><p>The display needs <strong>the space occupied by participating models in a specified pose</strong>. This need not match the mesh asset’s original size or imported bounds covering several animations.</p>
+<p>Unity provides several easily confused values:</p>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Coordinate space</th>
+<th>Display considerations</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Mesh.bounds</code></td>
+<td>Mesh-local</td>
+<td>Original skinned vertices do not represent the current animated pose</td>
+</tr>
+<tr>
+<td><code>SkinnedMeshRenderer.localBounds</code></td>
+<td>Renderer-local</td>
+<td>May be a conservative animation envelope rather than a tight fit</td>
+</tr>
+<tr>
+<td><code>Renderer.bounds</code></td>
+<td>World-space AABB</td>
+<td>Affected by rotation, skinning updates, and culling</td>
+</tr>
+<tr>
+<td>A mesh from <code>BakeMesh</code></td>
+<td>Renderer-local</td>
+<td>A snapshot of the current skinned pose; transformations still need care</td>
+</tr>
+</tbody></table>
+<p>During the first investigation, the drawn box was much larger than the character. The size limiter treated that inflated box as the real model and kept shrinking the character.</p>
+<img src="/zh-CN/2026/Unity蒙皮包围盒与展示模型自适应缩放/oversized-bounds.webp" alt="A character in the editor with noticeably oversized bounds" width="340" style="display:block;width:340px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p><em>Cropped from the original Scene view to retain only the character-to-bounds size relationship.</em></p>
+<p>Moving the camera farther away does not fix measurement. It changes projection, while an incorrect measured size still makes the limiter shrink the model improperly.</p>
+<h2 id="The-first-attempt-BakeMesh"><a href="#The-first-attempt-BakeMesh" class="headerlink" title="The first attempt: BakeMesh"></a>The first attempt: BakeMesh</h2><p><code>SkinnedMeshRenderer.BakeMesh</code> produces a snapshot of the current skinned mesh. When static bounds are too conservative, comparing the baked mesh with Renderer bounds helps determine whether the discrepancy comes from an asset envelope or the current pose.</p>
+<p>Do not simply treat <code>mesh.bounds.size</code> as a world size after baking. In a general hierarchy, transform the local box’s eight corners into a common coordinate space and combine them into a new AABB.</p>
+<img src="/zh-CN/2026/Unity蒙皮包围盒与展示模型自适应缩放/bounds-spaces.svg" alt="Transform local mesh bounds into world space before calculating uniform scaling" width="540" style="display:block;width:540px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p>Two common mistakes are:</p>
+<ul>
+<li>Multiplying local <code>size</code> by <code>lossyScale</code> and ignoring rotation’s effect on the world AABB.</li>
+<li>Baking with scale included, then applying the same scale again in a later matrix transformation.</li>
+</ul>
+<p>Our project has an additional complication: clothing bones are rebound to the character skeleton, so the Renderer node’s scale and actual skinning do not always follow a simple hierarchy relationship. Applying “local box times Transform” can collapse the result to a point or inflate it unexpectedly.</p>
+<p>I therefore did not settle on <code>BakeMesh</code> as the final solution and continued examining our skinning updates. Baking provides information, but cannot replace confirming the skeleton and coordinate spaces.</p>
+<h2 id="Correct-size-also-requires-correct-timing"><a href="#Correct-size-also-requires-correct-timing" class="headerlink" title="Correct size also requires correct timing"></a>Correct size also requires correct timing</h2><p>The second issue occurred during loading. The character, clothing, and held item become ready separately; resource changes may also cause the Animator to <code>Rebind</code>. Measuring immediately can capture the bind pose or unstable bones.</p>
+<p>The same assets working sometimes and failing at other times is typical of this timing problem. I changed the sequence to:</p>
+<ol>
+<li>Wait for the character, clothing, and held item to be ready.</li>
+<li>Finish refreshing the animation controller and skeleton.</li>
+<li>Pass the rebind frame and evaluate the display pose in a subsequent update phase.</li>
+<li>Confirm skinning has updated, then collect participating Renderers.</li>
+<li>Combine bounds and calculate uniform scaling.</li>
+</ol>
+<p>For this dedicated display character, I evaluate a known Idle pose before measurement:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> previousMode = animator.cullingMode;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">    animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (animator.HasState(<span class="number">0</span>, idleStateHash))</span><br><span class="line">        animator.Play(idleStateHash, <span class="number">0</span>, <span class="number">0f</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Write this pose without advancing animation time.</span></span><br><span class="line">    animator.Update(<span class="number">0f</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">finally</span></span><br><span class="line">&#123;</span><br><span class="line">    animator.cullingMode = previousMode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This changes the current pose, so it suits a display character during initialization, rather than resetting a character currently being played. Measuring Idle only establishes its size in that pose; it cannot guarantee later waving, jumping, or every other animation fits the same space.</p>
+<h2 id="Offscreen-updating-is-another-measurement-condition"><a href="#Offscreen-updating-is-another-measurement-condition" class="headerlink" title="Offscreen updating is another measurement condition"></a>Offscreen updating is another measurement condition</h2><p>Display models often finish loading outside the camera view. Even when resources exist, offscreen culling may prevent expected animation or skinning updates.</p>
+<p>I enabled <code>updateWhenOffscreen</code> on the relevant <code>SkinnedMeshRenderer</code>s and combined it with a known Animator pose and later-frame measurement to obtain usable world-space bounds in our project. This also avoided reconstructing world bounds for unusual skinning hierarchies myself.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (renderer <span class="keyword">is</span> SkinnedMeshRenderer skinned)</span><br><span class="line">    skinned.updateWhenOffscreen = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">Bounds worldBounds = renderer.bounds;</span><br></pre></td></tr></table></figure>
+
+<p>This does not mean one switch instantly makes every model’s Bounds accurate. Check whether the project overrides Bounds, whether the skeleton has stabilized, and whether this frame’s animation and skinning evaluation has actually finished.</p>
+<p>Continuous offscreen updates cost time. Our limited number of display objects makes that tradeoff acceptable. For many characters, restrict which objects update and for how long, then check results after restoring culling.</p>
+<h2 id="Combine-only-objects-actually-displayed"><a href="#Combine-only-objects-actually-displayed" class="headerlink" title="Combine only objects actually displayed"></a>Combine only objects actually displayed</h2><p>A character hierarchy may contain hidden old parts, inactive held items, and particle effects as well as visible clothing. These can inflate bounds.</p>
+<p>Filter before collecting:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!renderer.enabled || !renderer.gameObject.activeInHierarchy)</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (renderer <span class="keyword">is</span> ParticleSystemRenderer)</span><br><span class="line">    <span class="keyword">continue</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Use world-space data for the remaining objects and combine it with <code>Bounds.Encapsulate</code>. Initialize from the first valid Renderer, not a zero-sized box at the world origin; otherwise a model away from the origin includes irrelevant space.</p>
+<p>I also record which Renderer supplies each axis’s minimum and maximum. That identifies whether clothing inflated X or a bone-associated part stretched Y, rather than exposing only one huge final number.</p>
+<h2 id="Scale-uniformly-using-the-tightest-axis"><a href="#Scale-uniformly-using-the-tightest-axis" class="headerlink" title="Scale uniformly using the tightest axis"></a>Scale uniformly using the tightest axis</h2><p>Let <code>measuredSize</code> be the current size and <code>targetSize</code> the allowed display space. To shrink oversized models without enlarging small ones:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">float</span> fit = Mathf.Min(</span><br><span class="line">    <span class="number">1f</span>,</span><br><span class="line">    targetSize.x / measuredSize.x,</span><br><span class="line">    targetSize.y / measuredSize.y,</span><br><span class="line">    targetSize.z / measuredSize.z);</span><br><span class="line"></span><br><span class="line">modelRoot.localScale = initialScale * fit;</span><br></pre></td></tr></table></figure>
+
+<p>Reject empty collections, zero dimensions, and non-finite values first. Measure under a consistent initial scale; do not repeatedly multiply a model that has already been scaled.</p>
+<p>Uniform scaling preserves the character-to-item proportions, but flat or wide items often hit horizontal limits first. Adjust the display space or configure target boxes by resource category instead of loosening every display’s limits for one model.</p>
+<p>This solves a three-dimensional size constraint. Keeping the whole model visible in a perspective-camera UI window also depends on view angle, FOV, and screen projection. A world AABB does not guarantee that the image will never be cropped.</p>
+<h2 id="The-most-useful-diagnostic-information"><a href="#The-most-useful-diagnostic-information" class="headerlink" title="The most useful diagnostic information"></a>The most useful diagnostic information</h2><p>Starting with abnormal bounds in mid-June, I traced skeleton rebinding, offscreen updates, and measurement timing. For similar problems, first record the current pose, participating Renderers, each axis’s extreme-value sources, and the loading phase when measurement occurs.</p>
+<p>Adjusting only the final scale can temporarily hide the fault. Once the measured object, frame, and coordinate space are correct, the fitting formula is straightforward.</p>
+<p>References: <a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Renderer-bounds.html">Renderer.bounds</a>, <a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/SkinnedMeshRenderer.BakeMesh.html">SkinnedMeshRenderer.BakeMesh</a>, <a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/SkinnedMeshRenderer-updateWhenOffscreen.html">updateWhenOffscreen</a>.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/en/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/en/tags/SkinnedMeshRenderer/" rel="tag"># SkinnedMeshRenderer</a>
+              <a href="/en/tags/%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" rel="tag"># 问题排查</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/" rel="prev" title="Dynamic Unity Timeline Bindings and Asset Authoring">
+                  <i class="fa fa-angle-left"></i> Dynamic Unity Timeline Bindings and Asset Authoring
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/" rel="next" title="Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions">
+                  Investigating System Freezes Caused by Long-Running Tuanjie Editor Sessions <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/zh-TW/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="這兩天用Tuanjie開發項目, 掛機一段時間之後電腦總是莫名其妙的卡死(通常是第二天上班發現)，沒藍屏，也沒有穩定的報錯彈窗, 只偶爾會有幾個應用程序報錯提示OOM, 一旦出現基本只能長按電源鍵重啟。 最後排查出是 Tuanjie 內存洩漏，Unity 6 也存在。但通過一些特殊途徑可能更高頻地觸發內存洩漏，導致卡死，在此記錄一下排查的過程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="團結引擎長時間掛機導致系統卡死的問題排查">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-07-21-%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="這兩天用Tuanjie開發項目, 掛機一段時間之後電腦總是莫名其妙的卡死(通常是第二天上班發現)，沒藍屏，也沒有穩定的報錯彈窗, 只偶爾會有幾個應用程序報錯提示OOM, 一旦出現基本只能長按電源鍵重啟。 最後排查出是 Tuanjie 內存洩漏，Unity 6 也存在。但通過一些特殊途徑可能更高頻地觸發內存洩漏，導致卡死，在此記錄一下排查的過程。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/windows-log.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/uxtool-settings.png">
+<meta property="article:published_time" content="2026-07-21T09:04:50.000Z">
+<meta property="article:modified_time" content="2026-08-24T16:00:00.000Z">
+<meta property="article:author" content="HanWen">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-07-21-%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-07-21-%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/","path":"zh-TW/2026/zh-TW-2026-07-21-长时间挂机Tuanjie导致系统卡死的问题排查/","title":"團結引擎長時間掛機導致系統卡死的問題排查"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>團結引擎長時間掛機導致系統卡死的問題排查 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zh-TW/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/zh-TW/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/zh-TW/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/zh-TW/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-categories"><a href="/zh-TW/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-游戏开发"><a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>遊戲開發</a></li><li class="menu-item menu-item-摄影技术"><a href="/zh-TW/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>攝影技術</a></li><li class="menu-item menu-item-ai技术"><a href="/zh-TW/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI 技術</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>繁體中文</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical aria-label="選擇語言">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
+          簡體中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-07-21-Investigating-System-Freezes-Caused-by-Long-Running-Tuanjie-Editor-Sessions/">
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-07-21-%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" selected>
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%92%B0%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">環境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E8%AA%8C"><span class="nav-number">2.</span> <span class="nav-text">日誌</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">排查工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%95%8F%E9%A1%8C%E5%BE%A9%E7%8F%BE"><span class="nav-number">4.</span> <span class="nav-text">問題復現</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%BE%A9%E7%8F%BE"><span class="nav-number">4.1.</span> <span class="nav-text">1. 復現</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%86%E6%9E%90"><span class="nav-number">4.2.</span> <span class="nav-text">2. 分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%9F%B3%E9%8C%98"><span class="nav-number">4.3.</span> <span class="nav-text">3. 石錘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E9%80%99%E5%80%8B%E9%A0%85%E7%9B%AE%E7%89%B9%E5%88%A5%E5%AE%B9%E6%98%93%E8%A7%B8%E7%99%BC"><span class="nav-number">4.4.</span> <span class="nav-text">為什麼這個項目特別容易觸發</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E5%95%8F%E9%A1%8C%E8%A8%98%E9%8C%84"><span class="nav-number">4.5.</span> <span class="nav-text">官方問題記錄</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%B1%BA"><span class="nav-number">5.</span> <span class="nav-text">解決</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A9%97%E8%AD%89"><span class="nav-number">6.</span> <span class="nav-text">驗證</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2026-%E5%B9%B4-8-%E6%9C%88%E5%BE%8C%E7%BA%8C%EF%BC%9A%E6%8A%8A%E6%AD%A3%E5%B8%B8%E9%87%8D%E5%95%9F%E5%81%9A%E6%88%90%E5%B7%A5%E5%85%B7"><span class="nav-number">7.</span> <span class="nav-text">2026 年 8 月後續：把正常重啟做成工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B8%BD%E7%B5%90"><span class="nav-number">8.</span> <span class="nav-text">總結</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen" src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">遊戲客戶端開發工程師, 風光攝影和星空愛好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zh-TW/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zh-TW/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zh-TW/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-07-21-%E9%95%BF%E6%97%B6%E9%97%B4%E6%8C%82%E6%9C%BATuanjie%E5%AF%BC%E8%87%B4%E7%B3%BB%E7%BB%9F%E5%8D%A1%E6%AD%BB%E7%9A%84%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="團結引擎長時間掛機導致系統卡死的問題排查 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content>
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          團結引擎長時間掛機導致系統卡死的問題排查
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2026-07-21 17:04:50" itemprop="dateCreated datePublished" datetime="2026-07-21T17:04:50+08:00">2026-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">遊戲開發</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>這兩天用Tuanjie開發項目, 掛機一段時間之後電腦總是莫名其妙的卡死(通常是第二天上班發現)，沒藍屏，也沒有穩定的報錯彈窗, 只偶爾會有幾個應用程序報錯提示OOM, 一旦出現基本只能長按電源鍵重啟。</p>
+<p>最後排查出是 Tuanjie 內存洩漏，Unity 6 也存在。但通過一些特殊途徑可能更高頻地觸發內存洩漏，導致卡死，在此記錄一下排查的過程。</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tuanjielogo.png" alt="tuanjielogo"></p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+
+
+<h2 id="環境"><a href="#環境" class="headerlink" title="環境"></a>環境</h2><ul>
+<li>操作系統：Windows 11</li>
+<li>編輯器：Tuanjie <code>2022.3.62t6</code></li>
+<li>構建分支：<code>tuanjie/1.8/staging</code></li>
+</ul>
+<h2 id="日誌"><a href="#日誌" class="headerlink" title="日誌"></a>日誌</h2><p>因為出問題的時候系統基本卡死了, 所以除了Tuanjie 自己的日誌, 我也看了下系統的崩潰日誌, 有沒有哪個子進程崩潰前有比較異常的情況.</p>
+<p>直接讓GPT給我掃了一下盤, 一週內共找到 60 條資源耗盡事件，最關鍵的是 <code>Event ID 2004</code>, 官方文檔和信息描述都提示了確實是內存不足導致的崩潰:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/windows-log.png" alt="windows-log"></p>
+<p>這些事件的成因並不完全一樣:</p>
+<ol>
+<li>有一次，Tuanjie 私有內存從約 35.18 GiB 漲到 39.25 GiB，嫌疑很大。</li>
+<li>另一次，系統提交量達到約 94.93&#x2F;94.94 GiB。<ul>
+<li><code>svchost</code> 漲到 50.74 GiB。</li>
+<li><code>DoSvc</code> 相關進程約 12.65 GiB。</li>
+<li>Tuanjie 約 9.08 GiB。</li>
+</ul>
+</li>
+</ol>
+<p>下面是兩條典型的 <code>Event ID 2004</code>，字節數我自己加了下分隔，方便複核。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[2026/7/16 11:30:59]</span><br><span class="line">Provider: Microsoft-Windows-Resource-Exhaustion-Detector</span><br><span class="line">Event ID: 2004</span><br><span class="line">Windows 成功诊断出虚拟内存不足的情况。以下程序使用了大部分虚拟内存：</span><br><span class="line">Tuanjie.exe (38948) 使用了 42,144,346,112 字节；</span><br><span class="line">svchost.exe (9560) 使用了 8,966,844,416 字节；</span><br><span class="line">svchost.exe (44892) 使用了 5,992,996,864 字节。</span><br><span class="line"></span><br><span class="line">[2026/7/20 09:04:22]</span><br><span class="line">Provider: Microsoft-Windows-Resource-Exhaustion-Detector</span><br><span class="line">Event ID: 2004</span><br><span class="line">Windows 成功诊断出虚拟内存不足的情况。以下程序使用了大部分虚拟内存：</span><br><span class="line">svchost.exe (3068) 使用了 54,483,042,304 字节；</span><br><span class="line">svchost.exe (5272) 使用了 13,587,877,888 字节；</span><br><span class="line">Tuanjie.exe (6952) 使用了 9,745,526,784 字节。</span><br></pre></td></tr></table></figure>
+
+<p>導出的系統日誌裡共有 83 條 <code>Event ID 2004</code>，向前篩七天是 60 條。</p>
+<p>第一條裡，Tuanjie 確實是最大消費者。</p>
+<p>第二條很不一樣，真正吃掉大頭的是 <code>svchost</code>。</p>
+<p>這就有點麻煩了：Tuanjie 有嫌疑，但不是每次 OOM 的唯一答案, 可能最終的崩潰是由多個內存洩漏的Bug導致的. 我們這次的目標是先把影響最大的搞掉, 至少讓編輯器不要掛機太久就崩潰</p>
+<h2 id="排查工具"><a href="#排查工具" class="headerlink" title="排查工具"></a>排查工具</h2><p>讓AI搓了個<code>MemoryLeakTracker</code>, 大體功能是當系統內存在一段時間內異常增長時, 採集以下信息:</p>
+<table>
+<thead>
+<tr>
+<th>採集內容</th>
+<th>工具</th>
+<th>規則</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>系統內存和內核池</td>
+<td>性能計數器</td>
+<td>15 秒一次，循環保存</td>
+</tr>
+<tr>
+<td>Tuanjie 內存、句柄和線程</td>
+<td>性能計數器</td>
+<td>達到閾值時留檔</td>
+</tr>
+<tr>
+<td>句柄、堆和虛擬內存棧</td>
+<td>WPR&#x2F;ETW</td>
+<td>保存約 10 分鐘 ETL</td>
+</tr>
+<tr>
+<td>進程現場</td>
+<td>ProcDump</td>
+<td>私有內存到 12 GiB 時轉儲</td>
+</tr>
+<tr>
+<td>輔助證據</td>
+<td>事件日誌和系統快照</td>
+<td>事件前後各保存一份</td>
+</tr>
+</tbody></table>
+<p>滿足以下條件之一就會觸發這個採集器：</p>
+<ul>
+<li>Tuanjie 私有內存超過 6 GiB</li>
+<li>系統提交率超過 70%</li>
+<li>句柄超過 10,000</li>
+<li>10 分鐘內增長超過 768 MiB</li>
+<li>私有內存達到 12 GiB 時生成轉儲</li>
+</ul>
+<p>這個工具並不解決系統會崩潰重啟的問題, 只要死之前能留下遺言就夠了 (悲) 這樣我下次登錄的時候就有希望看到更具體的日誌。如果沒有 ETL 和轉儲，只能得到一句“佔用很高”這種正確的廢話, 然並卵。有了調用棧，才有機會追到 <code>DuplicateHandle</code> 的上層。</p>
+<h2 id="問題復現"><a href="#問題復現" class="headerlink" title="問題復現"></a>問題復現</h2><p>工具做好之後直接重啟掛機了一段時間, 很意外的是才沒過幾分鐘工具就彈窗提示開始記錄了. 看來平時崩潰幾天才出現一次或許是因為這臺電腦有64G的物理內存能硬抗一段時間.</p>
+<h3 id="1-復現"><a href="#1-復現" class="headerlink" title="1. 復現"></a>1. 復現</h3><p>第一份關鍵採集位於：</p>
+<p><code>E:\MemoryLeak-Capture\Incidents\20260720-142209-PID22848</code></p>
+<p>14:21:19，兩個 <code>AssetImportWorker</code> 啟動。</p>
+<p>14:22:09，其中一個工作進程達到約 11,590 個句柄，自動採集被觸發。</p>
+<p>自動生成的 <code>incident-20260720-142210.json</code> 中，關鍵字段如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;CapturedAt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-07-20T14:22:16.1321305+08:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;Reason&quot;</span><span class="punctuation">:</span> <span class="string">&quot;句柄达到 11590&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;System&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;CommitPercent&quot;</span><span class="punctuation">:</span> <span class="number">29.05</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;AvailablePhysicalMiB&quot;</span><span class="punctuation">:</span> <span class="number">36851.55</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;PoolPagedMiB&quot;</span><span class="punctuation">:</span> <span class="number">1304.77</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;PoolNonpagedMiB&quot;</span><span class="punctuation">:</span> <span class="number">1326.43</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;Targets&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;CreationTime&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-07-20T11:00:06.8128080+08:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">3.853</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">6060</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">292</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ProjectPath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;E:\\Unity\\wx_gardenagrown_1\\Unity&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">22848</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ParentProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">0.756</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">11590</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">155</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;WorkerName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AssetImportWorker0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;ProcessId&quot;</span><span class="punctuation">:</span> <span class="number">6884</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ParentProcessId&quot;</span><span class="punctuation">:</span> <span class="number">27308</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;PrivateGiB&quot;</span><span class="punctuation">:</span> <span class="number">0.754</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;HandleCount&quot;</span><span class="punctuation">:</span> <span class="number">11589</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;ThreadCount&quot;</span><span class="punctuation">:</span> <span class="number">155</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;WorkerName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AssetImportWorker1&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>當時系統提交率只有 29.05%，並不是正在發生的 OOM，而是追蹤器提前抓到了異常行為。</p>
+<p>主進程的句柄變化非常典型, 基本就是一個上升-下降的鋸齒狀曲線, 然後毫不令人意外的是每次鋸齒之後的量會比上次多一些：</p>
+<table>
+<thead>
+<tr>
+<th>時間</th>
+<th align="right">主進程句柄數</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>14:22:10</td>
+<td align="right">6,060</td>
+</tr>
+<tr>
+<td>14:24:18</td>
+<td align="right">35,684</td>
+</tr>
+<tr>
+<td>14:29:57</td>
+<td align="right">120,037</td>
+</tr>
+<tr>
+<td>14:30:29</td>
+<td align="right">8,846</td>
+</tr>
+<tr>
+<td>14:38:51</td>
+<td align="right">132,168</td>
+</tr>
+</tbody></table>
+<p>14:59:59 到 15:00:04，只有 5 秒，句柄卻從 14,884 漲到 16,825，私有內存仍在約 4 GiB。</p>
+<p>這裡已經基本可以確定排查方向, 洩露的不是堆內存而是句柄。</p>
+<h3 id="2-分析"><a href="#2-分析" class="headerlink" title="2. 分析"></a>2. 分析</h3><p>接著用 Sysinternals Handle 檢查 <code>PID 27308</code> (剛才出問題的pid)。</p>
+<p>一次快照裡，數據是這樣的：</p>
+<ul>
+<li>總句柄數：97,998</li>
+<li><code>Thread</code> 句柄：92,490</li>
+<li>實際存活線程：289</li>
+</ul>
+<p>Handle 工具的關鍵輸出摘錄如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Handle type summary:</span><br><span class="line">  Event      :   908</span><br><span class="line">  Semaphore  :  3264</span><br><span class="line">  Thread     : 92490</span><br><span class="line">Total handles: 97998</span><br><span class="line"></span><br><span class="line">Get-Process PID 27308:</span><br><span class="line">  Live threads: 289</span><br><span class="line"></span><br><span class="line">Thread-handle target aggregation:</span><br><span class="line">  &gt;99% of thread handles -&gt; TID 30960</span><br></pre></td></tr></table></figure>
+
+<p>九萬多個 <code>Thread</code> 句柄，鼠實有點嚇人。</p>
+<p>再按目標線程聚合，超過 99% 的異常句柄都指向 <code>TID 30960</code>, 也就是說這一坨句柄其實都是這一個線程搞出來的, 實際上系統並沒有開啟那麼多任務.</p>
+<p>高度懷疑是這個30960背後的服務被複制或重啟了N次, 導致句柄數量一直在增長.</p>
+<h3 id="3-石錘"><a href="#3-石錘" class="headerlink" title="3. 石錘"></a>3. 石錘</h3><p>為瞭解析 ETL，安裝了 Windows Performance Toolkit, WPAExporter 加載了微軟符號和 Tuanjie 符號。</p>
+<p>只看 15 秒，同一條複製棧就出現了 219,368 次，這個數字已經離譜了。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Thread::RunThreadWrapper</span><br><span class="line">PreviewTextureManager::LoadingLoop</span><br><span class="line">PreviewTextureManager::GetMostImportantTextureToLoad</span><br><span class="line">ProtectedScopedThreadAttach::ProtectedScopedThreadAttach</span><br><span class="line">scripting_thread_attach</span><br><span class="line">mono_thread_internal_attach</span><br><span class="line">mono_thread_attach_internal</span><br><span class="line">mono_threads_open_native_thread_handle</span><br><span class="line">KernelBase!DuplicateHandle</span><br><span class="line">ntdll!NtDuplicateObject</span><br></pre></td></tr></table></figure>
+
+<p>WPA 導出結果的聚合摘要如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Trace range                         : 15 seconds</span><br><span class="line">Dominant creation method            : Duplicate</span><br><span class="line">Dominant stack events               : 219368</span><br><span class="line">Observed net handle growth           : 380-400 handles/second</span><br><span class="line">Creating process                     : Tuanjie.exe (27308)</span><br><span class="line">Handle type                          : Thread</span><br><span class="line">Dominant target thread               : TID 30960</span><br></pre></td></tr></table></figure>
+
+<p>到了這裡，基本可以說是破案了：</p>
+<ol>
+<li><code>PreviewTextureManager</code> 的後臺加載線程正在執行預覽任務。</li>
+<li>它通過 <code>ProtectedScopedThreadAttach</code> 把原生線程附加到 Mono。</li>
+<li>Mono 會複製原生線程句柄。<ul>
+<li>調用點：<code>mono_threads_open_native_thread_handle</code></li>
+</ul>
+</li>
+<li>句柄沒有被及時關閉，同一個線程對象越積越多。</li>
+</ol>
+<p>根因其實還是落在 Tuanjie 引擎內部，位置是預覽線程與 Mono 附加路徑。</p>
+<h3 id="為什麼這個項目特別容易觸發"><a href="#為什麼這個項目特別容易觸發" class="headerlink" title="為什麼這個項目特別容易觸發"></a>為什麼這個項目特別容易觸發</h3><p>“誰在漏”已經找到了，但事情還沒完。同一個引擎，為什麼這個項目觸發得這麼頻繁？</p>
+<p>編輯器日誌顯示，在異常開始前後，下面這個文件被反覆檢測、寫入和導入：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br></pre></td></tr></table></figure>
+
+<p>順著日誌和代碼排查，發現其實是ThunderFire UXTool的收藏夾功能引發的頻繁寫入：</p>
+<ol>
+<li><code>RecentSelectRecord</code> 訂閱 <code>Selection.selectionChanged</code>。</li>
+<li>每次選擇改變時，代碼會先刪除舊記錄，再添加新記錄。</li>
+<li>刪除和添加都會調用 <code>JsonAssetManager.SaveAssets</code>。</li>
+<li><code>SaveAssets</code> 把 JSON 寫進 <code>Assets</code> 目錄。<ul>
+<li>寫入接口：<code>File.WriteAllText</code></li>
+</ul>
+</li>
+<li>寫入會觸發 Asset Database 刷新。</li>
+<li>“最近選中”界面的資源項還會調用 <code>AssetPreview.GetAssetPreview</code>。</li>
+<li>這些預覽請求最終進入正在洩漏的 <code>PreviewTextureManager</code>。</li>
+</ol>
+<p>重啟前的 <code>Editor-prev.log</code> 也對上了。下面只截一小段：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Starting new worker id: 0 with log in .../Logs/AssetImportWorker0.log</span><br><span class="line">Starting new worker id: 1 with log in .../Logs/AssetImportWorker1.log</span><br><span class="line">Detected change in .../Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Refreshing native plugins compatible for Editor in 39.09 ms, found 15 plugins.</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.182 seconds</span><br><span class="line">Detected change in .../FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.188 seconds</span><br><span class="line">Detected change in .../FilesRecentlySelectedData.json</span><br><span class="line">Start importing Assets/Res/Editor/UI/UXTool/Tools/UserDatas/FilesRecentlySelectedData.json</span><br><span class="line">Asset Pipeline Refresh (...): Total: 0.208 seconds</span><br><span class="line"></span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br><span class="line">Thread 00000000000068E0 may have been prematurely finalized</span><br></pre></td></tr></table></figure>
+
+<p><code>prematurely finalized</code> 和句柄驟降能對上。終結器會回收一批對象，但同一條創建路徑還在跑。</p>
+<p>關鍵源碼位置包括：</p>
+<ul>
+<li><code>RecentSelectRecord.cs</code>：訂閱選擇變化以及刪除、添加記錄</li>
+<li><code>RecentFilesSetting.cs</code>：每次修改後立即保存 JSON</li>
+<li><code>AssetItemMatFile.cs</code>：請求材質預覽</li>
+<li><code>AssetItemOthersFile.cs</code>：請求其他資源預覽</li>
+<li><code>SwitchSetting.json</code>：保存“最近選中面板記錄”功能開關</li>
+</ul>
+<p>把關鍵代碼放在一起，關係就很直觀：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RecentSelectRecord.cs</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">RecentSelectRecord</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    Selection.selectionChanged += UpdateRecentFiles;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (recentList.Contains(guid))</span><br><span class="line">&#123;</span><br><span class="line">    recentSelected.Remove(guid);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (guid != <span class="string">&quot;&quot;</span> &amp;&amp; !recentList.Contains(guid))</span><br><span class="line">&#123;</span><br><span class="line">    recentSelected.Add(guid);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RecentFilesSetting.cs</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Add</span>(<span class="params"><span class="built_in">string</span> guid</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    List.Insert(<span class="number">0</span>, guid);</span><br><span class="line">    JsonAssetManager.SaveAssets(<span class="keyword">this</span>);</span><br><span class="line">    OnValueChanged();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Remove</span>(<span class="params"><span class="built_in">string</span> guid</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> index = List.FindIndex(i =&gt; i == guid);</span><br><span class="line">    <span class="keyword">if</span> (index &gt;= <span class="number">0</span>) List.RemoveAt(index);</span><br><span class="line">    JsonAssetManager.SaveAssets(<span class="keyword">this</span>);</span><br><span class="line">    OnValueChanged();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// JsonAssetManager.cs</span></span><br><span class="line"><span class="built_in">string</span> dataAsJson = JsonUtility.ToJson(obj);</span><br><span class="line">File.WriteAllText(path, dataAsJson);</span><br><span class="line"></span><br><span class="line"><span class="comment">// AssetItemMatFile.cs / AssetItemOthersFile.cs</span></span><br><span class="line">Texture2D preview = AssetPreview.GetAssetPreview(_assetObj);</span><br></pre></td></tr></table></figure>
+
+<p>注意, UXTool 只是觸發器，它會頻繁刷新和預覽，但本質這個問題還是 Tuanjie 引擎的鍋。</p>
+<h3 id="官方問題記錄"><a href="#官方問題記錄" class="headerlink" title="官方問題記錄"></a>官方問題記錄</h3><p>Unity 官方 Issue Tracker 裡有一條類似的記錄：<a href="https://issuetracker-mig.prd.it.unity3d.com/issues/crash-on-protectedscopedthreadattach-protectedscopedthreadattach-when-performing-various-unity-operations">UUM-141036</a>。</p>
+<p>它的原生調用鏈幾乎一樣：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PreviewTextureManager::LoadingLoop</span><br><span class="line">PreviewTextureManager::GetMostImportantTextureToLoad</span><br><span class="line">ProtectedScopedThreadAttach</span><br><span class="line">scripting_thread_attach</span><br><span class="line">mono_thread_internal_attach</span><br></pre></td></tr></table></figure>
+
+<p>不過，Tuanjie 是獨立分支，Unity那邊的事情很可能跟我們已經沒有關係了. 目標版本有沒有修好，還得看實際問題有沒有解決。考慮到項目中途升級引擎版本風險很大, 恐怕這個問題要一直陪伴我們很長時間.</p>
+<h2 id="解決"><a href="#解決" class="headerlink" title="解決"></a>解決</h2><p>解決不了問題, 那隻好解決提(chu)出(fa)問題的工具了. 直接把UXTool的“最近選中面板記錄”關閉, 然後重啟一下團結:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/uxtool-settings.png" alt="uxtool-settings"></p>
+<h2 id="驗證"><a href="#驗證" class="headerlink" title="驗證"></a>驗證</h2><p>因為已經確認是句柄的問題, 所以重啟之後重點排查句柄:</p>
+<table>
+<thead>
+<tr>
+<th>時間</th>
+<th align="right">句柄數</th>
+<th align="right">私有內存</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>15:45:42</td>
+<td align="right">5,513</td>
+<td align="right">3,629.7 MiB</td>
+</tr>
+<tr>
+<td>15:50:57</td>
+<td align="right">5,811</td>
+<td align="right">3,702.5 MiB</td>
+</tr>
+<tr>
+<td>15:55:57</td>
+<td align="right">6,100</td>
+<td align="right">3,711.8 MiB</td>
+</tr>
+<tr>
+<td>16:03:10</td>
+<td align="right">6,075</td>
+<td align="right">3,719.1 MiB</td>
+</tr>
+</tbody></table>
+<p>啟動階段，句柄最高到 7,564，很快又回落到 5,500～6,100</p>
+<p>39 秒採樣裡，句柄從 5,831 漲到 5,871，速度約為每秒 1.03 個</p>
+<p>過了約 7 分鐘，句柄又從 6,100 回到 6,075</p>
+<p>舊進程會每秒漲幾百個，還會衝到十幾萬，看來我們已經解決了引發問題的大頭. 考慮到這是團結自己的問題, 殘留有少許的上漲也不令人意外. 能把崩潰的頻率降低就算成功.</p>
+<p>重啟後的 Handle 摘要如下，總量已經回到正常範圍。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Handle type summary:</span><br><span class="line">  Event      :  819</span><br><span class="line">  Semaphore  : 3225</span><br><span class="line">  Thread     :  557</span><br><span class="line">Total handles: 5871</span><br><span class="line"></span><br><span class="line">Process snapshot:</span><br><span class="line">  Threads    : 271</span><br><span class="line">  PrivateMiB : 3714.8</span><br></pre></td></tr></table></figure>
+
+<h2 id="2026-年-8-月後續：把正常重啟做成工具"><a href="#2026-年-8-月後續：把正常重啟做成工具" class="headerlink" title="2026 年 8 月後續：把正常重啟做成工具"></a>2026 年 8 月後續：把正常重啟做成工具</h2><p>排查之後，我又製作了 <a href="https://github.com/SHW2002/Unity-Restart-Tool">Unity-Restart-Tool</a>，用來管理 Windows 上多個 Unity &#x2F; 團結編輯器實例，並提供手動批量重啟和按項目設置的定時計劃。</p>
+<p>工具會識別具有主窗口與有效項目路徑的編輯器，排除 AssetImportWorker 等後臺進程。項目內的 Editor companion 負責檢查當前是否正在運行遊戲、編譯、導入或構建；不滿足條件或無法完成檢查時跳過實例，通過檢查後才嘗試正常退出並重新啟動，不強制結束進程。</p>
+<p>另外還有一個短時間的 Console 安靜檢查，退出前會再次檢查編輯器狀態，減少檢查完成到實際退出之間的狀態變化問題。這個檢查只是重啟條件之一，不能證明編輯器或項目本身沒有問題。</p>
+<p>這裡有個使用前需要明確的邊界：工具當前沒有把場景與資源的 Dirty 標誌作為重啟門禁，未保存內容可能隨編輯器退出而丟失，所以需要先保存工作，再使用手動或定時重啟。</p>
+<p>它是長時間運行時的輔助工具，不是本文引擎問題的修復，也不會改變前面的根因判斷。窗口位置可以嘗試恢復，Unity 內部佈局仍然依賴編輯器正常退出時保存；Windows 任務欄上的精確排列也不能保證完全復原。</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>總結一下問題的前因後果：</p>
+<ul>
+<li>表面現象：系統多次內存耗盡、桌面組件崩潰或整機卡死。</li>
+<li>已確認缺陷：<code>PreviewTextureManager</code> 會反覆複製線程句柄，句柄釋放不及時。</li>
+<li>項目側觸發器：UXTool“最近選中”會反覆寫 JSON，還會刷新資源並請求預覽。</li>
+<li>臨時解決：關閉該功能、正常退出並重啟 Tuanjie。</li>
+<li>驗證結果：句柄增速從每秒 380～400 個降到約 1 個。<ul>
+<li>線程句柄從 92,490 個降到 557 個。</li>
+<li>原洩漏特徵消失。</li>
+</ul>
+</li>
+<li>長期解決：等待或驗證 Tuanjie 引擎版本修復，不能把項目側規避當作引擎缺陷已經消失。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-06-18-Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/" rel="prev" title="Unity 蒙皮包圍盒與展示模型自適應縮放">
+                  <i class="fa fa-angle-left"></i> Unity 蒙皮包圍盒與展示模型自適應縮放
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-08-12-%E4%BB%8E%E8%87%AA%E5%8A%A8%E7%82%B9%E5%87%BB%E5%88%B0%E7%A6%BB%E7%BA%BF%E5%AF%BC%E8%88%AA-Unity%E8%87%AA%E6%B5%8B%E5%B7%A5%E5%85%B7%E7%9A%84%E6%BC%94%E8%BF%9B/" rel="next" title="自動測試工具Unity-Autorun-Tool的演進(2026)">
+                  自動測試工具Unity-Autorun-Tool的演進(2026) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

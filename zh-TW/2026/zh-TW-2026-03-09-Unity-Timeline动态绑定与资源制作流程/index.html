@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/zh-TW/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="項目裡的 Timeline 越來越多之後，主場景也跟著引用了越來越多的動畫和表現資源。美術製作時，把 Timeline 掛到場景中的 PlayableDirector 上很方便；但如果把這份引用關係一直保留到運行時，場景就會持續攜帶這些資源依賴。 這次調整把 Timeline 資源與場景對象的綁定信息單獨保存，需要播放時再加載並恢復綁定。美術仍然在場景中製作和預覽，交付時多一個導出步驟，運">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity Timeline 動態綁定與資源製作流程">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-03-09-Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="項目裡的 Timeline 越來越多之後，主場景也跟著引用了越來越多的動畫和表現資源。美術製作時，把 Timeline 掛到場景中的 PlayableDirector 上很方便；但如果把這份引用關係一直保留到運行時，場景就會持續攜帶這些資源依賴。 這次調整把 Timeline 資源與場景對象的綁定信息單獨保存，需要播放時再加載並恢復綁定。美術仍然在場景中製作和預覽，交付時多一個導出步驟，運">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/timeline-binding.svg">
+<meta property="article:published_time" content="2026-03-09T11:58:53.000Z">
+<meta property="article:modified_time" content="2026-03-09T11:58:53.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Timeline">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="资源管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/timeline-binding.svg">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-03-09-Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-03-09-Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/","path":"zh-TW/2026/zh-TW-2026-03-09-Unity-Timeline动态绑定与资源制作流程/","title":"Unity Timeline 動態綁定與資源製作流程"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unity Timeline 動態綁定與資源製作流程 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zh-TW/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/zh-TW/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/zh-TW/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/zh-TW/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-categories"><a href="/zh-TW/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-游戏开发"><a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>遊戲開發</a></li><li class="menu-item menu-item-摄影技术"><a href="/zh-TW/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>攝影技術</a></li><li class="menu-item menu-item-ai技术"><a href="/zh-TW/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI 技術</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>繁體中文</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical aria-label="選擇語言">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/">
+          簡體中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-03-09-Dynamic-Unity-Timeline-Bindings-and-Asset-Authoring/">
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-03-09-Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/" selected>
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#TimelineAsset-%E8%88%87%E7%B6%81%E5%AE%9A%E4%BF%A1%E6%81%AF%E6%98%AF%E5%85%A9%E9%83%A8%E5%88%86"><span class="nav-number">1.</span> <span class="nav-text">TimelineAsset 與綁定信息是兩部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8E%E5%87%BA%E6%99%82%E4%BF%9D%E5%AD%98%E5%93%AA%E4%BA%9B%E5%85%A7%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">導出時保存哪些內容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%8B%E8%A1%8C%E6%99%82%E6%80%8E%E6%A8%A3%E6%89%BE%E5%9B%9E%E5%BC%95%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">運行時怎樣找回引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%A0%B4%E6%99%AF%E5%B0%8D%E8%B1%A1%E7%B4%A2%E5%BC%95"><span class="nav-number">4.</span> <span class="nav-text">建立場景對象索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BE%8E%E8%A1%93%E8%A3%BD%E4%BD%9C%E6%B5%81%E7%A8%8B%E6%80%8E%E6%A8%A3%E4%BF%9D%E7%95%99"><span class="nav-number">5.</span> <span class="nav-text">美術製作流程怎樣保留</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%92%AD%E6%94%BE%E7%B5%90%E6%9D%9F%E5%BE%8C%E8%A6%81%E6%AD%B8%E9%82%84%E6%8E%A7%E5%88%B6%E6%AC%8A"><span class="nav-number">6.</span> <span class="nav-text">播放結束後要歸還控制權</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%85%A5%E6%99%82%E6%AA%A2%E6%9F%A5%E5%AE%8C%E6%95%B4%E5%BE%80%E8%BF%94%E6%B5%81%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">接入時檢查完整往返流程</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen" src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">遊戲客戶端開發工程師, 風光攝影和星空愛好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zh-TW/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zh-TW/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zh-TW/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-03-09-Unity-Timeline%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E4%B8%8E%E8%B5%84%E6%BA%90%E5%88%B6%E4%BD%9C%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Unity Timeline 動態綁定與資源製作流程 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content>
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unity Timeline 動態綁定與資源製作流程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2026-03-09 19:58:53" itemprop="dateCreated datePublished" datetime="2026-03-09T19:58:53+08:00">2026-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">遊戲開發</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>項目裡的 Timeline 越來越多之後，主場景也跟著引用了越來越多的動畫和表現資源。美術製作時，把 Timeline 掛到場景中的 PlayableDirector 上很方便；但如果把這份引用關係一直保留到運行時，場景就會持續攜帶這些資源依賴。</p>
+<p>這次調整把 Timeline 資源與場景對象的綁定信息單獨保存，需要播放時再加載並恢復綁定。美術仍然在場景中製作和預覽，交付時多一個導出步驟，運行時則按實際需要裝配。</p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<h2 id="TimelineAsset-與綁定信息是兩部分"><a href="#TimelineAsset-與綁定信息是兩部分" class="headerlink" title="TimelineAsset 與綁定信息是兩部分"></a>TimelineAsset 與綁定信息是兩部分</h2><p>TimelineAsset 保存軌道、片段和時間等內容，但一條軌道究竟控制場景中的哪個對象，通常由 PlayableDirector 保存。</p>
+<p>例如一個 AnimationTrack 需要綁定 Animator，一個 ActivationTrack 需要綁定 GameObject。把 TimelineAsset 從 Director 上取下來再動態加載回來，並不會憑空知道之前拖進去的是哪一個場景對象。</p>
+<p>因此需要一起解決兩件事：資源如何按需加載，以及加載後如何恢復軌道目標。</p>
+<img src="/zh-CN/2026/Unity-Timeline动态绑定与资源制作流程/timeline-binding.svg" alt="製作階段導出 Timeline 綁定，運行時加載資源並通過場景索引恢復軌道引用" width="550" style="display:block;width:550px;max-width:85%;height:auto;margin:1.5rem auto;" loading="lazy">
+
+<p>動態綁定能夠切斷場景到部分資源的直接引用鏈，但不自動保證首包一定減少多少。最終打包結果還取決於資源分組和其他引用是否仍然存在，不能只根據場景 Inspector 已經清空就判斷收益。</p>
+<h2 id="導出時保存哪些內容"><a href="#導出時保存哪些內容" class="headerlink" title="導出時保存哪些內容"></a>導出時保存哪些內容</h2><p>我為每個 Timeline 保存一份綁定描述，記錄資源信息與各條軌道的目標：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Timeline 資源路徑與 GUID</td>
+<td>編輯器定位與對應關係檢查</td>
+</tr>
+<tr>
+<td>軌道名稱、軌道類型</td>
+<td>找回待綁定的軌道</td>
+</tr>
+<tr>
+<td>目標對象的層級路徑</td>
+<td>在場景或指定根節點下定位對象</td>
+</tr>
+<tr>
+<td>目標對象名稱</td>
+<td>輔助診斷與受約束的查找</td>
+</tr>
+<tr>
+<td>對象類型、組件類型</td>
+<td>區分綁定 GameObject 還是某個組件</td>
+</tr>
+</tbody></table>
+<p>數據本身採用 XML 保存。關鍵不在 XML 這個格式，而在於文件保存的是可恢復的定位信息，沒有繼續持有原場景對象的直接引用。</p>
+<p>下面是一條經過簡化的描述：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">TrackBindingData</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">TrackName</span>&gt;</span>Character<span class="tag">&lt;/<span class="name">TrackName</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">TrackType</span>&gt;</span>AnimationTrack<span class="tag">&lt;/<span class="name">TrackType</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">BoundObjectPath</span>&gt;</span>Stage/Actor<span class="tag">&lt;/<span class="name">BoundObjectPath</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">BoundComponentType</span>&gt;</span>Animator<span class="tag">&lt;/<span class="name">BoundComponentType</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">TrackBindingData</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>導出器從 <code>timeline.outputs</code> 遍歷軌道，通過 <code>director.GetGenericBinding(output.sourceObject)</code> 讀取當前綁定。如果目標是組件，就保存它所在對象的路徑和組件類型；如果目標是 GameObject，就保存對象本身的類型。</p>
+<p>文件成功寫出之後，再清除 Director 的軌道綁定和 <code>playableAsset</code>。編輯器側同時記錄 Undo 並標記對象變更，避免用戶看到場景清空時無法撤銷。</p>
+<h2 id="運行時怎樣找回引用"><a href="#運行時怎樣找回引用" class="headerlink" title="運行時怎樣找回引用"></a>運行時怎樣找回引用</h2><p>播放前先加載 TimelineAsset 和綁定描述，給 Director 設置資源，再把描述中的目標恢復成對象引用。核心調用仍然是 Unity 自帶的 API：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">director.playableAsset = timeline;</span><br><span class="line"></span><br><span class="line"><span class="keyword">foreach</span> (TrackAsset track <span class="keyword">in</span> timeline.GetOutputTracks())</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!bindings.TryGetValue(track.name, <span class="keyword">out</span> <span class="keyword">var</span> binding))</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">    UnityEngine.Object target = ResolveTarget(binding, sceneRoot);</span><br><span class="line">    <span class="keyword">if</span> (target == <span class="literal">null</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ReportMissingBinding(track.name, binding);</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    director.SetGenericBinding(track, target);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>這是綁定流程的示意，資源加載、失敗彙總和是否允許播放由外層管理。一個關鍵軌道沒有綁上時，不能只打一條日誌就當成播放準備成功。</p>
+<p>我在當前版本里按軌道名稱建立查找表，所以同一份資源中的輸出軌道名稱需要保持唯一，重命名之後也要重新導出。如果要支持任意重名軌道，就需要改用更穩定的標識，不能繼續讓同名項覆蓋。</p>
+<p>這個工具處理的是軌道的 Generic Binding。片段內部的 <code>ExposedReference</code> 等引用有自己的解析機制，不能假設導出軌道綁定就已經覆蓋了 Timeline 中的所有依賴。</p>
+<h2 id="建立場景對象索引"><a href="#建立場景對象索引" class="headerlink" title="建立場景對象索引"></a>建立場景對象索引</h2><p>如果每條軌道都從場景根節點重新搜索一次，多個 Timeline 依次播放時就會重複遍歷相同層級。我把場景對象按路徑建立索引，後續綁定直接查找；名稱索引則保留同名對象集合，便於處理輔助查詢。</p>
+<p>查找範圍可以限定在一個根節點下，也可以遍歷已經加載的場景。使用哪一種方式，需要與導出路徑的約定一致，尤其不能把完整場景路徑與相對路徑混用。</p>
+<p>緩存也需要失效條件。場景或根節點切換時可以重建，但同一個場景內臨時生成、銷燬和重命名對象，也可能讓緩存過期。這種變化不能單靠場景名稱或場景句柄檢測，相關流程需要顯式清理或刷新索引。</p>
+<p>路徑綁定的優點是數據直觀、容易診斷，代價是依賴層級穩定。目標節點移動之後，編輯器預覽還正常，舊綁定文件卻可能失效，所以重新保存綁定必須成為資源修改流程的一部分。</p>
+<h2 id="美術製作流程怎樣保留"><a href="#美術製作流程怎樣保留" class="headerlink" title="美術製作流程怎樣保留"></a>美術製作流程怎樣保留</h2><p>新的流程沒有改變 Timeline 的基本編輯方式，主要是在保存與接入之間增加導出和回讀：</p>
+<ol>
+<li>在合適的場景中，把 TimelineAsset 掛到一個製作使用的 Director 上。</li>
+<li>選中場景中的 Director，綁定目標對象並錄製動畫。</li>
+<li>預覽效果，先保存 Timeline 中修改的動畫資源。</li>
+<li>從 Director 的菜單導出綁定信息。</li>
+<li>確認綁定文件生成，Director 的引用被清除，再保存場景。</li>
+<li>需要繼續修改時，重新掛載 Timeline 並讀取綁定文件，恢復編輯狀態。</li>
+</ol>
+<p>“點擊 Project 裡的 TimelineAsset”與“選中場景裡的 Director”不是同一個入口。需要錄製場景對象時，使用的是後者，否則綁定或錄製功能可能不可用。</p>
+<p>也不是所有 Timeline 都需要額外文件。如果完整演出都放在一個預製體內，並且沒有引用預製體外的場景對象，可以保留預製體內部的綁定關係，直接加載預製體。額外的綁定描述主要用於跨越資源與場景邊界的情況。</p>
+<h2 id="播放結束後要歸還控制權"><a href="#播放結束後要歸還控制權" class="headerlink" title="播放結束後要歸還控制權"></a>播放結束後要歸還控制權</h2><p>資源能夠加載、軌道能夠綁定，只說明演出能夠開始。相機等對象在結束後是否恢復，同樣需要進入製作驗收。</p>
+<p>當時的相機製作約定要求：演出最後一幀不再保持 Timeline 專用相機的激活狀態，避免正常結束後仍佔用視角。實際項目還應核對 ActivationTrack 的結束設置，以及相機系統自身的優先級規則。</p>
+<p>如果允許中途打斷，單靠時間軸最後一幀還不夠。外層停止流程也需要處理相機歸還、Director 清理和動態資源釋放，避免把“自然播完”的收尾誤當成所有退出路徑。</p>
+<h2 id="接入時檢查完整往返流程"><a href="#接入時檢查完整往返流程" class="headerlink" title="接入時檢查完整往返流程"></a>接入時檢查完整往返流程</h2><p>這次工具完成後，我把保存、回讀和運行時加載放進同一份製作說明，並要求原有 Timeline 的播放入口做迴歸。新功能能播，並不能證明舊資源在拆開引用之後仍然完整。</p>
+<p>對一份準備交付的資源，我會至少走一遍“製作 → 導出 → 重新讀取 → 運行時播放 → 結束或打斷”。這樣既能發現路徑和軌道名失配，也能發現動畫未保存、相機未釋放等製作問題。</p>
+<p>動態綁定的價值，是讓資源在製作時保持可見、可編輯，在運行時又能夠獨立加載。代碼與製作約定必須一起交付，這條路徑才能長期維持。</p>
+<p>參考：<a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Playables.PlayableDirector.GetGenericBinding.html">PlayableDirector.GetGenericBinding</a>、<a href="https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Playables.PlayableDirector.SetGenericBinding.html">PlayableDirector.SetGenericBinding</a>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zh-TW/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/zh-TW/tags/Timeline/" rel="tag"># Timeline</a>
+              <a href="/zh-TW/tags/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" rel="tag"># 資源管理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-03-04-%E5%9C%A8Unity-Mecanim%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%80%8F%E4%BC%A0%E7%8A%B6%E6%80%81%E7%9A%84%E5%8A%A8%E4%BD%9C%E5%90%8C%E6%AD%A5/" rel="prev" title="在Unity Mecanim中實現透傳狀態的動作同步">
+                  <i class="fa fa-angle-left"></i> 在Unity Mecanim中實現透傳狀態的動作同步
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-06-18-Unity%E8%92%99%E7%9A%AE%E5%8C%85%E5%9B%B4%E7%9B%92%E4%B8%8E%E5%B1%95%E7%A4%BA%E6%A8%A1%E5%9E%8B%E8%87%AA%E9%80%82%E5%BA%94%E7%BC%A9%E6%94%BE/" rel="next" title="Unity 蒙皮包圍盒與展示模型自適應縮放">
+                  Unity 蒙皮包圍盒與展示模型自適應縮放 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

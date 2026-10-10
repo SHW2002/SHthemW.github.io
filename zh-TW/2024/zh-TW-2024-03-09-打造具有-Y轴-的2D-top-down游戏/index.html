@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/zh-TW/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="想像一座帶有橋洞的小橋. 玩家先從左側上橋, 再從右側下橋, 最後從中間的橋洞走過去. 這是一個很簡單, 很常見的場景. 然而, 要在2D top-down視角的遊戲中實現它卻比想像中更復雜 –在橋上阻擋玩家跳下去的碰撞盒, 要如何才不會阻擋要穿過橋洞的玩家?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="打造具有&quot;Y軸&quot;的2D top-down遊戲">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-TW/2024/zh-TW-2024-03-09-%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="想像一座帶有橋洞的小橋. 玩家先從左側上橋, 再從右側下橋, 最後從中間的橋洞走過去. 這是一個很簡單, 很常見的場景. 然而, 要在2D top-down視角的遊戲中實現它卻比想像中更復雜 –在橋上阻擋玩家跳下去的碰撞盒, 要如何才不會阻擋要穿過橋洞的玩家?">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tit.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s1.png">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2024/%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/ref3.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref4.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref6.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s3.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/height_map_demo.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/walk%20demo.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s7.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s8-1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s8-1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/trans%20demo.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/fly%20demo.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s9.jpg">
+<meta property="article:published_time" content="2024-03-09T04:31:57.000Z">
+<meta property="article:modified_time" content="2024-03-09T04:31:57.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Unity">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s6.png">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-TW/2024/zh-TW-2024-03-09-%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://www.shenhanwen.top/zh-TW/2024/zh-TW-2024-03-09-%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/","path":"zh-TW/2024/zh-TW-2024-03-09-打造具有-Y轴-的2D-top-down游戏/","title":"打造具有\"Y軸\"的2D top-down遊戲"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>打造具有"Y軸"的2D top-down遊戲 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zh-TW/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/zh-TW/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/zh-TW/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/zh-TW/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-categories"><a href="/zh-TW/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-游戏开发"><a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>遊戲開發</a></li><li class="menu-item menu-item-摄影技术"><a href="/zh-TW/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>攝影技術</a></li><li class="menu-item menu-item-ai技术"><a href="/zh-TW/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI 技術</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>繁體中文</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical aria-label="選擇語言">
+      
+        <option value="zh-CN" data-href="/zh-CN/2024/%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/">
+          簡體中文
+        </option>
+      
+        <option value="en" data-href="/en/2024/en-2024-03-09-Creating-a-2D-Top-Down-Game-with-a-Y-Axis/">
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2024/zh-TW-2024-03-09-%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/" selected>
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E5%AF%A6%E4%BD%A0%E4%B8%80%E7%9B%B4%E5%9C%A8%E8%B5%B0%E8%BF%B7%E5%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">其實你一直在走迷宮</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E5%8D%80%E7%BC%BA%E9%99%B7"><span class="nav-number">1.1.</span> <span class="nav-text">死區缺陷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%A5%E5%8D%94"><span class="nav-number">1.2.</span> <span class="nav-text">妥協</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E7%A2%BA%E6%98%A0%E5%B0%84%E9%AB%98%E5%BA%A6"><span class="nav-number">2.</span> <span class="nav-text">正確映射高度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%95%E7%90%86-X-Z-%E9%9D%A2%E7%A2%B0%E6%92%9E"><span class="nav-number">2.1.</span> <span class="nav-text">處理(X, Z)面碰撞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%95%E7%90%86%E6%B8%B2%E6%9F%93%E9%A0%86%E5%BA%8F"><span class="nav-number">2.2.</span> <span class="nav-text">處理渲染順序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%9C%E6%A8%93%E6%A2%AF%E2%80%9D"><span class="nav-number">2.3.</span> <span class="nav-text">“樓梯”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E7%A7%91%E5%AD%B8%E7%9A%84%E5%81%9A%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">更科學的做法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#End"><span class="nav-number">4.</span> <span class="nav-text">End</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen" src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">遊戲客戶端開發工程師, 風光攝影和星空愛好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zh-TW/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zh-TW/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zh-TW/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-TW/2024/zh-TW-2024-03-09-%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="打造具有&quot;Y軸&quot;的2D top-down遊戲 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content>
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          打造具有"Y軸"的2D top-down遊戲
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2024-03-09 12:31:57" itemprop="dateCreated datePublished" datetime="2024-03-09T12:31:57+08:00">2024-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">遊戲開發</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>想像一座帶有橋洞的小橋. 玩家先從左側上橋, 再從右側下橋, 最後從中間的橋洞走過去.</p>
+<p>這是一個很簡單, 很常見的場景. 然而, 要在2D top-down視角的遊戲中實現它卻比想像中更復雜 –在橋上阻擋玩家跳下去的碰撞盒, 要如何才不會阻擋要穿過橋洞的玩家?</p>
+</div>
+
+<div class="post-intro-media">
+
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s6.png" alt="好吧這兩個數字可能被壓的太扁了"></p>
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<blockquote>
+<p>本文在知乎同步發佈: <a href="https://zhuanlan.zhihu.com/p/686230441">打造具有”Y軸”的2D top-down遊戲 - 知乎 (zhihu.com)</a></p>
+<p>感謝點贊收藏的朋友們!</p>
+</blockquote>
+<br>
+
+<h2 id="其實你一直在走迷宮"><a href="#其實你一直在走迷宮" class="headerlink" title="其實你一直在走迷宮"></a>其實你一直在走迷宮</h2><p>一般的2D俯視角遊戲通常隱去了”地層高度”這一設計. 玩家所看到的大部分地形都是純視覺效果, 其實際上只是由貼圖和碰撞盒而構成的平面, 玩家在這些”地層”間穿梭時其實更像是在走一個2D的迷宮.</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref1.jpg" alt="參考圖1"></p>
+<p>這種辦法顯然是高性價比的妥協 –多數情況下玩家並不會關心遊戲內部的具體實現, 只要讓地形”看起來像有高度”就足以滿足大多數遊戲的需求了. </p>
+<p>但代價是什麼呢古爾丹? 請看下面的場景:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/tit.png"></p>
+<p>這是一個在遊戲中經常能遇到的場景, 看起來與圖1似乎並沒有什麼不同, 除了人物移動到了高地形的後方. 現在請留意圖片上的A點. 假如玩家希望移動到這個位置, 他該怎麼做? </p>
+<p>答案是: 不知道!</p>
+<h3 id="死區缺陷"><a href="#死區缺陷" class="headerlink" title="死區缺陷"></a>死區缺陷</h3><p>為什麼? 因為產生了Y座標映射歧義. 圖上的點A看似是一個確切的座標點, 但其實不然: 過攝像機和A點的射線在這個場景中其實穿透了兩個平面, 也就是說, 產生了兩個交點. 這導致A點在場景中其實代表的是x, z座標相同而y座標不同的兩個<em>不同</em>位置, 也就不難理解為什麼我們很難確定目的地了.</p>
+<p>通過以下的示意圖可以更好的瞭解目前的處境:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s1.png" alt="示意圖"></p>
+<ul>
+<li><p>狀況1中, 所有面都僅被攝像機發出的射線穿透一次, 此時場景內的每一個(x, z)座標均對應唯一的一個y座標, 因此不會產生什麼問題. 本文的示意圖1就代表了這種情況.</p>
+</li>
+<li><p>狀況2中, 部分地形對另一部分地形(從相機的角度看)發生了遮擋. 導致部分射線同時穿過了被遮擋區域和遮擋其的區域. 此時若在這些區域(死區)內選擇座標點, 就會產生一個座標對應多個實際位置的情況.</p>
+</li>
+</ul>
+<h3 id="妥協"><a href="#妥協" class="headerlink" title="妥協"></a>妥協</h3><p>對多數top-down的2D遊戲來說, 這個問題的解決方案也比想像中的更簡單粗暴 –要麼直接禁止玩家前往這些區域, 要麼將產生衝突的兩個區域中的一個設置為不可達, 只為另一個區域配置碰撞盒. </p>
+<p>例如在這款示例遊戲中, 玩家角色只能向下跑動到如下圖所示的位置 –顯然開發者是按照巖壁頂面配置的碰撞區域. 同樣顯然的是, 一部分本該可達的區域(被岩石遮擋的後方)由於這種妥協變的不再可達了.</p>
+<p><img src="/zh-CN/2024/%E6%89%93%E9%80%A0%E5%85%B7%E6%9C%89-Y%E8%BD%B4-%E7%9A%842D-top-down%E6%B8%B8%E6%88%8F/ref3.jpg" alt="已經過不去了!&gt;_&lt;"></p>
+<p>另外一種常用的解決方案是直接使用3D模型, 而後使用三渲二的方式實現視覺上的2D效果. 不過這種情況實際屬於3D遊戲的範疇, 不在本文的討論範圍之內, 在此不進行詳細論述.</p>
+<p>2D top-down遊戲的這種特性一定程度上降低了地圖的可交互能力. 實際上, 一些早期的此類遊戲往往將地圖中的實體設計的卡通而矮小, 將遊戲性中心更多放在戰鬥&#x2F;特效&#x2F;機制等層面, 以此來揚長避短. 久而久之, 玩家在面對這種遊戲時甚至都不會產生對地形交互的期許 –大家只會想: “哦, 這裡有一個城堡啊, 我們繞過去吧” 而不是”從狗洞鑽進去跟陽臺上的哥們打個招呼再從二樓繞道出來”.</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref4.gif" alt="ref4"></p>
+<p>當然, 這不失為是一種風格化的遊戲特色. 但交互性之於遊戲就好像珠峰之於攀山者, 是一個永無止境的追求標準. 此外對於諸多小型工作室, 製作和渲染3D模型的成本往往是高昂的. 有沒有什麼辦法能緩解2D top-down的這種死區缺陷呢?</p>
+<blockquote>
+<p>注: 本文僅論證技術層面的可行性. 對於遊戲設計上是否有必要&#x2F;商業上是否受歡迎等維度將不做過多探討. 也歡迎大家分享自己的想法 ;)</p>
+</blockquote>
+<br>
+
+<h2 id="正確映射高度"><a href="#正確映射高度" class="headerlink" title="正確映射高度"></a>正確映射高度</h2><p>對於模型在y軸上的頂點信息和碰撞盒, top-down並非完全不能處理這種情況. 往簡單的說, 如果開發者能手動為每一層高設置碰撞盒並使其動態切換, 就能實現類似3D碰撞的效果.</p>
+<h3 id="處理-X-Z-面碰撞"><a href="#處理-X-Z-面碰撞" class="headerlink" title="處理(X, Z)面碰撞"></a>處理(X, Z)面碰撞</h3><p>更確切的說, 地圖上的實體應該在不同”高度層”上響應不同的碰撞區域. 仍然以之前的圖2所示, 我們希望玩家站在低層平臺時只響應低層的碰撞盒(下圖藍色框線), 而站在高臺時改為使用高臺的碰撞盒(圖中紫色框線). </p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/ref6.jpg" alt="ref6"></p>
+<p>這樣一來, 分層佈設的碰撞盒相當於模糊的攜帶了其包圍區域的y座標信息, 讓整個場景產生了偽3D的感覺. 如圖所示的這種畫法是以圖上高地的高度作為粒度劃分的. 考慮到為每一層tile都繪製碰撞盒會比較複雜, 這裡暫時只進行簡單的建模.</p>
+<p>下面我們在Unity引擎中使用Tilemap嘗試構造一個這樣的地圖:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s3.jpg" alt="s3"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/height_map_demo.gif" alt="引擎版本2022.3"></p>
+<p>紅色方格表示的就是碰撞塊. 圖中展示了兩個不同高度層的碰撞盒.</p>
+<p>對場景中每個需要的高度繪製碰撞盒並不複雜, 實際上只要做好分層處理, 它便和繪製單層碰撞盒一樣容易. Unity引擎為每個GameObject提供了LayerMask和SortingLayer屬性, 分別用於控制其邏輯層和渲染排序層.</p>
+<p>如下圖所示, Unity允許開發者自定義邏輯層間的物理交互關係. 我們可以為碰撞盒所在的物體設置高度Layer, 並在Unity提供的Layer Collision Matrix中設置碰撞關係: 僅允許高度相同的兩個層間進行碰撞.</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s2.png" alt="請忽略圖中的Float層"></p>
+<blockquote>
+<p>注意, Unity中的Layer Mask是使用32位掩碼進行存儲的, 要特別注意對其的設置和修改.</p>
+</blockquote>
+<h3 id="處理渲染順序"><a href="#處理渲染順序" class="headerlink" title="處理渲染順序"></a>處理渲染順序</h3><p>初步打造了多層次的碰撞模型後, 我們還需要按照正確的次序渲染不同高度的模型. 對於top-down視角的X-Z面(即玩家站立的平面), 高度更”高”的面距離攝像機的距離總是更近, 應當被優先渲染. 在下面所示的場景中, C面總是會遮擋比其高度更低的B面, 同樣的原理它們也會遮擋地面A面.</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s4.png" alt="s4"></p>
+<p>現在來考慮X-Y面(即面向相機的牆面)的渲染情況. 它們的邏輯高度其實處於”牆”所連接的低處和高處之間. 同樣道理的還有處於高度內的實體 -如圖上的玩家角色位於高度B-C之間, 地上的灌木叢位於A-B之間. 這些物體總是被更高層的地面遮擋, 也總是遮擋其所”踩”著的地面. 而同一高度層的物體兩兩之間則遵循”Z座標優先排序” –一種傳統top-down中很常用的渲染方法.</p>
+<p>根據這些設計, 我們如圖所示搭建Sorting Order的原型:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s4.png"></p>
+<p>上圖中的grd表示X-Z面, upr表示X-Y面. 後面的細分數值是用於搭建同一層中次序不同的物體的(如土地和長在上面的草), 讀者可以暫時只關心上面命名中的前綴.</p>
+<p>至此, 我們已經可以實現下圖所示的效果:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/walk%20demo.gif" alt="walk demo"></p>
+<p>可以看到在穿越城門時玩家角色成功被城門上的拱門遮擋了, 這是由於組成拱門的tile具有比玩家更大的邏輯高度和渲染優先級. 和通常的top-down遊戲不同的是, 我們的做法更客觀的映射了地圖高度, 而不是淺淺的區分一個”所謂前景”和”所謂背景”.</p>
+<h3 id="“樓梯”"><a href="#“樓梯”" class="headerlink" title="“樓梯”"></a>“樓梯”</h3><blockquote>
+<p>截至目前, 我們使用的是Unity自帶的Layer Mask和Sorting Layer屬性. 單獨分別設置它們很容易在維護時增添不必要的麻煩, 因此可以考慮專門編寫一個Height2D組件用於封裝”高度”屬性. 讀者可以自己根據項目設計模塊, 下文中的Properties僅作為偽代碼參考.</p>
+</blockquote>
+<p>在遊戲中, 實體的高度往往會產生變化: 玩家可能期望通過樓梯走向一塊比較高的地形, 怪物也可能會由於閒逛而跑到遠離出生點的區域. 玩家的初始高度可以通過靜態調整<code>Height2D.height</code>屬性來設置, 那如何做到動態識別玩家當前所處的高度呢?</p>
+<p>考慮一個如下圖所示的模型:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s6.png" alt="好吧這兩個數字可能被壓的太扁了"></p>
+<p>圖中L表示lower(低地), H表示higher(高地). 留意它們之間的兩條分別寫著1和0的紫色線條, 這兩條線就是高度切換的關鍵. 實際上, 它們是一組”邏輯樓梯”, 如下圖所示:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s7.jpg" alt="s7"></p>
+<p>邏輯樓梯中具有兩個entrance, 分別掛載了具有切換其中實體功能的組件. 當實體進入樓梯的判定區時, 樓梯程序便會改變通過其中的實體的<code>Height2D.height</code>屬性, 達到切換高度的效果. 你可以將這些”邏輯樓梯”佈置在場景中真正的樓梯區域, 或是任何具有類似高度切換功能的區域, 實現玩家的上下位移功能.</p>
+<p>下圖是”邏輯樓梯”在演示場景中的應用:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s8-1.jpg" alt="s8-1"></p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s8-1.jpg"></p>
+<p>可以看到, “邏輯樓梯”不僅適用於傳統意義上的樓梯, 其它遊戲場景中常見的高度切換設備(如梯子)也是其適用對象.</p>
+<p>在完成高度切換邏輯後, 我們可以輕易實現下面所展示的效果:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/trans%20demo.gif" alt="trans demo"></p>
+<p>請留意在上圖的流程中Player的<code>height</code>屬性是動態變化的 (0 &#x3D;&gt; 1 &#x3D;&gt; 2 &#x3D;&gt; 1).</p>
+<p>以下是一個效果更為明顯的示例:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/fly%20demo.gif" alt="fly demo"></p>
+<p>在這個場景中, 玩家從城牆上方(高度2)滑翔並降落到了地面(高度1). 可以看到, 原先在城牆上包圍玩家的碰撞盒立刻失效了, 玩家能夠穿越那些區域並從城門裡走出來. 這也回答了本文開頭提到的”橋洞模型”問題.</p>
+<br>
+
+<h2 id="更科學的做法"><a href="#更科學的做法" class="headerlink" title="更科學的做法"></a>更科學的做法</h2><p>對於中小型項目而言, 上面提到的分層碰撞盒和高度field算是一個可行的解決方案. 然而本質上說, 2D top-down地圖的每個座標均只攜帶了X, Z平面的座標信息而缺少Y座標信息, 這才是我們難以映射高度的根本原因.</p>
+<p>從更純粹的算法和數學層面, 我們也可以考慮以下設計:</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">enum</span> SpaceType : <span class="built_in">int</span></span><br><span class="line">&#123;</span><br><span class="line">    None = <span class="number">0</span>,    <span class="comment">// 表示空间内什么都没有. 理论上该值不该被使用, 因为YSpace字典中只会定义非空空间.</span></span><br><span class="line">    Solid,       <span class="comment">// 表示空间内具有实心块</span></span><br><span class="line">    Transitional <span class="comment">// 表示空间内的块具有过渡功能</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> Coordinate</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> X &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Z &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> Dictionary&lt;<span class="built_in">int</span>, SpaceType&gt; YSpace &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上述代碼中, 我們用全新的數據結構表示了地圖座標. 除了傳統的X-Z座標外, 添加了<code>YSpace</code>字典用於表示在當前平面座標上的Y空間. 字典的Key表示每個非空的Y座標, Value則表示當前存在的物塊類型(實心&#x2F;斜坡).</p>
+<p>這個做法可以更輕易的表示複雜地形, 甚至帶有中空結構的地形:</p>
+<p><img src="https://raw.githubusercontent.com/SHW2002/Blog.Images/master/s9.jpg" alt="用MC搭了個模型"></p>
+<p>如上圖所示的構造可以用如下偽代碼定義: (設左側灰色頂點為原點, 右-上為正方向)</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 四个高度为0的地块</span></span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">0</span>, Z = <span class="number">0</span>, YSpace = <span class="keyword">new</span>()&#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">1</span>, Z = <span class="number">0</span>, YSpace = <span class="keyword">new</span>()&#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">2</span>, Z = <span class="number">0</span>, YSpace = <span class="keyword">new</span>()&#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">2</span>, Z = <span class="number">1</span>, YSpace = <span class="keyword">new</span>()&#123;&#125; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 四个高度为1的地块</span></span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">1</span>, Z = <span class="number">1</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">1</span>, Z = <span class="number">2</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">2</span>, Z = <span class="number">2</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">2</span>, Z = <span class="number">3</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 三个高度为2的地块</span></span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">0</span>, Z = <span class="number">2</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid, <span class="number">2</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">0</span>, Z = <span class="number">3</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid, <span class="number">2</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">1</span>, Z = <span class="number">3</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid, <span class="number">2</span> : SpaceType.Solid&#125; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 一个中间空了一格的地块:</span></span><br><span class="line"><span class="keyword">new</span> Coordinate() &#123; X = <span class="number">0</span>, Z = <span class="number">1</span>, YSpace = <span class="keyword">new</span>()&#123;<span class="number">1</span> : SpaceType.Solid, <span class="number">3</span> : SpaceType.Solid&#125; &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>這種數據結構顯然制定了數學層面上更為嚴謹的規則 –它真正的為每個平面點分配了Y座標. </p>
+<p>從理論上說, 為這種模型編寫<code>TerrainParser</code>並實現與上文類似的效果是可行的. 然而, 考慮到為每個採樣點分配存儲Y空間的字典所帶來的空間和性能開銷, 以及在這個模型下實現尋路算法的複雜性, 這種做法未必能有效地在工程中取代本文提到的第一種實現.</p>
+<br>
+
+<h2 id="End"><a href="#End" class="headerlink" title="End"></a>End</h2><p>要訪問本文中的示例遊戲,</p>
+<p>歡迎關注作者GitHub: <a href="https://github.com/SHW2002">SHW2002 (S.H.W) (github.com)</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zh-TW/tags/Unity/" rel="tag"># Unity</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-TW/2023/zh-TW-2023-11-30-%E6%AC%A2%E8%BF%8E/" rel="prev" title="歡迎!">
+                  <i class="fa fa-angle-left"></i> 歡迎!
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-TW/2025/zh-TW-2025-03-19-%E6%B8%B8%E6%88%8FGM%E5%B7%A5%E5%85%B7%E7%9A%84%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%94%B6%E8%97%8F%E8%AE%BE%E8%AE%A1/" rel="next" title="遊戲 GM 工具的動態註冊與收藏設計">
+                  遊戲 GM 工具的動態註冊與收藏設計 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

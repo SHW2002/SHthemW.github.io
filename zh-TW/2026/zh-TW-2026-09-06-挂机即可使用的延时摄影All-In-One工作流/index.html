@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.shenhanwen.top","root":"/zh-TW/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="我把延時攝影中反覆手動完成的操作，做成了一套以 TimelapseManager 為入口的自動化工具流：配置好相機、依賴和拍攝時段後，創建任務就能自動拍攝包圍曝光序列、下載照片、合成 HDR、去閃並導出視頻。開啟晚霞評分後，它還會找出霞光片段、給相冊評分，並通過企業微信推送結果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="掛機即可使用的延時攝影All-In-One工作流">
+<meta property="og:url" content="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-09-06-%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/index.html">
+<meta property="og:site_name" content="Welcome to HanWen&#39;s Blog!">
+<meta property="og:description" content="我把延時攝影中反覆手動完成的操作，做成了一套以 TimelapseManager 為入口的自動化工具流：配置好相機、依賴和拍攝時段後，創建任務就能自動拍攝包圍曝光序列、下載照片、合成 HDR、去閃並導出視頻。開啟晚霞評分後，它還會找出霞光片段、給相冊評分，並通過企業微信推送結果。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/sunset-score-examples.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/nikon-z30-bracketing.webp">
+<meta property="og:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-webhook.webp">
+<meta property="article:published_time" content="2026-09-06T05:10:45.000Z">
+<meta property="article:modified_time" content="2026-09-06T05:10:45.000Z">
+<meta property="article:author" content="HanWen">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="延时摄影">
+<meta property="article:tag" content="摄影工具">
+<meta property="article:tag" content="自动化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shenhanwen.top/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/timelapse-manager-overview.webp">
+
+
+<link rel="canonical" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-09-06-%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-09-06-%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/","path":"zh-TW/2026/zh-TW-2026-09-06-挂机即可使用的延时摄影All-In-One工作流/","title":"掛機即可使用的延時攝影All-In-One工作流"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>掛機即可使用的延時攝影All-In-One工作流 | Welcome to HanWen's Blog!</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/zh-TW/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Welcome to HanWen's Blog!</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">The language switcher is available in the top navigation</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/zh-TW/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/zh-TW/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/zh-TW/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-categories"><a href="/zh-TW/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-游戏开发"><a href="/zh-TW/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="section"><i class="fa fa-gamepad fa-fw"></i>遊戲開發</a></li><li class="menu-item menu-item-摄影技术"><a href="/zh-TW/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-camera fa-fw"></i>攝影技術</a></li><li class="menu-item menu-item-ai技术"><a href="/zh-TW/categories/AI%E6%8A%80%E6%9C%AF/" rel="section"><i class="fa fa-robot fa-fw"></i>AI 技術</a></li>
+  </ul>
+</nav>
+
+
+
+
+  <div class="languages header-languages">
+    <label class="lang-select-label" for="header-lang-select">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      <span>繁體中文</span>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </label>
+    <select id="header-lang-select" class="lang-select" data-canonical aria-label="選擇語言">
+      
+        <option value="zh-CN" data-href="/zh-CN/2026/%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/">
+          簡體中文
+        </option>
+      
+        <option value="en" data-href="/en/2026/en-2026-09-06-An-Unattended-All-in-One-Timelapse-Workflow/">
+          English
+        </option>
+      
+        <option value="zh-TW" data-href="/zh-TW/2026/zh-TW-2026-09-06-%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/" selected>
+          繁體中文
+        </option>
+      
+    </select>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%80%E6%AC%A1%E4%BB%BB%E5%8B%99%EF%BC%8C%E5%BE%97%E5%88%B0%E6%88%90%E7%89%87%E5%92%8C%E5%8F%AF%E7%AF%A9%E9%81%B8%E7%9A%84%E7%B4%A0%E6%9D%90"><span class="nav-number">1.</span> <span class="nav-text">1. 一次任務，得到成片和可篩選的素材</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E7%89%87%E8%88%87%E7%9B%B8%E5%86%8A%E8%BC%B8%E5%87%BA"><span class="nav-number">1.1.</span> <span class="nav-text">成片與相冊輸出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%9A%E9%9C%9E%E7%AF%A9%E9%81%B8%E6%95%88%E6%9E%9C"><span class="nav-number">1.2.</span> <span class="nav-text">晚霞篩選效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%B3%BB%E7%B5%B1%E6%9E%B6%E6%A7%8B%EF%BC%9A%E4%B8%80%E5%80%8B%E5%85%A5%E5%8F%A3%EF%BC%8C%E5%88%86%E5%B7%A5%E6%98%8E%E7%A2%BA%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="nav-number">2.</span> <span class="nav-text">2. 系統架構：一個入口，分工明確的工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BB%BB%E5%8B%99%E7%AE%A1%E7%90%86%EF%BC%9A%E8%AE%93%E2%80%9C%E4%B8%80%E9%8D%B5%E5%95%9F%E5%8B%95%E2%80%9D%E8%83%BD%E5%A4%A0%E6%8C%81%E7%BA%8C%E9%81%8B%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">3. 任務管理：讓“一鍵啟動”能夠持續運行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E9%A0%90%E8%A8%AD%E7%94%9F%E6%88%90%E6%98%8E%E7%A2%BA%E7%9A%84%E4%BB%BB%E5%8B%99"><span class="nav-number">3.1.</span> <span class="nav-text">用預設生成明確的任務</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%95%8C%E9%9D%A2%E8%88%87%E5%9F%B7%E8%A1%8C%E9%80%B2%E7%A8%8B%E5%88%86%E9%9B%A2"><span class="nav-number">3.2.</span> <span class="nav-text">界面與執行進程分離</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%9C%96%E5%83%8F%E8%99%95%E7%90%86%EF%BC%9A%E5%BE%9E%E5%8C%85%E5%9C%8D%E6%9B%9D%E5%85%89%E5%88%B0%E7%A9%A9%E5%AE%9A%E7%9A%84%E5%BB%B6%E6%99%82%E7%95%AB%E9%9D%A2"><span class="nav-number">4.</span> <span class="nav-text">4. 圖像處理：從包圍曝光到穩定的延時畫面</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%9D%E5%85%89%E7%B5%84%E6%98%AF%E6%8B%8D%E6%94%9D%E8%88%87%E8%99%95%E7%90%86%E7%9A%84%E4%BA%A4%E6%8E%A5%E5%96%AE%E4%BD%8D"><span class="nav-number">4.1.</span> <span class="nav-text">曝光組是拍攝與處理的交接單位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E6%8B%8D%E6%94%9D%E8%88%87%E4%B8%8B%E8%BC%89%E8%80%97%E6%99%82%E8%A8%88%E5%85%A5%E9%96%93%E9%9A%94"><span class="nav-number">4.2.</span> <span class="nav-text">把拍攝與下載耗時計入間隔</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%9E%8D%E5%90%88%E3%80%81%E5%8E%BB%E9%96%83%E8%88%87%E7%B7%A8%E7%A2%BC%E5%88%86%E5%88%A5%E8%99%95%E7%90%86%E4%BB%80%E9%BA%BC"><span class="nav-number">4.3.</span> <span class="nav-text">融合、去閃與編碼分別處理什麼</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%B8%A6%E8%A1%8C%E6%B5%81%E6%B0%B4%E7%B7%9A%EF%BC%9A%E9%82%8A%E6%8B%8D%E6%94%9D%EF%BC%8C%E9%82%8A%E5%90%88%E6%88%90%EF%BC%8C%E9%82%8A%E8%A9%95%E5%88%86"><span class="nav-number">5.</span> <span class="nav-text">5. 並行流水線：邊拍攝，邊合成，邊評分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%B2%E5%BA%A6%E4%BE%86%E8%87%AA%E5%90%84%E9%9A%8E%E6%AE%B5%E7%9A%84%E5%AF%A6%E9%9A%9B%E7%B5%90%E6%9E%9C"><span class="nav-number">5.1.</span> <span class="nav-text">進度來自各階段的實際結果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%9C%AC%E5%9C%B0%E8%A6%96%E8%A6%BA%E8%A9%95%E5%88%86%E8%88%87%E7%B4%A0%E6%9D%90%E4%BF%9D%E7%95%99"><span class="nav-number">6.</span> <span class="nav-text">6. 本地視覺評分與素材保留</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%9E%E5%96%AE%E5%BC%B5%E5%88%86%E6%95%B8%E5%BE%97%E5%88%B0%E6%99%9A%E9%9C%9E%E5%8D%80%E9%96%93"><span class="nav-number">6.1.</span> <span class="nav-text">從單張分數得到晚霞區間</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E8%A9%95%E5%88%86%E8%AE%8A%E6%88%90%E5%8F%AF%E8%A7%A3%E9%87%8B%E7%9A%84%E6%AD%B8%E6%AA%94%E5%8B%95%E4%BD%9C"><span class="nav-number">6.2.</span> <span class="nav-text">把評分變成可解釋的歸檔動作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E9%95%B7%E6%9C%9F%E9%81%8B%E8%A1%8C%E9%9C%80%E8%A6%81%E7%9A%84%E6%81%A2%E5%BE%A9%E3%80%81%E4%BE%9D%E8%B3%B4%E8%88%87%E9%80%9A%E7%9F%A5"><span class="nav-number">7.</span> <span class="nav-text">7. 長期運行需要的恢復、依賴與通知</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%8C%E6%9C%9F%E5%A4%B1%E6%95%97%E6%99%82%E4%BF%9D%E4%BD%8F%E5%B7%B2%E7%B6%93%E6%8B%8D%E5%88%B0%E7%9A%84%E5%85%A7%E5%AE%B9"><span class="nav-number">7.1.</span> <span class="nav-text">後期失敗時保住已經拍到的內容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%93%E4%BB%BB%E5%8B%99%E4%BD%BF%E7%94%A8%E7%9A%84%E4%BE%9D%E8%B3%B4%E5%8F%AF%E4%BB%A5%E7%A2%BA%E5%AE%9A"><span class="nav-number">7.2.</span> <span class="nav-text">讓任務使用的依賴可以確定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E9%9B%BB%E8%85%A6%E4%B9%8B%E5%A4%96%E6%9F%A5%E7%9C%8B%E6%8B%8D%E6%94%9D%E7%B5%90%E6%9E%9C"><span class="nav-number">7.3.</span> <span class="nav-text">在電腦之外查看拍攝結果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E9%85%8D%E7%BD%AE%E4%B8%80%E6%AC%A1%EF%BC%8C%E9%87%8D%E8%A4%87%E4%BD%BF%E7%94%A8"><span class="nav-number">8.</span> <span class="nav-text">8. 配置一次，重複使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E5%85%A9%E5%80%8B%E9%85%8D%E5%A5%97%E5%B7%A5%E5%85%B7%EF%BC%9A%E7%B2%BE%E7%B4%B0%E5%BE%8C%E6%9C%9F%E8%88%87-RAW-%E6%95%B4%E7%90%86"><span class="nav-number">9.</span> <span class="nav-text">9. 兩個配套工具：精細後期與 RAW 整理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E6%BC%94%E9%80%B2%E8%88%87%E7%89%88%E6%9C%AC%E4%BE%9D%E6%93%9A"><span class="nav-number">10.</span> <span class="nav-text">10. 演進與版本依據</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="HanWen" src="https://github.com/SHW2002.png">
+  <p class="site-author-name" itemprop="name">HanWen</p>
+  <div class="site-description" itemprop="description">遊戲客戶端開發工程師, 風光攝影和星空愛好者</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/zh-TW/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/zh-TW/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/zh-TW/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/SHW2002" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;SHW2002" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/ShenHanWen2002@163.com" title="E-Mail → ShenHanWen2002@163.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://www.shenhanwen.top/zh-TW/2026/zh-TW-2026-09-06-%E6%8C%82%E6%9C%BA%E5%8D%B3%E5%8F%AF%E4%BD%BF%E7%94%A8%E7%9A%84%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1All-In-One%E5%B7%A5%E4%BD%9C%E6%B5%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/SHW2002.png">
+      <meta itemprop="name" content="HanWen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Welcome to HanWen's Blog!">
+      <meta itemprop="description" content="游戏客户端开发工程师, 风光摄影和星空爱好者">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="掛機即可使用的延時攝影All-In-One工作流 | Welcome to HanWen's Blog!">
+      <meta itemprop="description" content>
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          掛機即可使用的延時攝影All-In-One工作流
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2026-09-06 13:10:45" itemprop="dateCreated datePublished" datetime="2026-09-06T13:10:45+08:00">2026-09-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/zh-TW/categories/%E6%91%84%E5%BD%B1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">攝影技術</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="閱讀次數" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">閱讀次數：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><div class="post-intro">
+
+<div class="post-intro-text">
+
+<p>我把延時攝影中反覆手動完成的操作，做成了一套以 <strong>TimelapseManager</strong> 為入口的自動化工具流：配置好相機、依賴和拍攝時段後，創建任務就能自動拍攝包圍曝光序列、下載照片、合成 HDR、去閃並導出視頻。開啟晚霞評分後，它還會找出霞光片段、給相冊評分，並通過企業微信推送結果。</p>
+</div>
+
+<div class="post-intro-media">
+
+<img src="/zh-CN/2026/挂机即可使用的延时摄影All-In-One工作流/timelapse-manager-overview.webp" alt="Timelapse Manager 運行總覽，集中顯示任務狀態、當前階段和受控進程" style="width:680px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
+
+</div>
+
+</div>
+
+<span id="more"></span>
+
+<p>這套工具已經能夠運行單次、每日循環和持續分批任務。拍攝、HDR 合成與評分可以並行推進，關閉管理窗口後，後臺任務仍然繼續。本文重點介紹最終能得到什麼，以及支撐這套自動化的任務模型、圖像處理和異常恢復設計。</p>
+<p><em>運行總覽將任務、狀態、當前階段和工作進程放在同一個界面中；圖片來自倉庫隨附的界面演示，任務數據用於展示。</em></p>
+<h2 id="1-一次任務，得到成片和可篩選的素材"><a href="#1-一次任務，得到成片和可篩選的素材" class="headerlink" title="1. 一次任務，得到成片和可篩選的素材"></a>1. 一次任務，得到成片和可篩選的素材</h2><p>以固定機位拍攝黃昏為例，我希望在設置好時間後，程序完成以下工作：</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>最終得到的結果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>定時拍攝與下載</td>
+<td>按曝光組連續編號的本地照片序列</td>
+</tr>
+<tr>
+<td>曝光融合與去閃</td>
+<td>融合後的 HDR 畫面，以及經過亮度平滑的成片輸入</td>
+</tr>
+<tr>
+<td>視頻編碼</td>
+<td>H.265 編碼的 MP4 延時視頻</td>
+</tr>
+<tr>
+<td>可選的晚霞分析</td>
+<td>每個採樣點的分數與理由、最高分照片、晚霞區間</td>
+</tr>
+<tr>
+<td>歸檔與通知</td>
+<td>按日期和時段組織的相冊、最高分目錄標記、文本與圖片通知</td>
+</tr>
+</tbody></table>
+<p>假設一次任務從 16:00 拍到 20:00，每六秒拍攝一組三張照片，理想情況下約產生 2400 組、7200 張 JPG。每組融合為一幀，按 30 fps 編碼後，四小時的變化就壓縮為約 80 秒。這是素材量與成片時長的估算，實際幀數會受曝光、下載耗時和中斷影響。</p>
+<h3 id="成片與相冊輸出"><a href="#成片與相冊輸出" class="headerlink" title="成片與相冊輸出"></a>成片與相冊輸出</h3><p>一次最高晚霞評分為 4、並完成清理歸檔的任務，保留結果可以呈現為：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">AutoTimelapse/</span><br><span class="line">└── 2026-09-06-S4/</span><br><span class="line">    └── 1600-2000-S4/</span><br><span class="line">        ├── hdr_enfuse/</span><br><span class="line">        │   ├── hdr_00001.jpg</span><br><span class="line">        │   ├── ...</span><br><span class="line">        │   └── .sunsetscore-score.json</span><br><span class="line">        └── hdr_video/</span><br><span class="line">            └── hdr_timelapse.mp4</span><br></pre></td></tr></table></figure>
+
+<p>這是輸出結構示意。<code>hdr_enfuse</code> 保存曝光融合幀，<code>hdr_video</code> 保存成片，評分文件保留分析結果；日期與時段目錄中的 <code>S4</code> 讓有價值的拍攝時段在文件管理器裡就能被找到。同一天存在多個已標記相冊時，外層日期目錄使用它們的最高分。</p>
+<p>處理過程中還會生成原始曝光組和 <code>hdr_deflick</code> 去閃中間幀，是否繼續保留由任務清理配置決定。這樣既能直接查看視頻，也能保留值得進一步後期的 HDR 序列。</p>
+<h3 id="晚霞篩選效果"><a href="#晚霞篩選效果" class="headerlink" title="晚霞篩選效果"></a>晚霞篩選效果</h3><p>下面是 SunsetScore 倉庫中來自同一延時序列的實際評分樣例。普通白灰雲得到 1 分，著色較柔和的雲層得到 3 分，大範圍鮮豔著色的雲層得到 4 分。</p>
+<img src="/zh-CN/2026/挂机即可使用的延时摄影All-In-One工作流/sunset-score-examples.webp" alt="SunsetScore 同一延時序列的評分示例，從左到右為 1 分、3 分和 4 分" style="width:760px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
+
+<p><em>保留了原始樣例中的評分標籤，按低、中、高分並排展示；這組樣例沒有 5 分照片。</em></p>
+<p>對於每天重複拍攝的固定機位，篩選結果減少了逐個打開文件夾、逐幀尋找霞光的工作。成片用於快速回看，評分和晚霞區間用於定位值得細看的素材。</p>
+<h2 id="2-系統架構：一個入口，分工明確的工具"><a href="#2-系統架構：一個入口，分工明確的工具" class="headerlink" title="2. 系統架構：一個入口，分工明確的工具"></a>2. 系統架構：一個入口，分工明確的工具</h2><p>所有項目都放在 GitHub 的 <a href="https://github.com/hanwenphotograph">Hanwen Photograph</a> 組織中。<a href="https://github.com/hanwenphotograph/Timelapse-Auto-Script">TimelapseManager</a> 同時提供 GUI 與 CLI，倉庫名仍為 <code>Timelapse-Auto-Script</code>。</p>
+<p>Manager 承擔任務調度、進程管理、進度彙總和結果處置，圖像處理交給專門的工具。各層通過命令行、文件和公開事件協議連接：</p>
+<pre>
+<code class="mermaid">
+
+flowchart TB
+    UI[&quot;TimelapseManager GUI &#x2F; CLI&quot;] --&gt; M[&quot;任務服務與後臺 worker&lt;br&#x2F;&gt;配置、調度、進程、日誌&quot;]
+    M --&gt;|啟動與監控| C[&quot;Camera Timelapse Controller&lt;br&#x2F;&gt;gphoto2 控制相機&quot;]
+    M --&gt;|啟動與監控| B[&quot;Bracketlapse&lt;br&#x2F;&gt;可選對齊與 enfuse 曝光融合&quot;]
+    C --&gt;|完整、穩定的曝光組| B
+    B --&gt;|HDR 序列| D[&quot;Simple Deflicker&lt;br&#x2F;&gt;亮度去閃&quot;]
+    D --&gt; V[&quot;FFmpeg&lt;br&#x2F;&gt;H.265 視頻&quot;]
+    B --&gt;|hdr_ready 經 Manager 轉發| S[&quot;SunsetScore&lt;br&#x2F;&gt;本地常駐評分服務&quot;]
+    S --&gt; A[&quot;Manager 結果處置&lt;br&#x2F;&gt;相冊標記、HDR 保留與通知&quot;]
+</code>
+</pre>
+
+<p>Bracketlapse 負責組織曝光融合、去閃和編碼；SunsetScore 負責目錄採樣、模型推理和評分彙總。Manager 通過它們的公開接口安排工作，各工具可以獨立運行，也可以繼續替換或改進內部實現。</p>
+<p>組織裡的 Lumalapse 和 NEF Filter 提供 RAW 精細後期、篩片後整理兩條配套路徑，目前獨立使用。自動拍攝主線直接連接相機控制、Bracketlapse 和 SunsetScore，Simple Deflicker 作為 Bracketlapse 的後期依賴參與處理。</p>
+<h2 id="3-任務管理：讓“一鍵啟動”能夠持續運行"><a href="#3-任務管理：讓“一鍵啟動”能夠持續運行" class="headerlink" title="3. 任務管理：讓“一鍵啟動”能夠持續運行"></a>3. 任務管理：讓“一鍵啟動”能夠持續運行</h2><h3 id="用預設生成明確的任務"><a href="#用預設生成明確的任務" class="headerlink" title="用預設生成明確的任務"></a>用預設生成明確的任務</h3><p>Manager 提供四類創建預設，覆蓋臨時拍攝、每日定時和長期記錄：</p>
+<table>
+<thead>
+<tr>
+<th>預設</th>
+<th>使用場景</th>
+<th>執行方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>manual</code></td>
+<td>明確指定某一天、某個時段</td>
+<td>填寫目錄、起止日期和時間、拍攝間隔</td>
+</tr>
+<tr>
+<td><code>scheduled_once</code></td>
+<td>拍攝下一個清晨或黃昏</td>
+<td>按項目配置生成一次任務</td>
+</tr>
+<tr>
+<td><code>scheduled_loop</code></td>
+<td>每天重複拍攝</td>
+<td>每輪結束後自動生成並啟動後繼任務</td>
+</tr>
+<tr>
+<td><code>eternal</code></td>
+<td>持續記錄</td>
+<td>按完整曝光組分批歸檔，後臺依次處理批次</td>
+</tr>
+</tbody></table>
+<p>定時預設在創建時會展開為參數明確的 <code>manual</code> 任務，循環預設額外攜帶任務鏈信息。每一輪都擁有自己的時間範圍、輸出目錄、狀態與日誌，發生問題時可以定位到具體一次拍攝。</p>
+<p>永續模式則把素材按完整曝光組切成批次，讓拍攝繼續生產新照片，後臺依次處理已經歸檔的批次。批次邊界使用曝光組，避免把同一組中的三張照片拆到不同目錄。</p>
+<h3 id="界面與執行進程分離"><a href="#界面與執行進程分離" class="headerlink" title="界面與執行進程分離"></a>界面與執行進程分離</h3><p>GUI 和 CLI 共用任務服務，實際拍攝由獨立的後臺 worker 執行。任務定義與運行狀態分別持久化：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">config/tasks/&lt;task-id&gt;.yaml       任务定义</span><br><span class="line">.timelapse/tasks/&lt;task-id&gt;/</span><br><span class="line">├── state.json                   状态、阶段与进度</span><br><span class="line">└── task.log                     运行日志</span><br></pre></td></tr></table></figure>
+
+<p>因此關閉 GUI 不會結束正在運行的拍攝，重新打開後可以繼續查看和控制任務。啟動前會校驗配置和依賴，並通過啟動鎖與任務狀態檢查阻止同一任務重複啟動。</p>
+<p>停止也有不同語義：提前結束拍攝並完成已有素材的處理、當前任務或批次結束後停止，以及立即停止。對於一段正在記錄的黃昏，這些選擇分別對應不同的素材和後期邊界，不能都等同於結束進程。</p>
+<h2 id="4-圖像處理：從包圍曝光到穩定的延時畫面"><a href="#4-圖像處理：從包圍曝光到穩定的延時畫面" class="headerlink" title="4. 圖像處理：從包圍曝光到穩定的延時畫面"></a>4. 圖像處理：從包圍曝光到穩定的延時畫面</h2><h3 id="曝光組是拍攝與處理的交接單位"><a href="#曝光組是拍攝與處理的交接單位" class="headerlink" title="曝光組是拍攝與處理的交接單位"></a>曝光組是拍攝與處理的交接單位</h3><p><a href="https://github.com/hanwenphotograph/Camera-Timelapse-Controller">Camera Timelapse Controller</a> 通過 <code>gphoto2</code> 控制相機，默認使用相機已設置的 AEB 狀態完成三張包圍曝光，也支持逐張改變曝光補償的手動模式。</p>
+<img src="/zh-CN/2026/挂机即可使用的延时摄影All-In-One工作流/nikon-z30-bracketing.webp" alt="Nikon Z30 的間隔拍攝自動曝光包圍設置，示例為三張照片、增量 1.0" style="width:500px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
+
+<p><em>Bracketlapse 倉庫中的 Nikon Z30 設置照片，展示三張包圍曝光的配置入口；參數為示例。</em></p>
+<p>下載文件採用“組號 + 組內編號”命名。例如一組照片為 <code>0001_01.jpg</code>、<code>0001_02.jpg</code> 和 <code>0001_03.jpg</code>，已有目錄可以從現有最大組號繼續編號。這個命名同時為後期提供了明確的分組協議。</p>
+<p>Bracketlapse 接受一組輸入需要滿足兩個條件：成員從 <code>01</code> 到 <code>N</code> 齊全，且文件在連續掃描中保持穩定。<code>captXXXX.jpg</code> 一類臨時下載文件、不完整組都會被忽略。即使某組缺少一張照片，後面的組也能按組號繼續處理。</p>
+<p>任務的 <code>processing.group_size</code> 定義 <code>N</code>，未單獨配置時使用 <code>eternal.images_per_group</code>。這裡必須與實際拍攝張數一致。</p>
+<h3 id="把拍攝與下載耗時計入間隔"><a href="#把拍攝與下載耗時計入間隔" class="headerlink" title="把拍攝與下載耗時計入間隔"></a>把拍攝與下載耗時計入間隔</h3><p>拍攝間隔指相鄰兩組開始時間的目標間隔。以六秒為例，如果拍攝與下載用了三秒，就再等待約三秒；若已經超過六秒，則記錄警告並立即進入下一組。</p>
+<p>可以把單輪等待寫成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">等待时间 = max(0, 目标间隔 - 本轮拍摄与下载耗时)</span><br></pre></td></tr></table></figure>
+
+<p>這樣可以避免每輪在拍攝耗時之外再固定等待六秒，使實際節奏偏離配置。吞吐仍受相機和傳輸速度限制，設置更小的間隔並不能保證得到相同間隔的照片。</p>
+<h3 id="融合、去閃與編碼分別處理什麼"><a href="#融合、去閃與編碼分別處理什麼" class="headerlink" title="融合、去閃與編碼分別處理什麼"></a>融合、去閃與編碼分別處理什麼</h3><p><a href="https://github.com/hanwenphotograph/Bracketlapse">Bracketlapse</a> 使用 Hugin 的 <code>enfuse</code> 將不同曝光的照片融合成一幀，讓同一畫面裡的亮部和暗部獲得更合適的表現。相機發生輕微位移時，可以額外啟用 <code>align_image_stack</code> 對齊。</p>
+<p>曝光融合解決單幀的明暗取捨，延時播放還需要處理相鄰幀之間的亮度跳變。<a href="https://github.com/hanwenphotograph/simple-deflicker">Simple Deflicker</a> 對序列建立亮度直方圖，用滑動平均得到目標分佈，再通過直方圖匹配平滑全局閃爍，同時容納日落過程中的漸變。</p>
+<p>這部分基於 <a href="https://github.com/struffel/simple-deflicker">struffel&#x2F;simple-deflicker</a> 上游維護，我的分支補充了直方圖平滑調整、CLI 構建與 macOS 支持。它處理 JPG&#x2F;PNG 的全局亮度閃爍，室內燈光產生的滾動條紋不屬於該算法的處理範圍。</p>
+<p>最後，FFmpeg 從去閃後的幀生成 H.265 MP4。本文所說的 HDR 指包圍曝光融合的畫面效果，是否輸出 HDR10、HLG 等視頻還取決於色彩與編碼鏈路，不能僅由 <code>enfuse</code> 和 H.265 判斷。</p>
+<h2 id="5-並行流水線：邊拍攝，邊合成，邊評分"><a href="#5-並行流水線：邊拍攝，邊合成，邊評分" class="headerlink" title="5. 並行流水線：邊拍攝，邊合成，邊評分"></a>5. 並行流水線：邊拍攝，邊合成，邊評分</h2><p>長時間拍攝中，已經完成的曝光組可以立即進入後期。Bracketlapse 在原地 <code>standby</code> 模式下維持一個監聽進程，每完成一組融合，就通過標準輸出發送事件：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BRACKETLAPSE_EVENT &#123;&quot;event&quot;:&quot;hdr_ready&quot;,&quot;frame_number&quot;:1,&quot;path&quot;:&quot;/photos/hdr_enfuse/hdr_00001.jpg&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>這個事件表示一張 HDR 已經可用。Manager 收到後向 SunsetScore 的 JSONL 常駐服務提交掃描請求，評分服務自行掃描目錄，只處理新進入採樣位置的照片。請求示意如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;id&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span><span class="attr">&quot;command&quot;</span><span class="punctuation">:</span><span class="string">&quot;scan&quot;</span><span class="punctuation">,</span><span class="attr">&quot;session&quot;</span><span class="punctuation">:</span><span class="string">&quot;dusk-20260906&quot;</span><span class="punctuation">,</span><span class="attr">&quot;directory&quot;</span><span class="punctuation">:</span><span class="string">&quot;/photos/hdr_enfuse&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>scan</code> 提交後不等待本次評分全部結束，拍攝與融合可以繼續。任務收尾時，Manager 再發送 <code>finalize</code>，等待補掃、聚合和評分文件寫入完成。會話區分不同目錄，同一任務及其永續批次複用一個常駐模型，減少重複啟動進程和加載模型的開銷。</p>
+<p>這種協作包含兩種粒度：曝光組完成後可以立即融合、增量評分；去閃和最終視頻編碼則在 HDR 生產結束後收尾。評分可以與後期收尾並行推進，最終素材處置再使用完整結果。</p>
+<h3 id="進度來自各階段的實際結果"><a href="#進度來自各階段的實際結果" class="headerlink" title="進度來自各階段的實際結果"></a>進度來自各階段的實際結果</h3><p>拍攝、HDR、評分和視頻分別記錄進度。視頻階段使用 FFmpeg 的 <code>video_started</code>、<code>video_progress</code>、<code>video_completed</code> 事件，包含已完成幀數與總幀數；成功退出後才發出完成事件。</p>
+<p>因此界面能反映“拍攝仍在繼續，HDR 已處理多少組，視頻正在編碼多少幀”。不同設備上的吞吐仍取決於曝光時間、下載速度、CPU&#x2F;GPU 與磁盤，這種並行設計減少等待，但不承諾固定的實時處理速度。</p>
+<h2 id="6-本地視覺評分與素材保留"><a href="#6-本地視覺評分與素材保留" class="headerlink" title="6. 本地視覺評分與素材保留"></a>6. 本地視覺評分與素材保留</h2><h3 id="從單張分數得到晚霞區間"><a href="#從單張分數得到晚霞區間" class="headerlink" title="從單張分數得到晚霞區間"></a>從單張分數得到晚霞區間</h3><p><a href="https://github.com/hanwenphotograph/Sunset-Score">SunsetScore</a> 使用本地 Qwen3-VL 模型和 llama.cpp 運行時。模型選擇視覺類別，程序再將類別映射為 0—5 分，儘量保持分數與理由一致。首次準備好資源後可以離線評分。</p>
+<p>默認間隔為十張，對應第 1、11、21、31……張照片。分數主要描述可見雲層的霞光著色：普通白雲、純日落或暖色地平線不足以達到晚霞閾值；著色明確的雲層可達到 3 分，顏色強烈或覆蓋廣的雲層獲得更高分。</p>
+<p>只要任意一個採樣點達到 3 分，就返回 <code>has_sunset = true</code>。相鄰高分採樣點合併為晚霞區間，低分或失敗位置拆開區間。平均分與最高分用於描述結果，其中最高分也用於相冊命名。</p>
+<p>選擇“任意一個明確樣本”作為判定依據，是為了保留短暫出現的霞光。即使四小時中的大部分時間都是普通天空，也不應讓長時間的低分稀釋那幾分鐘的畫面。抽樣仍可能漏過更短的變化，需要根據拍攝節奏調整間隔。</p>
+<p>評分描述視覺特徵，不是概率，也不等於照片的整體攝影價值。模型不讀取地點或 EXIF 時間，視覺上相似的朝霞也可能獲得高分。</p>
+<h3 id="把評分變成可解釋的歸檔動作"><a href="#把評分變成可解釋的歸檔動作" class="headerlink" title="把評分變成可解釋的歸檔動作"></a>把評分變成可解釋的歸檔動作</h3><p>Manager 使用分析結論決定 HDR 的保留方式：</p>
+<table>
+<thead>
+<tr>
+<th>結果</th>
+<th>處理方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>檢測到晚霞</td>
+<td>保留 <code>hdr_enfuse</code>，受管日期和時段相冊添加最高分 <code>-Sx</code> 標記</td>
+</tr>
+<tr>
+<td>成功評分且未檢測到晚霞</td>
+<td>標記 <code>hdr_enfuse</code>，保留三天後再執行清理</td>
+</tr>
+<tr>
+<td>分析失敗，或存在失敗樣本且未檢測到晚霞</td>
+<td>保留 HDR，報告評分失敗</td>
+</tr>
+</tbody></table>
+<p>無晚霞目錄裡會寫入 <code>.timelapse-hdr-enfuse-delete</code> 標記，記錄帶時區的截止時間。Manager 在服務初始化和後續任務列表檢查時掃描 <code>auto_root</code>，檢查頻率最多每分鐘一次，只處理有效標記且已經到期的 <code>hdr_enfuse</code>。如果期間沒有運行檢查，實際刪除會發生在後續檢查時。</p>
+<p>三天的窗口為複核和另存素材留下了時間。這個策略只覆蓋被標記的 HDR 目錄，原始照片、去閃中間幀和視頻仍按各自的任務清理配置處理。</p>
+<h2 id="7-長期運行需要的恢復、依賴與通知"><a href="#7-長期運行需要的恢復、依賴與通知" class="headerlink" title="7. 長期運行需要的恢復、依賴與通知"></a>7. 長期運行需要的恢復、依賴與通知</h2><h3 id="後期失敗時保住已經拍到的內容"><a href="#後期失敗時保住已經拍到的內容" class="headerlink" title="後期失敗時保住已經拍到的內容"></a>後期失敗時保住已經拍到的內容</h3><p>拍攝、處理和任務完成是不同的狀態。對於有限任務，Bracketlapse 在拍攝期間意外退出，Manager 會記錄需要恢復，讓相機繼續完成拍攝，再從最終照片執行覆蓋恢復處理。</p>
+<p>如果有限任務最終仍然失敗，則跳過清理、保留原始照片。評分失敗同樣不能被當作“沒有晚霞”，否則推理故障會錯誤地變成刪圖依據。這兩條規則把素材保護放在任務成功判定之前。</p>
+<p>相機控制工具在下載成功後會刪除相機中的對應副本，因此本地下載目錄承擔了原片保存職責，任務的失敗與清理邊界尤其重要。</p>
+<h3 id="讓任務使用的依賴可以確定"><a href="#讓任務使用的依賴可以確定" class="headerlink" title="讓任務使用的依賴可以確定"></a>讓任務使用的依賴可以確定</h3><p>Manager 將工作流工具、Python 環境和評分資源放在應用的 <code>.timelapse/dependencies/</code> 下。任務從這套私有目錄解析命令，減少全局 <code>PATH</code> 或不同 Python 環境帶來的差異。</p>
+<p>“包管理”頁可以檢查和安裝組件，並對提供構建信息接口的自有工具顯示版本、源碼分支和構建時間。Camera Timelapse Controller、Bracketlapse、SunsetScore 更新時可以選擇分支，便於確認一次任務實際使用的工具版本。</p>
+<p>GUI 支持 Windows、macOS 和 Linux，實際相機控制還取決於 <code>gphoto2</code> 在對應平臺對相機的支持。當前主流程要求 Bracketlapse 至少為 <strong>0.4.1</strong>，可選 SunsetScore 至少為 <strong>0.12.0</strong>。</p>
+<h3 id="在電腦之外查看拍攝結果"><a href="#在電腦之外查看拍攝結果" class="headerlink" title="在電腦之外查看拍攝結果"></a>在電腦之外查看拍攝結果</h3><p>企業微信 Webhook 可以發送任務狀態、評分摘要和最高分照片。運行日誌用於定位過程中的問題，通知則讓完成結果直接到達日常查看消息的地方。</p>
+<img src="/zh-CN/2026/挂机即可使用的延时摄影All-In-One工作流/timelapse-manager-webhook.webp" alt="Timelapse Manager 的 Webhook 配置頁面，提供文本和圖片測試入口" style="width:680px;max-width:70%;height:auto;display:block;margin:1.5rem auto;">
+
+<p><em>配置頁支持文本與圖片測試，截圖中的機器人地址使用 <code>YOUR_KEY</code> 佔位。</em></p>
+<h2 id="8-配置一次，重複使用"><a href="#8-配置一次，重複使用" class="headerlink" title="8. 配置一次，重複使用"></a>8. 配置一次，重複使用</h2><p>第一次使用時，先在“包管理”中準備相機控制和後期組件；需要評分時，再準備 SunsetScore 與模型資源。隨後通過“配置中心”確認輸出目錄和時段，“任務管理”負責創建和啟動任務。</p>
+<p>項目配置的關鍵片段如下，其餘字段沿用程序生成的完整配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">auto_root:</span> <span class="string">~/Pictures/AutoTimelapse</span></span><br><span class="line"><span class="attr">capture_interval_seconds:</span> <span class="number">6</span></span><br><span class="line"></span><br><span class="line"><span class="attr">morning:</span></span><br><span class="line">  <span class="attr">start_at:</span> <span class="string">&#x27;03:00&#x27;</span></span><br><span class="line">  <span class="attr">end_at:</span> <span class="string">&#x27;09:00&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">dusk:</span></span><br><span class="line">  <span class="attr">start_at:</span> <span class="string">&#x27;16:00&#x27;</span></span><br><span class="line">  <span class="attr">end_at:</span> <span class="string">&#x27;20:00&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">sunset_score:</span></span><br><span class="line">  <span class="attr">interval:</span> <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="attr">eternal:</span></span><br><span class="line">  <span class="attr">batch_groups:</span> <span class="number">2000</span></span><br><span class="line">  <span class="attr">images_per_group:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>清晨、黃昏是固定配置時段，需要按季節和拍攝地點調整。<code>eternal.batch_groups</code> 控制永續任務的分批規模；對於單次定時任務，拍攝範圍由起止時間決定。</p>
+<p>日常使用時，選擇 <code>scheduled_loop</code> 就能讓清晨和黃昏任務接力；只想拍下一輪則選擇 <code>scheduled_once</code>；固定某天某個時段使用 <code>manual</code>。CLI 可以查看環境與後臺運行狀態：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python timelapse.py self-test</span><br><span class="line">python timelapse.py task list</span><br><span class="line">python timelapse.py process list</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-兩個配套工具：精細後期與-RAW-整理"><a href="#9-兩個配套工具：精細後期與-RAW-整理" class="headerlink" title="9. 兩個配套工具：精細後期與 RAW 整理"></a>9. 兩個配套工具：精細後期與 RAW 整理</h2><p>對於需要逐段調整畫面的素材，<a href="https://github.com/hanwenphotograph/Lumalapse">Lumalapse</a> 提供 RAW 序列導入、曝光曲線、關鍵幀調色和視頻導出。它通過 LibRaw&#x2F;rawpy 在線性空間解碼，在 <code>log2</code> 亮度域計算曲線，將平滑目標與實測曲線之差作為逐幀 EV 補償，再疊加人工關鍵幀曝光調整。</p>
+<p>這種方式將去閃與人為設計的明暗漸變結合起來，同時保留高光、陰影、色溫等調整能力。分析結果和關鍵幀緩存到素材目錄中的 <code>.lumalapse/</code>，便於重複打開繼續編輯。</p>
+<p><a href="https://github.com/hanwenphotograph/NEF-Filter">NEF Filter</a> 則把 JPG 篩片結果應用到 Nikon RAW：查找沒有對應 JPG 的 NEF，默認展示刪除列表並等待確認。它支持分別指定 JPG 與 NEF 目錄，默認非遞歸掃描，適合篩片後的整理工作。</p>
+<p>兩者是獨立使用的配套工具。自動主線負責從拍攝到初步篩選，值得繼續處理的素材可以進入更精細的後期與整理過程。</p>
+<h2 id="10-演進與版本依據"><a href="#10-演進與版本依據" class="headerlink" title="10. 演進與版本依據"></a>10. 演進與版本依據</h2><p>這套實現主要經歷了三個階段：6 月先補齊相機控制、包圍曝光合成和去閃等單項能力；7 月用任務管理器、圖形界面和晚霞評分建立統一入口；8—9 月完善增量處理、常駐模型、故障恢復與延遲清理。演進最終落在三個設計選擇上：以完整曝光組交接數據，以獨立任務記錄運行，以明確的處理結果決定歸檔。</p>
+<p>本文實現對應的倉庫版本如下，可用於核對接口和復現配置。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>參考版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/hanwenphotograph/Timelapse-Auto-Script">TimelapseManager &#x2F; Timelapse-Auto-Script</a></td>
+<td><a href="https://github.com/hanwenphotograph/Timelapse-Auto-Script/tree/134ddef65b9504724b267845c784f5b8512f1a7c">134ddef</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/Camera-Timelapse-Controller">Camera Timelapse Controller</a></td>
+<td><a href="https://github.com/hanwenphotograph/Camera-Timelapse-Controller/tree/510c20023c0d97fb65787a863ad41d687a3d9f6f">510c200</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/Bracketlapse">Bracketlapse</a></td>
+<td><a href="https://github.com/hanwenphotograph/Bracketlapse/tree/3a6bf7dec66ade332fcba50e95e62fddb2053947">3a6bf7d</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/Lumalapse">Lumalapse</a></td>
+<td><a href="https://github.com/hanwenphotograph/Lumalapse/tree/58d51926ee3cefeac1757b74c6d66d88666b104d">58d5192</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/simple-deflicker">Simple Deflicker 維護分支</a></td>
+<td><a href="https://github.com/hanwenphotograph/simple-deflicker/tree/6981a617671fedf29c67f47551a1bd6f4b99ee1a">6981a61</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/NEF-Filter">NEF Filter</a></td>
+<td><a href="https://github.com/hanwenphotograph/NEF-Filter/tree/95ded140366c967e695a700a7ea6b62ddd75c2cb">95ded14</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/hanwenphotograph/Sunset-Score">SunsetScore</a></td>
+<td><a href="https://github.com/hanwenphotograph/Sunset-Score/tree/0cdce29d07a33e98d6e1d25877545ee63c702deb">0cdce29</a></td>
+</tr>
+</tbody></table>
+<p>界面截圖來自 <a href="https://github.com/hanwenphotograph/Timelapse-Auto-Script/tree/134ddef65b9504724b267845c784f5b8512f1a7c/docs/images">TimelapseManager 文檔圖片</a>，相機照片來自 <a href="https://github.com/hanwenphotograph/Bracketlapse/tree/3a6bf7dec66ade332fcba50e95e62fddb2053947/res">Bracketlapse 資源目錄</a>，評分樣例來自 <a href="https://github.com/hanwenphotograph/Sunset-Score/tree/0cdce29d07a33e98d6e1d25877545ee63c702deb/docs/images/score-examples">SunsetScore 示例圖片</a>；本地配圖僅作格式轉換、縮放和並排排版。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/zh-TW/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/" rel="tag"># 自動化</a>
+              <a href="/zh-TW/tags/%E5%BB%B6%E6%97%B6%E6%91%84%E5%BD%B1/" rel="tag"># 延時攝影</a>
+              <a href="/zh-TW/tags/%E6%91%84%E5%BD%B1%E5%B7%A5%E5%85%B7/" rel="tag"># 攝影工具</a>
+              <a href="/zh-TW/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-09-01-%E5%9C%A8%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%B8%AD%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E5%90%8C%E6%AD%A5%E7%9A%84%E5%8F%8C%E4%BA%BA%E7%89%B5%E6%89%8B%E7%8E%A9%E6%B3%95/" rel="prev" title="在遊戲開發中實現網絡同步的雙人牽手玩法">
+                  <i class="fa fa-angle-left"></i> 在遊戲開發中實現網絡同步的雙人牽手玩法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-TW/2026/zh-TW-2026-09-22-%E7%80%9A%E6%96%87%E5%BE%AE%E6%B4%BE%E4%BC%A0%E8%AE%B0/" rel="next" title="瀚文微派傳記">
+                  瀚文微派傳記 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">HanWen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="訪客總數">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="總瀏覽次數">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
