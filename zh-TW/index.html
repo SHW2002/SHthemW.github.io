@@ -564,13 +564,13 @@
 
 <div class="post-intro-text">
 
-<p>2024 年底，我做了一個很小的 Unity 自動點擊工具：之前每次進遊戲都要等待場景加載，再依次點幾個連接、登錄和進入遊戲的按鈕。這段流程大約持續半分鐘，操作不復雜，卻要我一直盯著，並不是很方便。</p>
-<p>後來隨著AI技術的發展，感覺這一套自動工具如果給AI做為腳手架會大有可為。因此逐步增加了 UI 導航、編輯器入口和命令行調用接口。正式以一個AI Agent MCP為目標交付。</p>
+<p>2024 年底，我做了一個很小的 Unity 自動點擊工具。原因也很簡單：每次進遊戲都要等待場景加載，再依次點幾個連接、登錄和進入遊戲的按鈕。這段流程大約持續半分鐘，操作不復雜，卻要一直盯著。</p>
+<p>工具後來嘗試過 UI 導航圖，現在的 0.3.4 則把流程交給可編譯的 C# 業務腳本：AI 根據項目源碼和運行時證據準備代碼，Unity 編譯並執行，腳本自己說明從哪裡開始、做哪些動作，以及用什麼結果判斷成功。日常重複自測時，我直接運行已有腳本。</p>
 </div>
 
 <div class="post-intro-media">
 
-<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/images/post-covers/unity-autorun.webp" alt="Unity 自測工具的 MCP 面板與 UI 導航面板拼圖"></a></p>
+<p><a href="https://github.com/SHW2002/Unity-Autorun-MCP"><img src="/images/posts/unity-autorun/autorun-scripts-0.3.4.png" alt="隔離演示工程中 Unity Autorun Tool 0.3.4 的 Autorun Scripts 主面板"></a></p>
 </div>
 
 </div>
